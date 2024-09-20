@@ -6,11 +6,17 @@
 <configuration>
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true" />
+        <!--SQL 로그-->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
 
     <typeAliases>
-        <package name="org.scoula.security.account.domain" />
-        <package name="org.scoula.board.domain" />
+        <package name="org.scoula.oauth.domain.vo.OauthMember"/>
     </typeAliases>
+
+    <mappers>
+        <mapper resource="org/scoula/mapper/OauthMemberMapper.xml"/>
+    </mappers>
 </configuration>
 

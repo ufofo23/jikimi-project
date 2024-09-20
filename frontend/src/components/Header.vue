@@ -25,6 +25,22 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+
+const isLoggedIn = ref(false);
+
+onMounted(() => {
+  // 쿠키에서 JWT 토큰 확인하여 로그인 상태 설정
+  isLoggedIn.value = document.cookie.split('; ').some((cookie) => cookie.startsWith('jwt='));
+});
+
+function logout() {
+  // 쿠키에서 JWT 삭제 (여기서는 만료 시간을 과거로 설정)
+  document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+  isLoggedIn.value = false; // 로그인 상태 변경
+  router.push('/login'); // 로그인 페이지로 리디렉션
+}
+
 const router = useRouter();
 </script>
 

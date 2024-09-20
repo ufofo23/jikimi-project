@@ -1,21 +1,83 @@
 <template>
-  <div class="page-container">
-    <h1>소셜 로그인</h1>
-    <div class="social-login-container">
-      <Kakao></Kakao>
-      <Google></Google>
-      <Naver></Naver>
-    </div>
+  <div class="login-container">
+    <button @click="handleNaverLogin" class="login-button">
+      <img src="@/assets/naver.png" alt="Naver Login" class="naver-logo" />
+    </button>
+    <button @click="handleGoogleLogin" class="login-button">
+      <img src="@/assets/google.png" alt="Google Login" class="google-logo" />
+    </button>
   </div>
 </template>
 
-<script setup>
-import Google from '@/components/Google.vue';
-import Kakao from '@/components/Kakao.vue';
-import Naver from '@/components/Naver.vue';
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'login',
+  methods: {
+    // handleKakaoLogin() {
+    //   window.location.href = 'http://localhost:8080/oauth/KAKAO';
+    // },
+    handleNaverLogin() {
+      window.location.href = 'http://localhost:8080/oauth/NAVER';
+    },
+    handleGoogleLogin() {
+      window.location.href = 'http://localhost:8080/oauth/GOOGLE';
+    },
+    async fetchToken(code, provider) {
+      try {
+        // 인증 서버에서 JWT 쿠키를 설정
+        const response = await axios.get(`/oauth/login/${provider}?code=${code}`, {
+          withCredentials: true // 쿠키를 클라이언트에 저장
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Login failed", error);
+        throw error;
+      }
+    },
+    async handleRedirect() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const provider = urlParams.get('provider');
+      if (code && provider) {
+        await this.fetchToken(code, provider);
+        this.$router.push("/");
+      }
+    }
+  },
+  mounted() {
+    this.handleRedirect();
+  }
+};
 </script>
 
 <style scoped>
+.google-logo {
+  width: 55px;
+  height: 55px;
+}
+
+.naver-logo {
+  width: 55px;
+  height: 55px;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.login-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+}
+
 .page-container {
   display: flex;
   flex-direction: column; /* 수직 정렬 */

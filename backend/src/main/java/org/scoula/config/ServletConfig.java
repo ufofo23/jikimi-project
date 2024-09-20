@@ -1,8 +1,11 @@
 package org.scoula.config;
 
+import org.scoula.oauth.controller.OauthServerTypeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -11,9 +14,9 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
-        "org.scoula.controller",
-        "org.scoula.exception",
-})    // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
+        "org.scoula",
+})
+// Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
 public class ServletConfig implements WebMvcConfigurer {
 
     @Override
@@ -30,22 +33,25 @@ public class ServletConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/assets/**")       // Vue에서 사용 경로
                 .addResourceLocations("/resources/assets/");        // 서버 경로
     }
-
-    // jsp view resolver 설정
-//    @Override
-//    public void configureViewResolvers(ViewResolverRegistry registry) {
-//        InternalResourceViewResolver bean = new InternalResourceViewResolver();
-//
-//        bean.setViewClass(JstlView.class);
-//        bean.setPrefix("/WEB-INF/views/");
-//        bean.setSuffix(".jsp");
-//
-//        registry.viewResolver(bean);
-//    }
+    // 임시 CORS 설정 (추후 이동)
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173")
+                .allowCredentials(true)
+                .allowedMethods("*")
+                .allowedHeaders("*");
+    }
 
     // Servlet 3.0 v알 업로드 사용 시 - MulipartResolver 빈 등록
     @Bean
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
+    }
+
+    // OauthServerTypeConverter 등록
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new OauthServerTypeConverter());
     }
 }
