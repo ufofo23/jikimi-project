@@ -9,12 +9,11 @@ import Footer from './components/Footer.vue';
 
 <template> <!-- 얘네를 꾸며야함! -->
   <Header> <!-- 고정 - 홈페이지 위에 있는 노란색 바 (퀵 챗 같은거도 만들어야함) -->
-    
   </Header>
 
   <RouterView />
+  
   <Footer>
-
   </Footer>
 </template>
 
