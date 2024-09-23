@@ -1,47 +1,101 @@
 <template>
   <div class="quick-chat">
-    <button @click="toggleChat" class="btn btn-warning quick-chat-button">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="chat-icon"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-      >
-        <path
-          d="M20 2H4C2.897 2 2 2.897 2 4V18L6 14H20C21.103 14 22 13.103 22 12V4C22 2.897 21.103 2 20 2Z"
-        />
-      </svg>
-      Quick Chat
+    <!-- 동그란 Chat Bot 버튼 -->
+    <button @click="toggleChat" class="chat-bot-button">
+      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" />
+      Bugi Bot
     </button>
+
     <div v-if="chatVisible" class="chat-box">
-      <iframe
-        src="https://your-chatbot-service.com"
-        width="100%"
-        height="100%"
-        frameborder="0"
-        allow="microphone; camera"
-      >
-      </iframe>
-      <button @click="toggleChat" class="btn btn-warning close-button">
-        닫기
-      </button>
+      <button @click="toggleChat" class="close-button">닫기</button>
+      <div class="chat-container">
+        <div class="messages" ref="messagesContainer">
+          <div
+            v-for="(message, index) in messages"
+            :key="index"
+            class="message"
+          >
+            <strong>{{ message.role }}:</strong> {{ message.content }}
+          </div>
+        </div>
+        <div class="input-area">
+          <input
+            v-model="userInput"
+            @keyup.enter="sendMessage"
+            placeholder="메시지를 입력하세요"
+            ref="inputField"
+          />
+          <button @click="sendMessage">전송</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
-// 챗봇 창의 표시 여부를 관리하는 반응형 변수
-const chatVisible = ref(false);
+const chatVisible = ref(false); // 챗봇 창의 표시 여부를 관리하는 반응형 변수
+const messages = ref([]); // 채팅 메시지를 저장할 배열
+const userInput = ref(''); // 사용자 입력 값을 저장할 변수
+const messagesContainer = ref(null); // 메시지 영역을 참조하는 ref
+
+// API 호출 설정
+const api = axios.create({
+  baseURL: 'http://localhost:8080',
+  withCredentials: true, // 모든 요청에 쿠키 포함
+});
 
 // 챗봇 창을 토글하는 함수
 const toggleChat = () => {
   chatVisible.value = !chatVisible.value;
 };
+
+// 메시지를 전송하는 함수
+const sendMessage = async () => {
+  if (userInput.value.trim() === '') return; // 빈 메시지 방지
+
+  // 유저 메시지 추가
+  messages.value.push({ role: '유저(추 후 변경)', content: userInput.value });
+
+  try {
+    const response = await api.post(
+      '/api/chat',
+      { prompt: userInput.value },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      }
+    );
+
+    // 서버 응답 메시지 추가
+    const content = response.data.content || '';
+    messages.value.push({ role: '지키미', content });
+  } catch (error) {
+    console.error('Error:', error);
+    messages.value.push({
+      role: '지키미',
+      content: '메시지 전송에 실패했습니다. 다시 시도해 주세요.',
+    });
+  }
+
+  userInput.value = ''; // 입력 필드 초기화
+  scrollToBottom(); // 스크롤을 하단으로 이동
+};
+
+// 메시지 창을 항상 하단에 고정시키는 함수
+const scrollToBottom = () => {
+  const container = messagesContainer.value; // messagesContainer 참조
+  if (container) {
+    container.scrollTop = container.scrollHeight; // 스크롤을 아래로 이동
+  }
+};
 </script>
 
 <style scoped>
+/* Chat Bot 버튼 스타일 */
 .quick-chat {
   position: fixed;
   bottom: 20px;
@@ -49,28 +103,33 @@ const toggleChat = () => {
   z-index: 1000;
 }
 
-.quick-chat-button {
+.chat-bot-button {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
-  border-radius: 50px;
+  justify-content: center;
+  width: 80px; /* 버튼 크기 */
+  height: 80px; /* 버튼 크기 */
+  border-radius: 50%; /* 동그란 버튼 */
+  background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease; /* 트랜지션 추가 */
+  border: 2px solid #e5e5e5; /* 버튼 테두리 */
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-.quick-chat-button:hover {
-  transform: scale(1.1); /* 호버 시 살짝 커지게 */
+.chat-bot-button:hover {
+  transform: scale(1.1); /* 호버 시 버튼 커짐 */
 }
 
-.chat-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
+.turtle-icon {
+  width: 40px; /* 거북이 아이콘 크기 */
+  height: 40px;
 }
 
+/* Chat Box 스타일 */
 .chat-box {
   position: absolute;
-  bottom: 60px;
+  bottom: 100px;
   right: 0;
   width: 350px;
   height: 500px;
@@ -85,8 +144,70 @@ const toggleChat = () => {
   position: absolute;
   top: 10px;
   right: 10px;
+  background-color: #ffcc00;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
+.close-button:hover {
+  background-color: #f5b800;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 0; /* margin-bottom 제거 */
+  font-family: 'Arial', sans-serif; /* 글꼴 설정 */
+  font-size: 14px; /* 글꼴 크기 설정 */
+  line-height: 1.5; /* 줄 간격 설정 */
+}
+
+.input-area {
+  display: flex;
+  align-items: center;
+  padding: 10px; /* 적절한 패딩 추가 */
+  background: #fff; /* 입력란 배경색 */
+}
+
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.input-area button {
+  padding: 10px 15px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.input-area button:hover {
+  background-color: #f5b800;
+}
+
+.message {
+  margin-bottom: 5px;
+}
+
+/* 애니메이션 */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -1,20 +1,17 @@
 <template>
   <footer class="footer">
     <p>© 2024 부동산 거래 서비스</p>
-    <button class="quick-chat" @click="openChat">Quick Chat</button>
   </footer>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style scoped>
 .footer {
-  position: fixed;
+  position: flex;
   bottom: 0;
   width: 100%;
-  background-color: #fcd94d;
+  background-color: RGB(203, 236, 197); /* 브랜드 색상 */
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
