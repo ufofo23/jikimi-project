@@ -161,10 +161,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .checklist-container {
   max-width: 600px;
   margin: 0 auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
 }
 
 .question-item {
@@ -185,5 +190,20 @@ export default {
   margin-left: 20px;
   font-size: 0.9rem;
   color: #555;
+}
+
+button[type='submit'] {
+  align-self: flex-end; /* 버튼을 폼 안에서 오른쪽 끝에 배치 */
+  padding: 10px 20px;
+  background-color: #4caf50; /* 버튼 색상 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px; /* 내용과 버튼 사이의 간격 */
+}
+
+button[type='submit']:hover {
+  background-color: #45a049; /* hover 시 색상 변경 */
 }
 </style>
