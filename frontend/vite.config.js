@@ -12,5 +12,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  // 임시 포트 -> 5173으로
+  server: {
+    port: 5173,
   }
 })

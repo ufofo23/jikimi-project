@@ -20,8 +20,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@MapperScan(basePackages = {""})
-@ComponentScan(basePackages = {""})
+@MapperScan(basePackages = {"org.scoula.oauth.mapper", "org.scoula.commonsense.mapper"})
+@ComponentScan(basePackages = {"org.scoula.oauth", "org.scoula.commonsense.service"})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
@@ -52,7 +52,7 @@ public class RootConfig {
         sqlSessionFactory.setConfigLocation(
                 applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
-        return (SqlSessionFactory) sqlSessionFactory.getObject();
+        return sqlSessionFactory.getObject();
     }
 
     @Bean
