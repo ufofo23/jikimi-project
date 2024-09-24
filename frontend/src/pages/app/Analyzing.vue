@@ -1,15 +1,15 @@
 <template>
-  <h1>FAQ</h1>
-  <p>근데 이거 데이터베이스랑 연결해야하면 컴포넌트로 해야하는건가 ........?</p>
+  <h1>리포트/분석</h1>
+  <p>근데 이거 데이터베이스랑 연결해야하면 컴포넌트로 해야하나 ?_?</p>
   <div class="container">
     <!-- 버튼: 클릭하면 아래 세부 내용을 토글 -->
     <div @click="toggleDetails('contract')">
-      <h3>FAQ(지피티)1</h3>
+      <h3>평가 기준(1)</h3>
       <span v-if="openSection === 'contract'">▲</span>
       <span v-else>▼</span>
     </div>
     <div v-if="openSection === 'contract'">
-      <p>원리는 아직 모르겠어요 ㅠㅠ</p>
+      <p>지피티..</p>
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@ const toggleDetails = (section) => {
 
 <style lang="scss" scoped>
 .container {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   padding: 10px;
 }
