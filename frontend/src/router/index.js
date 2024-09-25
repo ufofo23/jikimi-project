@@ -13,6 +13,8 @@ import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
 import SenseDetailPage from '@/pages/study/SenseDetailPage.vue';
 import SenseListPage from '@/pages/study/SenseListPage.vue';
+import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
+import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 import FAQDetailPage from '@/pages/study/FAQ/FAQDetailPage.vue';
 import FAQListPage from '@/pages/study/FAQ/FAQListPage.vue';
 
@@ -62,6 +64,16 @@ const router = createRouter({
       path: '/study/faq/list',
       name: 'faqListPage',
       component: FAQListPage,
+    },
+    {
+      path: 'study/dictionary/list',
+      name: 'dictionaryList',
+      component: DictionaryListPage,
+    },
+    {
+      path: 'study/dictionary/detail/:no',
+      name: 'dictionaryDetailPage',
+      component: DictionaryDetailPage,
     },
   ],
 });
