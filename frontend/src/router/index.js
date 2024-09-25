@@ -15,6 +15,8 @@ import SenseDetailPage from '@/pages/study/SenseDetailPage.vue';
 import SenseListPage from '@/pages/study/SenseListPage.vue';
 import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
 import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
+import FAQDetailPage from '@/pages/study/FAQ/FAQDetailPage.vue';
+import FAQListPage from '@/pages/study/FAQ/FAQListPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +30,16 @@ const router = createRouter({
     { path: '/introduce', name: 'introduce', component: Introduce },
     { path: '/', name: 'main', component: Main },
     { path: '/login', name: 'login', component: Login },
+    {
+      path: '/fraudchecklist',
+      name: 'fraudchecklist',
+      component: FraudChecklist,
+    },
+    {
+      path: '/loading',
+      name: 'Loading',
+      component: Loading,
+    },
     {
       path: '/oauth/redirected/:provider',
       name: 'OAuthRedirectPage',
@@ -44,25 +56,25 @@ const router = createRouter({
       component: SenseListPage,
     },
     {
-      path: '/fraudchecklist',
-      name: 'fraudchecklist',
-      component: FraudChecklist,
+      path: '/study/faq/detail/:no',
+      name: 'faqDetailPage',
+      component: FAQDetailPage,
     },
     {
-      path: '/loading',
-      name: 'Loading',
-      component: Loading,
+      path: '/study/faq/list',
+      name: 'faqListPage',
+      component: FAQListPage,
     },
     {
       path: 'study/dictionary/list',
       name: 'dictionaryList',
-      component: DictionaryListPage
+      component: DictionaryListPage,
     },
     {
       path: 'study/dictionary/detail/:no',
       name: 'dictionaryDetailPage',
-      component: DictionaryDetailPage
-    }
+      component: DictionaryDetailPage,
+    },
   ],
 });
 
