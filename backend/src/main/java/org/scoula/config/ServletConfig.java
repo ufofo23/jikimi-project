@@ -15,7 +15,8 @@ import org.springframework.web.servlet.view.JstlView;
 @EnableWebMvc
 @ComponentScan(basePackages = {
         "org.scoula.commonsense.controller",
-        "org.scoula.dictionary.controller"
+        "org.scoula.dictionary.controller",
+        "org.scoula.faq.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
 public class ServletConfig implements WebMvcConfigurer {

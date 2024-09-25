@@ -23,11 +23,13 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = {
         "org.scoula.oauth.mapper",
         "org.scoula.commonsense.mapper",
-        "org.scoula.dictionary.mapper"})
+        "org.scoula.dictionary.mapper",
+        "org.scoula.faq.mapper"})
 @ComponentScan(basePackages = {
         "org.scoula.oauth",
         "org.scoula.commonsense.service",
-        "org.scoula.dictionary.service"})
+        "org.scoula.dictionary.service",
+        "org.scoula.faq.service"})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
