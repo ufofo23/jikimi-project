@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.dictionary.mapper.DictionaryMapper">
+    <select id="getList" resultType="org.scoula.dictionary.domain.DictionaryVO">
+        select * from dictionary_tbl
+        order by dictionary_title asc
+    </select>
+
+    <select id="get" resultType="org.scoula.dictionary.domain.DictionaryVO">
+        select * from dictionary_tbl
+        where dictionary_no = #{no}
+    </select>
+</mapper>

@@ -391,3 +391,4 @@ VALUES
         '한 번 분석을 마친 집에 대해서는 지속 조회가 가능하나, 최신화된 정보를 갖기 위해선 재분석을 하는 것이 좋습니다.'
     );
 
+select * from dictionary_tbl order by dictionary_title asc
