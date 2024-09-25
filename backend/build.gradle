@@ -8,8 +8,8 @@ version '1.0-SNAPSHOT'
 
 repositories {
   mavenCentral()
-  maven { url 'https://repo.spring.io/milestone' }
-  maven { url 'https://repo.spring.io/snapshot' }
+//  maven { url 'https://repo.spring.io/milestone' }
+//  maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
@@ -19,8 +19,8 @@ ext {
   springSecurityVersion = '5.8.13'
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -29,11 +29,12 @@ tasks.withType(JavaCompile) {
 dependencies {
 
   // Spring AI
-  implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
-  implementation 'org.springframework.ai:spring-ai-openai'
+//  implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
+//  implementation 'org.springframework.ai:spring-ai-openai'
 
   // OAuth2 의존성 추가
   implementation("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")
+
   // JWT 처리용
   implementation("org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}")
 
@@ -73,6 +74,7 @@ dependencies {
 
   // Jackson - Json 처리
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 
   // 테스트
   testImplementation "org.springframework:spring-test:${springVersion}"

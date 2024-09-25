@@ -2,7 +2,7 @@
   <header class="header">
     <nav class="nav-bar">
       <span class="logo">
-        <router-link :to="{ name: 'main' }">App Name</router-link>
+        <router-link :to="{ name: 'main' }">JIKIMI</router-link>
       </span>
       <ul class="menu">
         <li>
@@ -17,10 +17,12 @@
         <li>
           <router-link :to="{ name: 'faq' }">FAQ</router-link>
         </li>
+        <li>
+          <router-link :to="{ name: 'introduce' }">About us</router-link>
+        </li>
       </ul>
       <div class="auth" v-if="!isLoggedIn">
         <router-link :to="{ name: 'login' }">Login</router-link>
-        <router-link :to="{ name: 'signup' }">Join</router-link>
       </div>
 
       <div class="auth" v-else>
