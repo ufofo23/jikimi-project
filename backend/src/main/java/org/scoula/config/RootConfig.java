@@ -20,8 +20,16 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@MapperScan(basePackages = {"org.scoula.oauth.mapper", "org.scoula.commonsense.mapper"})
-@ComponentScan(basePackages = {"org.scoula.oauth", "org.scoula.commonsense.service"})
+@MapperScan(basePackages = {
+        "org.scoula.oauth.mapper",
+        "org.scoula.commonsense.mapper",
+        "org.scoula.dictionary.mapper",
+        "org.scoula.faq.mapper"})
+@ComponentScan(basePackages = {
+        "org.scoula.oauth",
+        "org.scoula.commonsense.service",
+        "org.scoula.dictionary.service",
+        "org.scoula.faq.service"})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
