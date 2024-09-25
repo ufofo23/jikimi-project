@@ -1,8 +1,6 @@
 import api from '@/api';
 
-const BASE_URL = '/api/sense';
-
-const headers = { 'Content-Type': 'multipart/form-data' };
+const BASE_URL = '/api/common-sense';
 
 export default {
   async getList(params) {
@@ -17,3 +15,5 @@ export default {
     return data;
   },
 };
+
+//dto....

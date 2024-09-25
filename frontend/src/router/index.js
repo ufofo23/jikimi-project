@@ -11,13 +11,12 @@ import Loading from '@/pages/Loading.vue';
 import FraudChecklist from '@/pages/FraudChecklist.vue';
 import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
+import SenseDetailPage from '@/pages/study/SenseDetailPage.vue';
+import SenseListPage from '@/pages/study/SenseListPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'main', component: Main },
-    { path: '/login', name: 'login', component: Login },
-    { path: '/oauth/redirected/:provider', name: 'OAuthRedirectPage', component: OauthRedirectPage},
     { path: '/mypage', name: 'mypage', component: MyPage },
     { path: '/signup', name: 'signup', component: Signup },
     { path: '/map', name: 'map', component: Map },
@@ -25,6 +24,23 @@ const router = createRouter({
     { path: '/study', name: 'study', component: Study },
     { path: '/faq', name: 'faq', component: FAQ },
     { path: '/introduce', name: 'introduce', component: Introduce },
+    { path: '/', name: 'main', component: Main },
+    { path: '/login', name: 'login', component: Login },
+    {
+      path: '/oauth/redirected/:provider',
+      name: 'OAuthRedirectPage',
+      component: OauthRedirectPage,
+    },
+    {
+      path: '/study/commonsense/detail/:no',
+      name: 'senseDetailPage',
+      component: SenseDetailPage,
+    },
+    {
+      path: '/study/commonsense/list',
+      name: 'senseListPage',
+      component: SenseListPage,
+    },
     {
       path: '/fraudchecklist',
       name: 'fraudchecklist',
