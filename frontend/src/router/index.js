@@ -13,6 +13,8 @@ import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
 import SenseDetailPage from '@/pages/study/SenseDetailPage.vue';
 import SenseListPage from '@/pages/study/SenseListPage.vue';
+import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
+import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +53,16 @@ const router = createRouter({
       name: 'Loading',
       component: Loading,
     },
+    {
+      path: 'study/dictionary/list',
+      name: 'dictionaryList',
+      component: DictionaryListPage
+    },
+    {
+      path: 'study/dictionary/detail/:no',
+      name: 'dictionaryDetailPage',
+      component: DictionaryDetailPage
+    }
   ],
 });
 
