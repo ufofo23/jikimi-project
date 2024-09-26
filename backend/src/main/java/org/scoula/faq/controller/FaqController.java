@@ -2,6 +2,8 @@ package org.scoula.faq.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.scoula.common.pagination.Page;
+import org.scoula.common.pagination.PageRequest;
 import org.scoula.faq.domain.FaqDTO;
 import org.scoula.faq.service.FaqService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,8 @@ public class FaqController {
     final FaqService service;
 
     @GetMapping("")
-    public ResponseEntity<List<FaqDTO>> getList() {
-        return ResponseEntity.ok(service.getList());
+    public ResponseEntity<Page> getList(PageRequest pageRequest) {
+        return ResponseEntity.ok(service.getPage(pageRequest));
     }
 
     @GetMapping("/{no}")

@@ -4,10 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.scoula.faq.mapper.FaqMapper">
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from faq_tbl
+    </select>
+
+    <select id="getPage" resultType="org.scoula.faq.domain.FaqVO">
+        select * from faq_tbl order by faq_no desc
+        limit #{offset}, #{amount}
+    </select>
+
     <select id="getList" resultType="org.scoula.faq.domain.FaqVO">
         select * from faq_tbl
         order by faq_no asc
     </select>
+
     <select id="get" resultType="org.scoula.faq.domain.FaqVO">
         select * from faq_tbl
         where faq_no = #{no}
