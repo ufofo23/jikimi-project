@@ -11,8 +11,9 @@ const article = ref({});
 const isLoading = ref(true);
 const errorMessage = ref('');
 
+// 목록으로 돌아가는 함수
 const back = () => {
-  router.push({ name: 'commonsense/list', query: cr.query });
+  router.push({ name: 'senseListPage' }); // 올바른 라우트 이름을 사용하여 이동
 };
 
 const load = async () => {
@@ -38,7 +39,7 @@ onMounted(() => {
   <div class="container d-flex flex-column min-vh-100">
     <div class="flex-grow-1">
       <h1 class="mt-4 text-center">{{ article.commonSenseTitle }}</h1>
-
+      <p>{{ article.pieceSense }}</p>
       <div v-if="isLoading" class="text-center my-4">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">로딩 중...</span>
