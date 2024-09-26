@@ -66,13 +66,13 @@ const router = createRouter({
       component: FAQListPage,
     },
     {
-      path: 'study/dictionary/list',
-      name: '/dictionaryList',
+      path: '/study/dictionary/list',
+      name: 'dictionaryList',
       component: DictionaryListPage,
     },
     {
-      path: 'study/dictionary/detail/:no',
-      name: '/dictionaryDetailPage',
+      path: '/study/dictionary/detail/:no',
+      name: 'dictionaryDetailPage',
       component: DictionaryDetailPage,
     },
   ],
