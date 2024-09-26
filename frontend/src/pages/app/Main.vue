@@ -2,15 +2,27 @@
   <div class="container-fluid custom-container">
     <div class="custom-grid">
       <!-- 왼쪽 큰 카드 -->
-      <router-link
-        :to="{ name: 'study' }"
-        class="card large-card real-estate-info text-center"
-      >
+      <div class="card large-card real-estate-info text-center">
         <div class="card-body">
-          <h3 class="card-title">부동산 토막 상식</h3>
-          <p>(슬라이드)</p>
+          <h3 class="card-title">오늘의 토막 상식 🏡</h3>
+
+          <div class="content my-4">
+            <!-- 현재 pieceSense 표시 -->
+            <div class="content my-4">
+              <!-- 현재 pieceSense 표시 -->
+              <div
+                @click="detail(currentCommonSenseNo)"
+                v-if="currentPieceSense"
+                style="cursor: pointer"
+              >
+                {{ currentPieceSense }}
+              </div>
+              <p v-else>로딩 중...</p>
+              <!-- 데이터를 로드 중일 때 표시 -->
+            </div>
+          </div>
         </div>
-      </router-link>
+      </div>
 
       <!-- 중간 카드 -->
       <router-link
@@ -18,7 +30,7 @@
         class="card small-card price-check text-center"
       >
         <div class="card-body">
-          <h3 class="card-title">주변 시세 확인</h3>
+          <h3 class="card-title">주변 시세 확인📍</h3>
           <p>(대략적 주소)</p>
         </div>
       </router-link>
@@ -29,7 +41,7 @@
         class="card small-card safety-check text-center"
       >
         <div class="card-body">
-          <h3 class="card-title">이 집은 안전한가?</h3>
+          <h3 class="card-title">이 집은 안전한가?🕵🏻‍♂️</h3>
           <p>바로 안전진단 받기!</p>
         </div>
       </router-link>
@@ -39,19 +51,76 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import senseApi from '@/api/senseApi'; // study API를 가져옴
+import { useRouter } from 'vue-router'; // Vue Router 훅을 가져옴
+import senseApi from '@/api/senseApi'; // API 모듈
 
-// study 데이터를 저장할 참조 변수 생성
-const studyData = ref(null);
+const router = useRouter(); // useRouter를 통해 router 객체 생성
 
-// 컴포넌트가 마운트되면 study 데이터를 불러옴
-onMounted(async () => {
-  try {
-    const data = await studyApi.getStudyData();
-    studyData.value = data; // 데이터를 참조 변수에 저장
-  } catch (error) {
-    console.error('데이터 로드 실패', error);
+// 상태 관리
+const pieceSenseList = ref([]); // 여러 개의 pieceSense를 저장할 배열
+const isLoading = ref(true);
+const errorMessage = ref('');
+
+// 현재 표시할 pieceSense와 관련된 상태 변수
+const currentPieceSense = ref('');
+const currentCommonSenseNo = ref('');
+const currentCommonSenseTitle = ref('');
+const currentCommonSenseContent = ref('');
+
+// 무작위로 pieceSense를 선택하는 함수
+const getRandomSense = () => {
+  if (pieceSenseList.value.length > 0) {
+    const randomIndex = Math.floor(Math.random() * pieceSenseList.value.length);
+    currentPieceSense.value = pieceSenseList.value[randomIndex].pieceSense;
+    currentCommonSenseNo.value =
+      pieceSenseList.value[randomIndex].commonSenseNo;
+    currentCommonSenseTitle.value =
+      pieceSenseList.value[randomIndex].commonSenseTitle;
+    currentCommonSenseContent.value =
+      pieceSenseList.value[randomIndex].commonSenseContent;
   }
+};
+
+// 상세 페이지로 이동하는 함수
+const detail = (no) => {
+  router.push({
+    name: 'senseDetailPage', // 라우트 이름이 'senseDetailPage'여야 합니다
+    params: { no: no },
+  });
+};
+
+// 데이터 로드 함수
+const load = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  try {
+    const response = await senseApi.getList(); // API 호출
+    console.log('API 응답:', response);
+
+    // 받아온 데이터를 pieceSenseList에 할당
+    if (response && Array.isArray(response.list) && response.list.length > 0) {
+      pieceSenseList.value = response.list.map((item) => ({
+        pieceSense: item.pieceSense, // pieceSense 필드 추출
+        commonSenseTitle: item.commonSenseTitle, // commonSenseTitle 필드 추출
+        commonSenseContent: item.commonSenseContent, // commonSenseContent 필드 추출
+        commonSenseNo: item.commonSenseNo, // 상세 페이지로 이동할 때 사용할 ID
+      }));
+      getRandomSense(); // 무작위로 하나의 sense 선택
+    } else {
+      errorMessage.value = '유효하지 않은 데이터 형식입니다.';
+    }
+  } catch (error) {
+    console.error('데이터 로드 실패:', error);
+    errorMessage.value =
+      '데이터를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 컴포넌트가 마운트될 때 데이터 로드
+onMounted(() => {
+  load();
 });
 </script>
 
@@ -125,5 +194,9 @@ onMounted(async () => {
 
 .card-body p {
   font-size: 1.2rem; /* 본문 텍스트 크기 키움 */
+}
+
+.button-container {
+  margin-top: 20px;
 }
 </style>
