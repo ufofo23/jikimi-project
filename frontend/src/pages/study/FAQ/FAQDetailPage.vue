@@ -37,7 +37,7 @@ onMounted(() => {
 <template>
   <div class="container d-flex flex-column min-vh-100">
     <div class="flex-grow-1">
-      <h1 class="mt-4 text-center">{{ article.commonSenseTitle }}</h1>
+      <h1 class="mt-4 text-center">{{ article.faqQuestion }}</h1>
 
       <div v-if="isLoading" class="text-center my-4">
         <div class="spinner-border" role="status">
@@ -53,7 +53,7 @@ onMounted(() => {
         {{ errorMessage }}
       </div>
 
-      <div v-else class="content my-4">{{ article.commonSenseContent }}</div>
+      <div v-else class="content my-4">{{ article.faqAnswer }}</div>
     </div>
 
     <div class="button-container">

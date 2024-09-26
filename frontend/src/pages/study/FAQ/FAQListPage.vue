@@ -22,18 +22,21 @@
         <thead>
           <tr>
             <th style="width: 80px">번호</th>
-            <th>제목</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="article in articles" :key="article.commonSenseNo">
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseNo }}
+          <tr v-for="article in articles" :key="article.faqNo">
+            <td @click="detail(article.faqNo)">
+              {{ article.faqNo }}
             </td>
 
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseTitle }}
+            <!-- <td @click="detail(article.faqQuestion)">
+              {{ article.faqQuestion }}
             </td>
+
+            <td @click="detail(article.faqAnswer)">
+              {{ article.faqAnswer }}
+            </td> -->
           </tr>
         </tbody>
       </table>
