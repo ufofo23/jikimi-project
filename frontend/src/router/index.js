@@ -67,12 +67,12 @@ const router = createRouter({
     },
     {
       path: 'study/dictionary/list',
-      name: 'dictionaryList',
+      name: '/dictionaryList',
       component: DictionaryListPage,
     },
     {
       path: 'study/dictionary/detail/:no',
-      name: 'dictionaryDetailPage',
+      name: '/dictionaryDetailPage',
       component: DictionaryDetailPage,
     },
   ],
