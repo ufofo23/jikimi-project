@@ -3,8 +3,8 @@ import api from '@/api';
 const BASE_URL = '/api/dictionary';
 
 export default {
-  async getList(params) {
-    const { data } = await api.get(BASE_URL, { params });
+  async getList() {
+    const { data } = await api.get(BASE_URL);
     console.log('STUDY GET LIST: ', data);
     return data;
   },
