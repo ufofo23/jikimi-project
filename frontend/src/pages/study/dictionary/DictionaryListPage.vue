@@ -1,28 +1,91 @@
-<script setup>
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/dictionaryApi';
-import { ref, onMounted } from 'vue';
+<template>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">
+      <i class="fa-solid fa-paste"></i> 게시글 목록
+    </h1>
 
+    <!-- 로딩 상태 -->
+    <div v-if="isLoading" class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">로딩 중...</span>
+      </div>
+    </div>
+
+    <!-- 에러 메시지 -->
+    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- 게시글 목록 테이블 -->
+    <div v-else>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width: 80px">번호</th>
+            <th>제목</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="article in articles" :key="article.dictionaryNo">
+            <td @click="detail(article.dictionaryNo)">
+              {{ article.dictionaryNo }}
+            </td>
+
+            <td @click="detail(article.dictionaryNo)">
+              {{ article.dictionaryTitle }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/api/dictionaryApi'; // API 모듈
+
+const article = ref({});
 const cr = useRoute();
 const router = useRouter();
+const detail = (no) => {
+  router.push({
+    name: 'dictionaryDetailPage',
+    params: { no: no },
+    query: cr.query,
+  });
+};
 
-const no = cr.params.no;
-const article = ref({});
+// 상태 관리
+const page = ref({
+  list: [],
+  totalCount: 0,
+});
 const isLoading = ref(true);
 const errorMessage = ref('');
 
-const back = () => {
-  router.push({ name: 'dictionary/list', query: cr.query });
-};
+// 페이지 요청 정보 (현재는 단순 페이지 1, 항목 수 10으로 설정)
+const pageRequest = ref({
+  page: 1,
+  amount: 10,
+});
 
+// 게시글 목록 계산 속성
+const articles = computed(() => page.value.list);
+
+// 데이터 로드 함수
 const load = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
   try {
-    article.value = await api.get(no);
-    console.log('DETAIL', article.value);
+    const response = await api.getList(pageRequest.value);
+    page.value = response;
+    console.log('게시글 목록:', page.value);
   } catch (error) {
-    console.error('Failed to load article:', error);
+    console.error('게시글 로드 실패:', error);
     errorMessage.value =
-      '게시물을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
   } finally {
     isLoading.value = false;
   }
@@ -34,65 +97,33 @@ onMounted(() => {
 });
 </script>
 
-<template>
-  <div class="container d-flex flex-column min-vh-100">
-    <div class="flex-grow-1">
-      <h1 class="mt-4 text-center">{{ article.dictionaryTitle }}</h1>
-
-      <div v-if="isLoading" class="text-center my-4">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">로딩 중...</span>
-        </div>
-      </div>
-
-      <div
-        v-else-if="errorMessage"
-        class="alert alert-danger my-4"
-        role="alert"
-      >
-        {{ errorMessage }}
-      </div>
-
-      <div v-else class="content my-4">{{ article.dictionaryContent }}</div>
-    </div>
-
-    <div class="button-container">
-      <button
-        class="btn btn-primary"
-        @click="back"
-        aria-label="목록으로 돌아가기"
-      >
-        <i class="fa-solid fa-list"></i> 목록
-      </button>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .container {
   max-width: 800px; /* 최대 너비 설정 */
   margin: 0 auto; /* 중앙 정렬 */
   padding: 0 15px; /* 좌우 패딩 추가 */
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* 화면 전체 높이 차지 */
 }
 
-.content {
-  white-space: pre-line;
-  margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
-  max-width: 800px; /* 내용의 최대 너비를 제한하여 읽기 편하게 */
-  text-align: justify; /* 내용이 균등하게 정렬되도록 설정 */
+.table-hover tbody tr:hover {
+  background-color: #f5f5f5;
 }
 
-.button-container {
-  display: flex;
-  justify-content: flex-end; /* 버튼을 우측으로 정렬 */
-  padding: 20px 0; /* 상하 패딩 추가 */
+.text-decoration-none {
+  color: inherit;
 }
 
-.attach {
-  font-size: 0.8rem;
-  cursor: pointer;
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 10px;
+  }
+  .table th,
+  .table td {
+    font-size: 0.9rem;
+  }
 }
 </style>
