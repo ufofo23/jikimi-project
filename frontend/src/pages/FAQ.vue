@@ -1,49 +1,144 @@
 <template>
-  <h1>FAQ</h1>
-  <p>근데 이거 데이터베이스랑 연결해야하면 컴포넌트로 해야하는건가 ........?</p>
-  <div class="container">
-    <!-- 버튼: 클릭하면 아래 세부 내용을 토글 -->
-    <div @click="toggleDetails('contract')">
-      <h3>FAQ(지피티)1</h3>
-      <span v-if="openSection === 'contract'">▲</span>
-      <span v-else>▼</span>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">
+      <i class="fa-solid fa-paste"></i> 게시글 목록
+    </h1>
+
+    <!-- 로딩 상태 -->
+    <div v-if="isLoading" class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">로딩 중...</span>
+      </div>
     </div>
-    <div v-if="openSection === 'contract'">
-      <p>원리는 아직 모르겠어요 ㅠㅠ</p>
+
+    <!-- 에러 메시지 -->
+    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div v-else>
+      <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          @click="toggleDetails(article.faqNo)"
+          style="cursor: pointer"
+        >
+          <h3 class="mb-0">{{ article.faqQuestion }}</h3>
+          <span v-if="openSection === 'contract'">▲</span>
+          <span v-else>▼</span>
+          <span>
+            <i
+              :class="
+                openSections.includes(article.faqNo)
+                  ? 'fa-solid fa-chevron-up'
+                  : 'fa-solid fa-chevron-down'
+              "
+            ></i>
+          </span>
+        </div>
+
+        <div v-if="openSections.includes(article.faqNo)" class="card-body">
+          <p class="card-text">{{ article.faqAnswer }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import api from '@/api/faqApi'; // API 모듈
 
-const openSection = ref(null); // 어떤 섹션이 열려 있는지 저장하는 변수
+const cr = useRoute();
+const router = useRouter();
 
-// 해당 섹션을 클릭하면 openSection 값을 변경하는 함수
-const toggleDetails = (section) => {
-  openSection.value = openSection.value === section ? null : section;
+// 상태 관리
+const page = ref({
+  list: [],
+  totalCount: 0,
+});
+const isLoading = ref(true);
+const errorMessage = ref('');
+
+// 페이지 요청 정보 (현재는 단순 페이지 1, 항목 수 10으로 설정)
+const pageRequest = ref({
+  page: 1,
+  amount: 10,
+});
+
+// 게시글 목록 계산 속성
+const articles = computed(() => page.value.list);
+
+// 상세 보기 토글을 위한 변수 (여러 섹션을 열 수 있도록 배열로 설정)
+const openSections = ref([]);
+
+// 토글 함수
+const toggleDetails = (no) => {
+  const index = openSections.value.indexOf(no);
+  if (index === -1) {
+    openSections.value.push(no);
+  } else {
+    openSections.value.splice(index, 1);
+  }
 };
+
+// 데이터 로드 함수
+const load = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  try {
+    const response = await api.getList(pageRequest.value);
+    page.value = response;
+    console.log('게시글 목록:', page.value);
+  } catch (error) {
+    console.error('게시글 로드 실패:', error);
+    errorMessage.value =
+      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 컴포넌트가 마운트될 때 데이터 로드
+onMounted(() => {
+  load();
+});
 </script>
-
-<style lang="scss" scoped>
+<style scoped>
 .container {
-  width: 80%;
-  margin: 0 auto;
+  max-width: 800px; /* 최대 너비 설정 */
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 0 15px; /* 좌우 패딩 추가 */
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.text-decoration-none {
+  color: inherit;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.faq-answer {
   padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
 }
 
-.container div {
-  cursor: pointer;
-  border-bottom: 1px solid #000000;
-  padding: 10px 0;
-}
-
-h3 {
-  display: inline-block;
-  margin: 0;
-}
-
-span {
-  float: right;
+@media (max-width: 600px) {
+  .container {
+    padding: 0 10px;
+  }
+  .table th,
+  .table td {
+    font-size: 0.9rem;
+  }
 }
 </style>
