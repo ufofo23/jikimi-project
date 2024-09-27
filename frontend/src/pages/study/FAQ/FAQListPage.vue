@@ -16,49 +16,43 @@
       {{ errorMessage }}
     </div>
 
-    <!-- 게시글 목록 테이블 -->
+    <!-- 게시글 목록 -->
     <div v-else>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th style="width: 80px">번호</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="article in articles" :key="article.faqNo">
-            <td @click="detail(article.faqNo)">
-              {{ article.faqNo }}
-            </td>
+      <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          @click="toggleDetails(article.faqNo)"
+          style="cursor: pointer"
+        >
+          <h3 class="mb-0">{{ article.faqQuestion }}</h3>
+          <span v-if="openSection === 'contract'">▲</span>
+          <span v-else>▼</span>
+          <span>
+            <i
+              :class="
+                openSections.includes(article.faqNo)
+                  ? 'fa-solid fa-chevron-up'
+                  : 'fa-solid fa-chevron-down'
+              "
+            ></i>
+          </span>
+        </div>
 
-            <!-- <td @click="detail(article.faqQuestion)">
-              {{ article.faqQuestion }}
-            </td>
-
-            <td @click="detail(article.faqAnswer)">
-              {{ article.faqAnswer }}
-            </td> -->
-          </tr>
-        </tbody>
-      </table>
+        <div v-if="openSections.includes(article.faqNo)" class="card-body">
+          <p class="card-text">{{ article.faqAnswer }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/faqApi'; // API 모듈
 
-const article = ref({});
 const cr = useRoute();
 const router = useRouter();
-const detail = (no) => {
-  router.push({
-    name: 'faqDetailPage',
-    params: { no: no },
-    query: cr.query,
-  });
-};
 
 // 상태 관리
 const page = ref({
@@ -76,6 +70,19 @@ const pageRequest = ref({
 
 // 게시글 목록 계산 속성
 const articles = computed(() => page.value.list);
+
+// 상세 보기 토글을 위한 변수 (여러 섹션을 열 수 있도록 배열로 설정)
+const openSections = ref([]);
+
+// 토글 함수
+const toggleDetails = (no) => {
+  const index = openSections.value.indexOf(no);
+  if (index === -1) {
+    openSections.value.push(no);
+  } else {
+    openSections.value.splice(index, 1);
+  }
+};
 
 // 데이터 로드 함수
 const load = async () => {
@@ -99,7 +106,6 @@ onMounted(() => {
   load();
 });
 </script>
-
 <style scoped>
 .container {
   max-width: 800px; /* 최대 너비 설정 */
@@ -118,6 +124,12 @@ onMounted(() => {
 .spinner-border {
   width: 3rem;
   height: 3rem;
+}
+
+.faq-answer {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
 }
 
 @media (max-width: 600px) {

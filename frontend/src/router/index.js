@@ -11,8 +11,8 @@ import Loading from '@/pages/Loading.vue';
 import FraudChecklist from '@/pages/FraudChecklist.vue';
 import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
-import SenseDetailPage from '@/pages/study/SenseDetailPage.vue';
-import SenseListPage from '@/pages/study/SenseListPage.vue';
+import SenseDetailPage from '@/pages/study/commonsense/SenseDetailPage.vue';
+import SenseListPage from '@/pages/study/commonsense/SenseListPage.vue';
 import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
 import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 import FAQDetailPage from '@/pages/study/FAQ/FAQDetailPage.vue';
@@ -56,12 +56,12 @@ const router = createRouter({
       component: SenseListPage,
     },
     {
-      path: '/study/faq/detail/:no',
+      path: '/faq/detail/:no',
       name: 'faqDetailPage',
       component: FAQDetailPage,
     },
     {
-      path: '/study/faq/list',
+      path: '/faq/list',
       name: 'faqListPage',
       component: FAQListPage,
     },

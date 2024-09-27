@@ -12,7 +12,7 @@ const isLoading = ref(true);
 const errorMessage = ref('');
 
 const back = () => {
-  router.push({ name: 'commonsense/list', query: cr.query });
+  router.push({ name: 'faqListPage', query: cr.query });
 };
 
 const load = async () => {
