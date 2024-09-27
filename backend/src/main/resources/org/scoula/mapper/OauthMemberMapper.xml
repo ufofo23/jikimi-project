@@ -16,13 +16,13 @@
 
     <select id="findByOauthId" parameterType="java.lang.String" resultMap="OauthMemberResultMap">
         SELECT *
-        FROM members
+        FROM member_tbl
         WHERE TRIM(member_id) = TRIM(#{userId})
             LIMIT 1
     </select>
 
     <insert id="save" parameterType="org.scoula.oauth.domain.vo.OauthMember">
-        INSERT INTO members (member_id, member_email, member_name, member_sex, member_age, member_birthday, member_phone, member_role)
+        INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_age, member_birthday, member_phone, member_role)
         VALUES (#{userId}, #{email}, #{name}, #{gender}, #{age}, #{birthday}, #{mobileE164}, #{role})
     </insert>
 
