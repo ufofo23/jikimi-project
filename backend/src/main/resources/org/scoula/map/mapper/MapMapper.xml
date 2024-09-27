@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scoula.map.mapper.MapMapper">
+
+    <select id="getAdressList" resultType="org.scoula.map.domain.MapVO">
+        select no, sigungu, doro_juso, x_coordinate, y_coordinate,
+               FORMAT(CAST(REPLACE(price, ',', '') AS UNSIGNED) / 10000, 1) AS price,
+               ROUND(spacial,2) AS spacial,
+            con_month, con_date, floor, build_year, type_build, apart_name
+        from address_price
+        WHERE apart_name in (SELECT apart_name FROM estate.address_price
+                             group by apart_name
+                             HAVING COUNT(apart_name) = 1)
+        ORDER BY apart_name asc
+        limit 100;
+    </select>
+</mapper>
