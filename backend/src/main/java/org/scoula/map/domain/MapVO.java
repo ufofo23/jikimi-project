@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressVO {
+public class MapVO {
     private int no;
     private String sigungu;
     private String doroJuso;

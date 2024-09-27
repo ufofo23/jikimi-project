@@ -1,9 +1,9 @@
 package org.scoula.map.mapper;
 
-import org.scoula.address.domain.AddressVO;
+import org.scoula.map.domain.MapVO;
 
 import java.util.List;
 
-public interface AddressMapper {
-    public List<AddressVO> getAdressList();
+public interface MapMapper {
+    public List<MapVO> getAdressList();
 }

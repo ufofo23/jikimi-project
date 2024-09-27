@@ -1,10 +1,10 @@
 package org.scoula.map.service;
 
-import org.scoula.map.domain.AddressVO;
+import org.scoula.map.domain.MapVO;
 
 import java.util.List;
 
-public interface AddressService {
-    public List<AddressVO> getAllAddress();
+public interface MapService {
+    public List<MapVO> getAllAddress();
 
 }
