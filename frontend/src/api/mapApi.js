@@ -1,13 +1,16 @@
-import api from '@/api';
+// src/api/mapApi.js
+import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
 
-const BASE_URL = '/api/map'; // 주소 데이터를 가져오는 URL
-const headers = { 'Content-Type': 'application/json' };
+const BASE_URL = '/api/map';
 
 export default {
   // 주소 리스트를 가져오는 함수
   async getAddressList() {
-    const { data } = await api.get(BASE_URL, { headers });
-    console.log('ADDRESS GET LIST: ', data);
-    return data;
+    try {
+      const { data } = await axiosInstance.get(BASE_URL, { headers: { 'Content-Type': 'application/json' } });
+      return data;
+    } catch (error) {
+      throw error; // 에러 전파
+    }
   },
 };

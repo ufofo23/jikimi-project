@@ -1,22 +1,35 @@
 <template>
-  <Header>
-    <!-- 고정 - 홈페이지 위에 있는 노란색 바 (퀵 챗 같은거도 만들어야함) -->
-  </Header>
-
-  <!-- 라우터 뷰로 컴포넌트 전환 -->
+  <Header />
   <RouterView />
-
-  <Footer> </Footer>
-
-  <!-- Quick Chat 버튼 전역으로 추가 -->
+  <Footer />
   <QuickChat />
 </template>
 
-<script setup>
-import { RouterLink, RouterView } from 'vue-router';
-import Header from './components/Header.vue';
-import Footer from './components/Footer.vue';
-import QuickChat from './components/QuickChat.vue'; // QuickChat 컴포넌트 불러오기
+<script>
+import { onMounted } from 'vue';
+import useAuthStore from '@/stores/auth'; // Pinia 스토어 import
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+import QuickChat from '@/components/QuickChat.vue';
+
+export default {
+  components: {
+    Header,
+    Footer,
+    QuickChat,
+  },
+  setup() {
+    const authStore = useAuthStore();
+
+    onMounted(() => {
+      authStore.checkAuth(); // 컴포넌트가 마운트될 때 인증 상태를 체크
+    });
+
+    return {};
+  },
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 필요에 따라 스타일 추가 */
+</style>

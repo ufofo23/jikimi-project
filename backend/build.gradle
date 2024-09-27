@@ -8,8 +8,6 @@ version '1.0-SNAPSHOT'
 
 repositories {
   mavenCentral()
-//  maven { url 'https://repo.spring.io/milestone' }
-//  maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
@@ -28,9 +26,10 @@ tasks.withType(JavaCompile) {
 
 dependencies {
 
-  // Spring AI
-//  implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
-//  implementation 'org.springframework.ai:spring-ai-openai'
+  //2024.09.24 챗봇
+  implementation 'io.projectreactor:reactor-core:3.4.0'
+  implementation 'org.springframework:spring-webflux:5.3.10'
+  implementation 'io.projectreactor.netty:reactor-netty:1.0.24'
 
   // OAuth2 의존성 추가
   implementation("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")

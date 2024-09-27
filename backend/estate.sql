@@ -12,11 +12,11 @@ CREATE TABLE member_tbl (
     member_id varchar(50) NOT NULL,
     member_email varchar(50) NOT NULL,
     member_name varchar(50) NOT NULL,
-    member_sex tinyint NOT NULL,
-    member_age int NOT NULL,
-    member_birthday date NOT NULL,
-    member_phone varchar(50) NOT NULL,
-    member_role varchar(50) NOT NULL,
+    member_sex tinyint ,
+    member_age int ,
+    member_birthday date ,
+    member_phone varchar(50) ,
+    member_role varchar(50) ,
     UNIQUE KEY id_email (member_id, member_email)
 );
 

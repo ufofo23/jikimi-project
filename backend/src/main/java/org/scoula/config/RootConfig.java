@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.sql.DataSource;
 
@@ -31,7 +32,9 @@ import javax.sql.DataSource;
         "org.scoula.commonsense.service",
         "org.scoula.dictionary.service",
         "org.scoula.faq.service",
-        "org.scoula.map.service"})
+        "org.scoula.map.service",
+        "org.scoula.chatbot.service"
+})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
@@ -69,5 +72,10 @@ public class RootConfig {
     public DataSourceTransactionManager transactionManager() {
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
         return manager;
+    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }

@@ -52,7 +52,7 @@ public class OauthService {
         String jwtToken = jwtUtil.generateToken(oauthMember.getUserId(), oauthMember.getRole());
 
         Cookie jwtCookie = new Cookie("jwtToken", jwtToken);
-        jwtCookie.setHttpOnly(true);
+        jwtCookie.setHttpOnly(false);
         jwtCookie.setSecure(false); // 개발 중에만 false -> https만 지원함
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(1 * 60 * 60);

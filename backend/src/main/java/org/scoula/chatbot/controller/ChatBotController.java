@@ -3,7 +3,10 @@ package org.scoula.chatbot.controller;
 import org.scoula.chatbot.dto.ChatRequest;
 import org.scoula.chatbot.dto.ChatResponse;
 import org.scoula.chatbot.service.ChatBotService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController

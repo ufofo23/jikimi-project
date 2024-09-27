@@ -28,7 +28,7 @@ public class ChatBotService {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
     private static final String MODEL_NAME = "gpt-3.5-turbo";
     private static final String SYSTEM_ROLE = "user";
-    private static final String ADDITIONAL_CONTEXT = "당신의 이름은 '지키미'이고, 한국의 부동산 전문가입니다. 한국에 사는 사람에게 2줄 이내로 요약된 정보를 존댓말로 제공해주세요.투자와 관련된 정보는 제한해주세요.";
+    private static final String ADDITIONAL_CONTEXT = "당신의 이름은 '부기봇'이고, 한국의 부동산 전문가입니다. 한국에 사는 사람에게 2줄 이내로 요약된 정보를 존댓말로 제공해주세요.투자와 관련된 정보는 제한해주세요.";
 
     public ChatBotService(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
         eventLoopGroup = new NioEventLoopGroup(4);

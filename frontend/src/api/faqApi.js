@@ -1,19 +1,24 @@
-import api from '@/api';
+// src/api/faqApi.js
+import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
 
 const BASE_URL = '/api/faq';
 
 export default {
   async getList(params) {
-    const { data } = await api.get(BASE_URL, { params });
-    console.log('STUDY GET LIST: ', data);
-    return data;
+    try {
+      const { data } = await axiosInstance.get(BASE_URL, { params });
+      return data;
+    } catch (error) {
+      throw error; // 에러 전파
+    }
   },
 
   async get(no) {
-    const { data } = await api.get(`${BASE_URL}/${no}`);
-    console.log('STUDY GET', data);
-    return data;
+    try {
+      const { data } = await axiosInstance.get(`${BASE_URL}/${no}`);
+      return data;
+    } catch (error) {
+      throw error; // 에러 전파
+    }
   },
 };
-
-//dto....
