@@ -1,4 +1,4 @@
-package org.scoula.oauth.domain.vo;
+package org.scoula.oauth.domain.VO;
 
 import static java.util.Locale.ENGLISH;
 

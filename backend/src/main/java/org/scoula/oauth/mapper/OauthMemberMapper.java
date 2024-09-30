@@ -2,7 +2,8 @@ package org.scoula.oauth.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.scoula.oauth.domain.vo.OauthMember;
+import org.scoula.oauth.domain.DTO.OauthMemberDTO;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
 
 @Mapper
 /*
@@ -11,8 +12,11 @@ import org.scoula.oauth.domain.vo.OauthMember;
 public interface OauthMemberMapper {
 
     // userId(ex. Naver_n142314) 로 멤버 찾는 메서드
-    OauthMember findByOauthId(@Param("userId") String userId);
+    OauthMemberVO findByOauthId(@Param("userId") String userId);
 
     // OauthMember 저장 메서드
-    int save(OauthMember oauthMember);
+    int save(OauthMemberVO oauthMemberVO);
+
+    // OauthMember 업데이트
+    int updateOauthInfo(@Param("userId") String userId, @Param("member") OauthMemberDTO member);
 }
