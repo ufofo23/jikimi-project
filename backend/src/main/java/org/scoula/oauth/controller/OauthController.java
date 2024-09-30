@@ -3,7 +3,8 @@ package org.scoula.oauth.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.DTO.OauthMemberDTO;
+import org.scoula.oauth.domain.VO.OauthServerType;
 import org.scoula.oauth.jwt.JwtUtil;
 import org.scoula.oauth.service.OauthService;
 import org.springframework.http.ResponseEntity;
@@ -84,5 +85,16 @@ public class OauthController {
         cookie.setMaxAge(0); // 쿠키 만료 시간 설정
         response.addCookie(cookie);
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<OauthMemberDTO> Info(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(oauthService.getInfo(token));
+    }
+
+    @PutMapping("/info")
+    public ResponseEntity<Integer> updateInfo(@RequestHeader("Authorization") String token, @RequestBody OauthMemberDTO member) {
+        log.info("-------------update start-------------");
+        return ResponseEntity.ok(oauthService.updateInfo(token, member));
     }
 }

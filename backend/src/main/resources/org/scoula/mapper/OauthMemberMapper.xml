@@ -3,7 +3,7 @@
 
 <mapper namespace="org.scoula.oauth.mapper.OauthMemberMapper">
 
-    <resultMap id="OauthMemberResultMap" type="org.scoula.oauth.domain.vo.OauthMember">
+    <resultMap id="OauthMemberResultMap" type="org.scoula.oauth.domain.VO.OauthMemberVO">
         <id property="userId" column="member_id"/>
         <result property="email" column="member_email"/>
         <result property="name" column="member_name"/>
@@ -21,9 +21,18 @@
             LIMIT 1
     </select>
 
-    <insert id="save" parameterType="org.scoula.oauth.domain.vo.OauthMember">
-        INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_age, member_birthday, member_phone, member_role)
-        VALUES (#{userId}, #{email}, #{name}, #{gender}, #{age}, #{birthday}, #{mobileE164}, #{role})
+    <insert id="save" parameterType="org.scoula.oauth.domain.VO.OauthMemberVO">
+        INSERT INTO member_tbl (member_id, member_email, member_name, member_role)
+        VALUES (#{userId}, #{email}, #{name}, #{role})
     </insert>
+
+    <update id="updateOauthInfo">
+        UPDATE member_tbl SET
+        member_sex = #{member.gender},
+        member_age = #{member.age},
+        member_birthday = #{member.birthday},
+        member_phone = #{member.mobileE164}
+        WHERE member_id = #{userId}
+    </update>
 
 </mapper>

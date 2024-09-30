@@ -1,11 +1,11 @@
 package org.scoula.oauth.domain.client;
 
-import org.scoula.oauth.domain.vo.OauthMember;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.VO.OauthServerType;
 
 public interface OauthMemberClient {
 
     OauthServerType supportServer();
 
-    OauthMember fetch(String code);
+    OauthMemberVO fetch(String code);
 }

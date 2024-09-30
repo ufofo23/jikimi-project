@@ -1,8 +1,5 @@
 package org.scoula.oauth.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.scoula.oauth.domain.vo.OauthId;
-
 //@Mapper
 /*
  * OauthId 데이터베이스 접근을 위한 매퍼 인터페이스

@@ -420,6 +420,7 @@ CREATE TABLE address_price(
           x_coordinate VARCHAR(50),
           y_coordinate VARCHAR(50)
 );
+
 INSERT INTO address_price (no, sigungu, bunji, bonbun, bubun, apart_name, spacial, con_month, con_date, price, dong, floor, buyer, seller, build_year, doro_juso, type_trade, type_build, x_coordinate, y_coordinate) VALUES (26084, '전북특별자치도 전주시 덕진구 금암동', '628-1', 628, 1, '(동남)우정맨션', 132.28, 202408, 14, '12,000', '-', '5', '개인', '개인', '1989', '삼송3길 21', '중개거래', '아파트', '127.135568555121', '35.8432371108302');
 INSERT INTO address_price (no, sigungu, bunji, bonbun, bubun, apart_name, spacial, con_month, con_date, price, dong, floor, buyer, seller, build_year, doro_juso, type_trade, type_build, x_coordinate, y_coordinate) VALUES (18632, '전북특별자치도 전주시 덕진구 금암동', '628-1', 628, 1, '(동남)우정맨션', 132.28, 202408, 19, '12,000', '1', '5', '개인', '개인', '1989', '삼송3길 21', '중개거래', '아파트', '127.135568555121', '35.8432371108302');
 INSERT INTO address_price (no, sigungu, bunji, bonbun, bubun, apart_name, spacial, con_month, con_date, price, dong, floor, buyer, seller, build_year, doro_juso, type_trade, type_build, x_coordinate, y_coordinate) VALUES (18107, '경상남도 김해시 지내동', '67', 67, 0, '1차동원', 84.93, 202408, 20, '16,700', '103', '14', '개인', '개인', '2000', '분성로727번길 16', '중개거래', '아파트', '128.923946231359', '35.231412203614');

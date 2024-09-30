@@ -1,7 +1,7 @@
 package org.scoula.oauth.domain.client;
 
-import org.scoula.oauth.domain.vo.OauthMember;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.VO.OauthServerType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ public class OauthMemberClientComposite {
                 ));
     }
 
-    public OauthMember fetch(OauthServerType oauthServerType, String authCode) {
+    public OauthMemberVO fetch(OauthServerType oauthServerType, String authCode) {
         return getClient(oauthServerType).fetch(authCode);
     }
 
