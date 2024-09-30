@@ -15,17 +15,11 @@ const fetchAddressData = async () => {
   try {
     const response = await addressApi.getAddressList(); // API 호출
     coordinates.value = response.map((item) => ({
-      apartName: item.apartName,
+      id: item.id,
       doroJuso: item.doroJuso,
-      x: parseFloat(item.xcoordinate),
-      y: parseFloat(item.ycoordinate),
+      x: parseFloat(item.xcoordinate), // 데이터 필드 이름을 정확히 맞춤
+      y: parseFloat(item.ycoordinate), // 데이터 필드 이름을 정확히 맞춤
       price: item.price,
-      spacial: item.spacial,
-      conMonth: item.conMonth,
-      conDate: item.conDate,
-      floor: item.floor,
-      buildYear: item.buildYear,
-      typeBuild: item.typeBuild,
     }));
 
     initializeMap(); // 데이터를 로드한 후 지도를 초기화합니다.
@@ -107,10 +101,15 @@ const initializeMap = () => {
     overlayContent.className = 'customoverlay';
     overlayContent.innerHTML = `<span class="price">${coord.price}억</span><br/>`;
 
+    overlayContent.addEventListener('click', (event) => {
+      event.stopPropagation(); // 이벤트 전파 방지
+      handleClick();
+    });
     // 커스텀 오버레이 생성
     const customOverlay = new kakao.maps.CustomOverlay({
       position: markerPosition, // 마커와 동일한 위치에 오버레이 표시
       content: overlayContent, // 커스텀 오버레이 내용
+      clickable: false, // 오버레이 클릭을 비활성화
       yAnchor: 1,
     });
 
@@ -118,18 +117,18 @@ const initializeMap = () => {
     customOverlay.setMap(map);
 
     // 마커 클릭 이벤트에서 매물 세부 정보를 표시하도록 함
-    const handleClick = () => {
-      selectedProperty.value = {
-        apartName: coord.apartName,
-        doroJuso: coord.doroJuso,
-        price: coord.price,
-        spacial: coord.spacial,
-        conMonth: coord.conMonth,
-        conDate: coord.conDate,
-        floor: coord.floor,
-        buildYear: coord.buildYear,
-        typeBuild: coord.typeBuild,
-      };
+    const handleClick = async () => {
+      try {
+        const data = await addressApi.getAddressDetails(
+          coord.id
+        );
+        selectedProperty.value = data; // Assuming data is a list
+      } catch (error) {
+        console.error(
+          'Failed to fetch address details:',
+          error
+        );
+      }
     };
 
     // 마커에 클릭 이벤트 등록
@@ -139,8 +138,6 @@ const initializeMap = () => {
       handleClick
     );
 
-    // 오버레이에 클릭 이벤트 등록
-    overlayContent.addEventListener('click', handleClick);
     return marker;
   });
 

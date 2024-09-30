@@ -5,15 +5,47 @@
 <mapper namespace="org.scoula.map.mapper.MapMapper">
 
     <select id="getAdressList" resultType="org.scoula.map.domain.MapVO">
-        select no, sigungu, doro_juso, x_coordinate, y_coordinate,
-               FORMAT(CAST(REPLACE(price, ',', '') AS UNSIGNED) / 10000, 1) AS price,
-               ROUND(spacial,2) AS spacial,
-            con_month, con_date, floor, build_year, type_build, apart_name
-        from address_price
-        WHERE apart_name in (SELECT apart_name FROM estate.address_price
-                             group by apart_name
-                             HAVING COUNT(apart_name) = 1)
-        ORDER BY apart_name asc
-        limit 100;
+        # 최신 데이터 순으로 실거래가 전체 보여주기
+        WITH RankedData AS (
+            SELECT
+                ad.id,
+                ad.road_name AS doro_juso,
+                ad.x_coordinate,
+                ad.y_coordinate,
+                ap.no,
+                FORMAT(CAST(REPLACE(ap.price, ',', '') AS UNSIGNED) / 10000, 2) AS price,
+                ROW_NUMBER() OVER (PARTITION BY ad.id ORDER BY CONCAT(ap.con_month, ap.con_date) DESC) AS row_num
+            FROM address_distinct ad
+                     RIGHT OUTER JOIN address_price ap ON ad.id = ap.address_id
+        )
+        SELECT *
+        FROM RankedData
+        WHERE row_num = 1
+        LIMIT 100;
     </select>
+    <select id="getAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
+        SELECT
+            ad.id,
+            ap.no,
+            ad.road_name AS doro_juso,
+            ap.price,
+            DATE_FORMAT(CONCAT(ap.con_month, LPAD(ap.con_date, '2', '0')), '%Y-%m-%d') AS date,
+            ap.spacial,
+            ap.dong,
+            ap.floor,
+            ap.buyer,
+            ap.seller,
+            ap.build_year,
+            ap.type_trade,
+            ap.type_build,
+            ap.apart_name,
+            ap.con_month,
+            ap.con_date,
+            ap.apart_name
+        FROM address_distinct ad
+        RIGHT OUTER JOIN address_price ap ON ad.id = ap.address_id
+        WHERE ad.id = #{id}
+        ORDER BY date DESC;-- id로 필터링
+    </select>
+
 </mapper>
