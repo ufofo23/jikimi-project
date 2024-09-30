@@ -12,7 +12,7 @@ const isLoading = ref(true);
 const errorMessage = ref('');
 
 const back = () => {
-  router.push({ name: 'dictionary/list', query: cr.query });
+  router.push({ name: 'dictionaryList', query: cr.query });
 };
 
 const load = async () => {
@@ -83,16 +83,27 @@ onMounted(() => {
   margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
   max-width: 800px; /* 내용의 최대 너비를 제한하여 읽기 편하게 */
   text-align: justify; /* 내용이 균등하게 정렬되도록 설정 */
+  margin-bottom: 10px;
+}
+
+.content.my-4 {
+  padding-bottom: 30px;
 }
 
 .button-container {
   display: flex;
   justify-content: flex-end; /* 버튼을 우측으로 정렬 */
   padding: 20px 0; /* 상하 패딩 추가 */
+  border-bottom: none;
 }
 
 .attach {
   font-size: 0.8rem;
   cursor: pointer;
 }
+
+.flex-grow-1 {
+  border-bottom: none;
+}
+
 </style>

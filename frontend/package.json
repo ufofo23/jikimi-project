@@ -9,10 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-vue-3": "^0.5.1",
     "hangul-js": "^0.2.6",
+    "js-cookie": "^3.0.5",
     "pinia": "^2.2.2",
     "real_estate": "file:",
     "swiper": "^11.1.14",

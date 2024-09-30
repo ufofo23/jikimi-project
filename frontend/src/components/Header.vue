@@ -67,7 +67,7 @@ export default {
 <style scoped>
 /* 헤더 스타일 */
 .header {
-  position: flex;
+  position: sticky;
   top: 0;
   width: 100%;
   background-color: RGB(203, 236, 197); /* 브랜드 색상 */
@@ -158,6 +158,12 @@ export default {
   white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
 }
 
+.dropdown-menu li:hover {
+  text-decoration-line: underline;
+  font-weight: bold;
+}
+
+
 /* 가운데 정렬을 위해 추가 */
 .dropdown-menu a {
   display: block; /* 블록 요소로 설정하여 전체 너비를 차지하도록 함 */
@@ -169,7 +175,8 @@ export default {
 }
 
 .dropdown-menu a:hover {
-  color: #ff6b6b;
+  text-decoration-line: underline;
+  font-weight: bold;
 }
 
 /* 로그인/회원가입 및 로그아웃/MyPage 스타일 */
