@@ -13,6 +13,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-vue-3": "^0.5.1",
     "hangul-js": "^0.2.6",
+    "js-cookie": "^3.0.5",
     "pinia": "^2.2.2",
     "real_estate": "file:",
     "swiper": "^11.1.14",
