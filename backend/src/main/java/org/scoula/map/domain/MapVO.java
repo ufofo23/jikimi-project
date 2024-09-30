@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MapVO {
+    private int id;
     private int no;
     private String sigungu;
     private String doroJuso;
