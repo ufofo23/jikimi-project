@@ -104,6 +104,10 @@ onMounted(() => {
   padding: 0 15px; /* 좌우 패딩 추가 */
 }
 
+.container div {
+  border-bottom: none;
+}
+
 .table-hover tbody tr:hover {
   background-color: #f5f5f5;
 }

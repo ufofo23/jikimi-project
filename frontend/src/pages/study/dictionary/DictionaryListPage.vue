@@ -4,24 +4,31 @@
       <i class="fa-solid fa-paste"></i> 부동산 용어 사전
     </h1>
 
-    <!-- 검색 입력 필드 -->
-    <div class="text-center mb-4">
-      <input
-        type="text"
-        class="form-control"
-        v-model="searchTerm"
-        placeholder="검색할 단어를 입력하세요"
-        @input="filterBySearch"
-        style="max-width: 400px; margin: 0 auto;"
-      />
-    </div>
-
     <!-- 필터 버튼 -->
-    <div class="text-center mb-4">
-      <button v-for="letter in letters" :key="letter" class="btn btn-outline-primary mx-1" @click="filterArticles(letter)">
+    <div class="filter-buttons mb-4">
+      <button
+        v-for="letter in letters"
+        :key="letter"
+        class="btn btn-outline-primary mx-1"
+        @click="filterArticles(letter)"
+      >
         {{ letter }}
       </button>
-      <button class="btn btn-outline-secondary mx-1" @click="clearFilter">모두 보기</button>
+      <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
+        모두 보기
+      </button>
+
+      <!-- 새 검색창 -->
+      <div class="new-search">
+        <input
+          type="text"
+          class="form-control"
+          v-model="searchTerm"
+          placeholder="검색할 단어를 입력하세요"
+          @input="filterBySearch"
+        />
+        <button class="btn btn-outline-success" @click="filterBySearch">🔍</button>
+      </div>
     </div>
 
     <!-- 로딩 상태 -->
@@ -42,12 +49,16 @@
         v-for="article in filteredArticles"
         :key="article.dictionaryNo"
         class="grid-item"
-        @click="detail(article.dictionaryNo)"
       >
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ article.dictionaryTitle }}</h5>
-            <p class="card-text">번호: {{ article.dictionaryNo }}</p>
+        <div class="card" @click="detail(article.dictionaryNo)">
+          <div class="card-body text-center">
+            <!-- 아이콘 클릭 이벤트에 stopPropagation() 적용 -->
+            <font-awesome-icon
+              :icon="[clickedIcons[article.dictionaryNo] ? 'fas' : 'far', 'circle-question']"
+              @click.stop="toggleIcon(article.dictionaryNo)" 
+              class="question-icon"
+            />
+            <h3 class="card-title d-inline-block ml-2">{{ article.dictionaryTitle }}</h3>
           </div>
         </div>
       </div>
@@ -58,6 +69,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'; // Font Awesome 아이콘 사용
+
 import api from '@/api/dictionaryApi'; // API 모듈
 import { getInitial } from 'hangul-js'; // hangul-js 라이브러리 임포트
 
@@ -86,6 +99,13 @@ const consonantRanges = {
   'ㅌ': ['타'.charCodeAt(0), '팋'.charCodeAt(0)],
   'ㅍ': ['파'.charCodeAt(0), '핗'.charCodeAt(0)],
   'ㅎ': ['하'.charCodeAt(0), '힣'.charCodeAt(0)],
+};
+
+const clickedIcons = ref({}); // 각 article의 아이콘 상태를 저장하는 객체
+
+// 아이콘 클릭 시 상태 변경 함수
+const toggleIcon = (dictionaryNo) => {
+  clickedIcons.value[dictionaryNo] = !clickedIcons.value[dictionaryNo];
 };
 
 // 검색어에 따라 필터링
@@ -165,47 +185,82 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
+/* 컨테이너 스타일 */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* 버튼 스타일 */
-.btn {
-  font-size: 1rem;
+/* 필터 버튼 스타일 */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: none;
 }
 
+
+/* 자음 버튼 스타일 */
+.filter-buttons button {
+  margin: 0 10px;
+  padding: 3px 10px;
+}
+
+/* 검색창 스타일 */
+.new-search {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+  margin-left: 10px;
+  border-bottom: none;
+}
+
+/* 카드 크기 수정 */
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 20px;
+  gap: 16px;
+  border-bottom: none;
 }
 
 .grid-item {
-  cursor: pointer;
+  border-bottom: none;
 }
-
-.card {
+.grid-item .card {
+  width: 100%;
+  max-width: 250px;
+  margin: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
   transition: transform 0.2s ease-in-out;
+  text-align: center;
 }
 
-.card:hover {
+.grid-item .card:hover {
   transform: scale(1.05);
 }
 
+
+/* 아이콘 및 제목 중앙 정렬 */
 .card-body {
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: none;
 }
 
 .card-title {
-  font-size: 1.25rem;
-  font-weight: bold;
+  border-bottom: none;
 }
 
+.question-icon {
+  cursor: pointer;
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+/* 반응형 디자인 */
 @media (max-width: 600px) {
   .container {
     padding: 0 10px;
