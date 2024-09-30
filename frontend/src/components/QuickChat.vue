@@ -57,7 +57,7 @@ const sendMessage = async () => {
   if (userInput.value.trim() === '') return; // 빈 메시지 방지
 
   // 유저 메시지 추가
-  messages.value.push({ role: '유저(추 후 변경)', content: userInput.value });
+  messages.value.push({ role: '부린이', content: userInput.value });
 
   try {
     const response = await api.post(
@@ -72,11 +72,11 @@ const sendMessage = async () => {
 
     // 서버 응답 메시지 추가
     const content = response.data.content || '';
-    messages.value.push({ role: '지키미', content });
+    messages.value.push({ role: '부기봇', content });
   } catch (error) {
     console.error('Error:', error);
     messages.value.push({
-      role: '지키미',
+      role: '부기봇',
       content: '메시지 전송에 실패했습니다. 다시 시도해 주세요.',
     });
   }
@@ -110,9 +110,9 @@ const scrollToBottom = () => {
   width: 80px; /* 버튼 크기 */
   height: 80px; /* 버튼 크기 */
   border-radius: 50%; /* 동그란 버튼 */
-  background-color: #ffffff;
+  background-color: #cbecc5; /* 브랜드 색상 */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #e5e5e5; /* 버튼 테두리 */
+  border: 2px solid #9db58f; /* 테두리를 브랜드 색상과 어울리게 변경 */
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -144,7 +144,7 @@ const scrollToBottom = () => {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #ffcc00;
+  background-color: #a1c49c; /* 브랜드 색상과 어울리도록 변경 */
   color: white;
   padding: 5px 10px;
   border: none;
@@ -155,7 +155,7 @@ const scrollToBottom = () => {
 }
 
 .close-button:hover {
-  background-color: #f5b800;
+  background-color: #8cb284; /* 호버 색상 변경 */
 }
 
 .chat-container {
@@ -193,14 +193,14 @@ const scrollToBottom = () => {
 
 .input-area button {
   padding: 10px 15px;
-  background-color: #ffcc00;
+  background-color: #a1c49c; /* 브랜드 색상과 어울리도록 변경 */
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .input-area button:hover {
-  background-color: #f5b800;
+  background-color: #8cb284; /* 호버 색상 변경 */
 }
 
 .message {

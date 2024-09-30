@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.vo.OauthId;
-import org.scoula.oauth.domain.vo.OauthMember;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.VO.OauthId;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.VO.OauthServerType;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Data
@@ -25,7 +25,7 @@ public class GoogleMemberResponse {
     private String name;
     private String locale;
 
-    public OauthMember toDomain() {
+    public OauthMemberVO toDomain() {
         Integer genderValue = null;
         if ("male".equalsIgnoreCase(gender)) {
             genderValue = 1;
@@ -33,7 +33,7 @@ public class GoogleMemberResponse {
             genderValue = 0;
         }
 
-        return OauthMember.builder()
+        return OauthMemberVO.builder()
                 .oauthId(new OauthId(id, OauthServerType.GOOGLE)) // OauthServerType.GOOGLE을 사용
                 .email(email)
                 .name(familyName+givenName)

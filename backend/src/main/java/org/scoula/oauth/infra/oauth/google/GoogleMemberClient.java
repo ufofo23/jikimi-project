@@ -1,9 +1,9 @@
 package org.scoula.oauth.infra.oauth.google;
 
 import lombok.RequiredArgsConstructor;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
 import org.scoula.oauth.domain.client.OauthMemberClient;
-import org.scoula.oauth.domain.vo.OauthMember;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.VO.OauthServerType;
 import org.scoula.oauth.infra.oauth.google.client.GoogleApiClient;
 import org.scoula.oauth.infra.oauth.google.dto.GoogleMemberResponse;
 import org.scoula.oauth.infra.oauth.google.dto.GoogleToken;
@@ -27,7 +27,7 @@ public class GoogleMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public OauthMember fetch(String authCode) {
+    public OauthMemberVO fetch(String authCode) {
         GoogleToken tokenInfo = googleApiClient.fetchToken(tokenRequestParams(authCode));
 
         // Access 토큰을 사용하여 Google 회원 정보를 가져옴

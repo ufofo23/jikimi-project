@@ -8,7 +8,7 @@
 
 <style scoped>
 .footer {
-  position: flex;
+  position: fixed;
   bottom: 0;
   width: 100%;
   background-color: RGB(203, 236, 197); /* 브랜드 색상 */

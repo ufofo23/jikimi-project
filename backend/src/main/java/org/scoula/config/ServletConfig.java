@@ -16,7 +16,10 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = {
         "org.scoula.commonsense.controller",
         "org.scoula.dictionary.controller",
-        "org.scoula.faq.controller"
+        "org.scoula.faq.controller",
+        "org.scoula.map.controller",
+        "org.scoula.chatbot.controller",
+        "org.scoula.oauth.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
 public class ServletConfig implements WebMvcConfigurer {

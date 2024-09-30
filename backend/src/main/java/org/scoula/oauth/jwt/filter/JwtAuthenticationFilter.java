@@ -46,12 +46,18 @@ public class JwtAuthenticationFilter implements Filter {
             }
         }
 
-        if (jwtToken != null && jwtUtil.validateToken(jwtToken)) {
-            String userId = jwtUtil.getUserIdFromToken(jwtToken);
-            UserDetails userDetails = new User(userId, "", Collections.emptyList());
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (jwtToken != null) {
+            if (jwtUtil.validateToken(jwtToken)) { // 유효한 토큰인 경우
+                String userId = jwtUtil.getUserIdFromToken(jwtToken);
+                UserDetails userDetails = new User(userId, "", Collections.emptyList());
+                System.out.println("userDetails = " + userDetails);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else { // 만료되거나 유효하지 않은 토큰인 경우
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
+                return; // 필터 체인을 중지하고 응답 전송
+            }
         }
 
         chain.doFilter(request, response);

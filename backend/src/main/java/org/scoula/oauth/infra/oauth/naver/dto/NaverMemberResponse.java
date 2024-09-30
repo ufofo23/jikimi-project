@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.vo.OauthId;
-import org.scoula.oauth.domain.vo.OauthMember;
-import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.VO.OauthId;
+import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.VO.OauthServerType;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ public class NaverMemberResponse {
     private String message;
     private Response response;
 
-    public OauthMember toDomain() {
+    public OauthMemberVO toDomain() {
         if (response == null) {
             throw new IllegalStateException("Response is null");
         }
@@ -52,7 +52,7 @@ public class NaverMemberResponse {
             }
         }
 
-        return OauthMember.builder()
+        return OauthMemberVO.builder()
                 .oauthId(new OauthId(String.valueOf(response.id), OauthServerType.NAVER))
                 .email(response.email)
                 .name(response.name)
