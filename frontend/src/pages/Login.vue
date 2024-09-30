@@ -22,18 +22,47 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'login',
   methods: {
-    handleKakaoLogin() {
-      window.location.href = 'http://localhost:8080/oauth/KAKAO';
-    },
+    // handleKakaoLogin() {
+    //   window.location.href = 'http://localhost:8080/oauth/KAKAO';
+    // },
     handleNaverLogin() {
       window.location.href = 'http://localhost:8080/oauth/NAVER';
     },
     handleGoogleLogin() {
       window.location.href = 'http://localhost:8080/oauth/GOOGLE';
     },
+    async fetchToken(code, provider) {
+      try {
+        // 인증 서버에서 JWT 쿠키를 설정
+        const response = await axios.get(
+          `/oauth/login/${provider}?code=${code}`,
+          {
+            withCredentials: true, // 쿠키를 클라이언트에 저장
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error('Login failed', error);
+        throw error;
+      }
+    },
+    async handleRedirect() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const provider = urlParams.get('provider');
+      if (code && provider) {
+        await this.fetchToken(code, provider);
+        this.$router.push('/');
+      }
+    },
+  },
+  mounted() {
+    this.handleRedirect();
   },
 };
 </script>
