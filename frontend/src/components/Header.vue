@@ -16,10 +16,14 @@
             <router-link :to="{ name: 'study' }">Study</router-link>
             <ul class="dropdown-menu">
               <li>
-                <router-link :to="{ path: '/study/commonsense/list' }">부동산 토막 상식</router-link>
+                <router-link :to="{ path: '/study/commonsense/list' }"
+                  >부동산 토막 상식</router-link
+                >
               </li>
               <li>
-                <router-link :to="{ path: '/study/dictionary/list' }">부동산 용어 사전</router-link>
+                <router-link :to="{ path: '/study/dictionary/list' }"
+                  >부동산 용어 사전</router-link
+                >
               </li>
             </ul>
           </div>
@@ -32,9 +36,10 @@
         </li>
       </ul>
       <div class="auth" v-if="!isAuthenticated">
-        <router-link :to="{ name: 'login' }">Login</router-link>
+        <router-link :to="{ name: 'login' }">
+          <img src="@/assets/login.png" alt="Login" class="login-image" />
+        </router-link>
       </div>
-
       <div class="auth" v-else>
         <button @click="logout" class="logout-link">Logout</button>
         <router-link :to="{ name: 'mypage' }">MyPage</router-link>
@@ -61,13 +66,13 @@ export default {
       logout,
     };
   },
-}
+};
 </script>
 
 <style scoped>
 /* 헤더 스타일 */
 .header {
-  position: flex;
+  position: sticky;
   top: 0;
   width: 100%;
   background-color: RGB(203, 236, 197); /* 브랜드 색상 */
@@ -158,6 +163,11 @@ export default {
   white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
 }
 
+.dropdown-menu li:hover {
+  text-decoration-line: underline;
+  font-weight: bold;
+}
+
 /* 가운데 정렬을 위해 추가 */
 .dropdown-menu a {
   display: block; /* 블록 요소로 설정하여 전체 너비를 차지하도록 함 */
@@ -169,7 +179,8 @@ export default {
 }
 
 .dropdown-menu a:hover {
-  color: #ff6b6b;
+  text-decoration-line: underline;
+  font-weight: bold;
 }
 
 /* 로그인/회원가입 및 로그아웃/MyPage 스타일 */
@@ -204,5 +215,12 @@ export default {
 
 .logout-link:hover {
   color: #ff6b6b; /* 호버 시 색상 변경 */
+}
+
+/* 이미지를 클릭할 수 있도록 스타일링 */
+.login-image {
+  width: 35px; /* 원하는 크기로 이미지 크기 조정 */
+  height: auto;
+  cursor: pointer; /* 클릭 가능한 포인터로 변경 */
 }
 </style>
