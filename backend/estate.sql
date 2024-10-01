@@ -13,7 +13,6 @@ CREATE TABLE member_tbl (
     member_email varchar(50) NOT NULL,
     member_name varchar(50) NOT NULL,
     member_sex tinyint ,
-    member_age int ,
     member_birthday date ,
     member_phone varchar(50) ,
     member_role varchar(50) ,
@@ -190,16 +189,16 @@ show tables;
 
 # 샘플 데이터
 # 회원 샘플
-INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_age, member_birthday, member_phone, member_role)
+INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_birthday, member_phone, member_role)
 VALUES
     (
-        'N11111', 'one@naver.com', '김일번', 0, 24, '2000-01-01', '010-1111-1111', 'MEMBER'
+        'N11111', 'one@naver.com', '김일번', 0, '2000-01-01', '010-1111-1111', 'MEMBER'
     ),
     (
-        'G22222', 'two@gmail.com', '정이번', 1, 25, '1999-02-02', '010-2222-2222', 'MEMBER'
+        'G22222', 'two@gmail.com', '정이번', 1, '1999-02-02', '010-2222-2222', 'MEMBER'
     ),
     (
-        'N33333', 'three@naver.com', '이삼번', 1, 26, '1998-03-03', '010-3333-3333', 'MEMBER'
+        'N33333', 'three@naver.com', '이삼번', 1, '1998-03-03', '010-3333-3333', 'MEMBER'
     );
 
 

@@ -8,7 +8,6 @@
         <result property="email" column="member_email"/>
         <result property="name" column="member_name"/>
         <result property="gender" column="member_sex"/>
-        <result property="age" column="member_age"/>
         <result property="birthday" column="member_birthday"/>
         <result property="mobileE164" column="member_phone"/>
         <result property="role" column="member_role"/>
@@ -29,7 +28,6 @@
     <update id="updateOauthInfo">
         UPDATE member_tbl SET
         member_sex = #{member.gender},
-        member_age = #{member.age},
         member_birthday = #{member.birthday},
         member_phone = #{member.mobileE164}
         WHERE member_id = #{userId}
