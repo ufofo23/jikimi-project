@@ -2,7 +2,7 @@
 package org.scoula.oauth.jwt;
 
 import io.jsonwebtoken.*;
-import org.scoula.oauth.domain.VO.Role;
+import org.scoula.oauth.domain.vo.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;

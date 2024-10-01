@@ -1,6 +1,6 @@
 package org.scoula.oauth.controller;
 
-import org.scoula.oauth.domain.VO.OauthServerType;
+import org.scoula.oauth.domain.vo.OauthServerType;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

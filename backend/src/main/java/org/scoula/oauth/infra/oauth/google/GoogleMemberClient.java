@@ -1,9 +1,9 @@
 package org.scoula.oauth.infra.oauth.google;
 
 import lombok.RequiredArgsConstructor;
-import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
 import org.scoula.oauth.domain.client.OauthMemberClient;
-import org.scoula.oauth.domain.VO.OauthServerType;
+import org.scoula.oauth.domain.vo.OauthServerType;
 import org.scoula.oauth.infra.oauth.google.client.GoogleApiClient;
 import org.scoula.oauth.infra.oauth.google.dto.GoogleMemberResponse;
 import org.scoula.oauth.infra.oauth.google.dto.GoogleToken;

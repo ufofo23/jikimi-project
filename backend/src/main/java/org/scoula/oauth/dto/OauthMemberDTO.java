@@ -3,7 +3,7 @@ package org.scoula.oauth.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.VO.Role;
+import org.scoula.oauth.domain.vo.Role;
 
 @Data
 @AllArgsConstructor

@@ -1,12 +1,12 @@
-package org.scoula.oauth.domain.DTO;
+package org.scoula.oauth.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.VO.OauthId;
-import org.scoula.oauth.domain.VO.OauthMemberVO;
-import org.scoula.oauth.domain.VO.Role;
+import org.scoula.oauth.domain.vo.OauthId;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
+import org.scoula.oauth.domain.vo.Role;
 
 @Data
 @NoArgsConstructor
