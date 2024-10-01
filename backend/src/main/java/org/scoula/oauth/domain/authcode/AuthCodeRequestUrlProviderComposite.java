@@ -1,6 +1,6 @@
 package org.scoula.oauth.domain.authcode;
 
-import org.scoula.oauth.domain.VO.OauthServerType;
+import org.scoula.oauth.domain.vo.OauthServerType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
