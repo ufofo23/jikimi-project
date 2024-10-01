@@ -1,4 +1,4 @@
-package org.scoula.oauth.domain.VO;
+package org.scoula.oauth.domain.vo;
 
 public enum Role {
 

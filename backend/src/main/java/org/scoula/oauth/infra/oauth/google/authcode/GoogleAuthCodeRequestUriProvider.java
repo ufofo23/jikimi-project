@@ -2,7 +2,7 @@ package org.scoula.oauth.infra.oauth.google.authcode;
 
 import lombok.RequiredArgsConstructor;
 import org.scoula.oauth.domain.authcode.AuthCodeRequestUrlProvider;
-import org.scoula.oauth.domain.VO.OauthServerType;
+import org.scoula.oauth.domain.vo.OauthServerType;
 import org.scoula.oauth.infra.oauth.google.GoogleOauthConfig;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
