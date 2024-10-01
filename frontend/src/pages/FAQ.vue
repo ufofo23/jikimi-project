@@ -17,30 +17,29 @@
     </div>
 
     <!-- 게시글 목록 -->
-    <div v-else>
-      <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
-        <div
-          class="card-header d-flex justify-content-between align-items-center"
-          @click="toggleDetails(article.faqNo)"
-          style="cursor: pointer"
-        >
-          <h3 class="mb-0">{{ article.faqQuestion }}</h3>
-          <span v-if="openSection === 'contract'">▲</span>
-          <span v-else>▼</span>
-          <span>
-            <i
-              :class="
-                openSections.includes(article.faqNo)
-                  ? 'fa-solid fa-chevron-up'
-                  : 'fa-solid fa-chevron-down'
-              "
-            ></i>
-          </span>
-        </div>
 
-        <div v-if="openSections.includes(article.faqNo)" class="card-body">
-          <p class="card-text">{{ article.faqAnswer }}</p>
-        </div>
+    <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+        @click="toggleDetails(article.faqNo)"
+        style="cursor: pointer"
+      >
+        <h3 class="mb-0">{{ article.faqQuestion }}</h3>
+        <span v-if="openSection === 'contract'">▲</span>
+        <span v-else>▼</span>
+        <span>
+          <i
+            :class="
+              openSections.includes(article.faqNo)
+                ? 'fa-solid fa-chevron-up'
+                : 'fa-solid fa-chevron-down'
+            "
+          ></i>
+        </span>
+      </div>
+
+      <div v-if="openSections.includes(article.faqNo)" class="card-body">
+        <p class="card-text">{{ article.faqAnswer }}</p>
       </div>
     </div>
   </div>

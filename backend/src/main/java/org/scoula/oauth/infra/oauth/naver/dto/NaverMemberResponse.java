@@ -35,13 +35,6 @@ public class NaverMemberResponse {
             gender = 0;
         }
 
-        Integer age = null;
-        if (response.age != null) {
-            String[] ageRange = response.age.split("-");
-            if (ageRange.length > 0) {
-                age = Integer.valueOf(ageRange[0]);
-            }
-        }
 
         String birthday = null;
         if (response.birthday != null) {
@@ -57,7 +50,6 @@ public class NaverMemberResponse {
                 .email(response.email)
                 .name(response.name)
                 .gender(gender)  // 성별 설정
-                .age(age) // 나이 범위의 첫 번째 값을 사용 (예 20-30 -> 20)
                 .birthday(birthday)
                 .mobileE164(response.mobile_e164)
                 .build();
@@ -74,7 +66,6 @@ public class NaverMemberResponse {
         private String name;
         private String email;
         private String gender;
-        private String age;
         private String birthday;
         private String profileImage;
         private String birthyear;
