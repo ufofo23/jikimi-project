@@ -2,12 +2,12 @@ package org.scoula.oauth.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.scoula.oauth.domain.DTO.OauthMemberDTO;
+import org.scoula.oauth.domain.dto.OauthMemberDTO;
 import org.scoula.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
 import org.scoula.oauth.domain.client.OauthMemberClientComposite;
-import org.scoula.oauth.domain.VO.OauthMemberVO;
-import org.scoula.oauth.domain.VO.OauthServerType;
-import org.scoula.oauth.domain.VO.Role;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
+import org.scoula.oauth.domain.vo.OauthServerType;
+import org.scoula.oauth.domain.vo.Role;
 import org.scoula.oauth.jwt.JwtUtil;
 import org.scoula.oauth.mapper.OauthMemberMapper;
 import org.springframework.stereotype.Service;

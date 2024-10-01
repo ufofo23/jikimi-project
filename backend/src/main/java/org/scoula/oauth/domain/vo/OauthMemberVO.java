@@ -1,10 +1,9 @@
-package org.scoula.oauth.domain.VO;
+package org.scoula.oauth.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.DTO.OauthMemberDTO;
 
 @Data
 @Builder

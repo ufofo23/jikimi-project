@@ -2,8 +2,8 @@ package org.scoula.oauth.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.scoula.oauth.domain.DTO.OauthMemberDTO;
-import org.scoula.oauth.domain.VO.OauthMemberVO;
+import org.scoula.oauth.domain.dto.OauthMemberDTO;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
 
 @Mapper
 /*

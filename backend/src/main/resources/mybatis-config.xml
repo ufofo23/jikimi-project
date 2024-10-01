@@ -12,7 +12,7 @@
     </settings>
 
     <typeAliases>
-        <package name="org.scoula.oauth.domain.VO.OauthMemberVO"/>
+        <package name="org.scoula.oauth.domain.vo.OauthMemberVO"/>
     </typeAliases>
 
     <mappers>

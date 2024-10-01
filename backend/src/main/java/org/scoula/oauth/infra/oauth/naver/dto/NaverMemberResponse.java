@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.scoula.oauth.domain.VO.OauthId;
-import org.scoula.oauth.domain.VO.OauthMemberVO;
-import org.scoula.oauth.domain.VO.OauthServerType;
+import org.scoula.oauth.domain.vo.OauthId;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
+import org.scoula.oauth.domain.vo.OauthServerType;
 
 import java.time.LocalDate;
 
