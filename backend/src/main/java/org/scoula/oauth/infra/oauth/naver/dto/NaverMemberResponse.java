@@ -71,5 +71,6 @@ public class NaverMemberResponse {
         private String birthyear;
         private String mobile;
         private String mobile_e164;
+        private String age;
     }
 }

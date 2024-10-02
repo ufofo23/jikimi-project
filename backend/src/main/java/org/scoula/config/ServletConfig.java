@@ -3,14 +3,11 @@ package org.scoula.config;
 import org.scoula.oauth.controller.OauthServerTypeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
@@ -18,7 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
         "org.scoula.dictionary.controller",
         "org.scoula.faq.controller",
         "org.scoula.map.controller",
-        "org.scoula.chatbot.controller",
+        "org.scoula.ai.controller",
         "org.scoula.oauth.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
