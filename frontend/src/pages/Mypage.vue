@@ -89,14 +89,14 @@
 
 <script setup>
 // Import necessary functions
+import useAuthStore from '@/stores/auth';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api/authApi'; // API containing getInfo and updateInfo
 
 // Router for navigation
 const router = useRouter();
-
-// Reactive properties for user details
+const authStore = useAuthStore();
 const userName = ref('');
 const userEmail = ref('');
 const userGender = ref(''); // 성별 변수 추가
@@ -170,7 +170,7 @@ onMounted(() => {
 // Logout function
 const handleLogout = async () => {
   try {
-    await api.logout(); // Assume logout API exists
+    authStore.logout();
     router.push('/login'); // Redirect to login after logout
   } catch (error) {
     console.error('Failed to logout:', error);
