@@ -1,23 +1,29 @@
 package org.scoula.map.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MapDetailDTO {
-    private int id;
-    private int no;
+    private int locationNo;
+    private int propertyNo;
     private String apartName;
     private String doroJuso;
+    private String roadName;
     private String price;
-    private String spacial;
-    private String dong;
-    private String floor;
+    private String propertyArea;
+    private String propertyAddrAptDong;
+    private String propertyAddrFloor;
+    private String propertyAddrAptName;
     private String buyer;
     private String seller;
-    private String buildYear;
+    private String buildingYear;
     private String typeTrade;
     private String typeBuild;
     private String date;
-    private String conMonth;
-    private String conDate;
+    private String contractYearMonth;
+    private String contractDate;
 }
