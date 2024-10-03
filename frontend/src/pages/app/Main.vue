@@ -163,7 +163,7 @@ onMounted(() => {
   display: flex;
   align-items: center; /* 카드들이 화면 중앙에 위치하도록 설정 */
   justify-content: center;
-  padding: 60px 20px 10px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
+  padding: 60px 20px 100px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
 }
 
 .custom-grid {
