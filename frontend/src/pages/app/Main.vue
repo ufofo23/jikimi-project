@@ -51,27 +51,25 @@
         </div>
       </router-link>
     </div>
-    <div></div>
   </div>
 
-  <!-- 새로운 컴포넌트들 추가 -->
-  <router-link :to="{ name: 'beforeCheckList' }" class="split-container">
+  <div class="split-container">
     <div class="split-grid">
-      <!-- 첫 번째 컴포넌트 -->
-      <div class="split-card left-card">
-        <h3>부동산 계약이 처음이라면?</h3>
-        <p>계약 전 필수 체크리스트 →</p>
-        <!-- <img src="@/assets/etf1.png" alt="etf1" class="card-image" /> -->
-      </div>
+      <router-link :to="{ name: 'beforeCheckList' }">
+        <!-- 첫 번째 컴포넌트 -->
+        <div class="split-card left-card">
+          <h3>부동산 계약이 처음이라면?</h3>
+          <p>계약 전 필수 체크리스트 →</p>
+        </div>
+      </router-link>
 
       <!-- 두 번째 컴포넌트 -->
       <div class="split-card right-card">
         <h3>부동산 계약을 진행/완료했다면?</h3>
         <p>유형별 사기 시나리오 확인 →</p>
-        <!-- <img src="@/assets/etf2.png" alt="etf2" class="card-image" /> -->
       </div>
     </div>
-  </router-link>
+  </div>
 </template>
 
 <script setup>
