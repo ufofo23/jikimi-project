@@ -16,6 +16,7 @@ import SenseListPage from '@/pages/study/commonsense/SenseListPage.vue';
 import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
 import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 import MainMap from '../pages/map/MainMap.vue';
+import BeforeCheckListPage from '@/pages/study/BeforeCheckListPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -83,14 +84,17 @@ const router = createRouter({
       name: 'map',
       component: MainMap,
     },
+    {
+      path: '/study/beforecheck/list',
+      name: 'beforeCheckList',
+      component: BeforeCheckListPage,
+    },
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const requiresAuth = to.matched.some(
-    (record) => record.meta.requiresAuth
-  );
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   authStore.checkAuth(); // 인증 체크
 
