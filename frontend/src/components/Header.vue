@@ -72,14 +72,14 @@ export default {
 <style scoped>
 /* 헤더 스타일 */
 .header {
-  position: sticky;
+  position: flex;
   top: 0;
   width: 100%;
   background-color: RGB(203, 236, 197); /* 브랜드 색상 */
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000; /* 헤더가 다른 요소들 위에 나타나도록 설정 */
 }
@@ -90,13 +90,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto; /* 가운데 정렬 */
 }
 
 /* 로고 스타일 */
 .logo {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   color: #333;
 }
