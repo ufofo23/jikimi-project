@@ -26,14 +26,16 @@ import javax.sql.DataSource;
         "org.scoula.commonsense.mapper",
         "org.scoula.dictionary.mapper",
         "org.scoula.faq.mapper",
-        "org.scoula.map.mapper"})
+        "org.scoula.map.mapper",
+        "org.scoula.like.dictionary.mapper"})
 @ComponentScan(basePackages = {
         "org.scoula.oauth",
         "org.scoula.commonsense.service",
         "org.scoula.dictionary.service",
         "org.scoula.faq.service",
         "org.scoula.map.service",
-        "org.scoula.ai.service"
+        "org.scoula.ai.service",
+        "org.scoula.like.dictionary.service"
 })
 @Slf4j
 @EnableTransactionManagement

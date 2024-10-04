@@ -653,3 +653,8 @@ WHERE ap.address_id IS NULL;
 
 # 데이터 확인
 SELECT * FROM address_distinct;
+
+
+select * from member_tbl;
+
+
