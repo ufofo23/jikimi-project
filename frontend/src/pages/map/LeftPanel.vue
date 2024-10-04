@@ -108,6 +108,7 @@ const props = defineProps({
 const emit = defineEmits([
   'toggle-panel',
   'update:selectedProperty',
+  'move-map-to-coordinates', // 상위 컴포넌트로 좌표 전달을 위한 이벤트 추가
 ]);
 
 // 즐겨찾기와 상세보기 토글 상태 관리
@@ -190,8 +191,8 @@ const selectApartment = (apartmentName) => {
 // 선택된 주소에 따른 좌표 처리
 const handleAddressSelected = (coordinates) => {
   console.log('선택된 좌표:', coordinates);
-  // 선택된 좌표에 대한 추가 로직을 여기에 추가
-  // 예: 해당 좌표에 맞는 아파트 정보 필터링 등
+  // 좌표를 상위 컴포넌트로 전달
+  emit('move-map-to-coordinates', coordinates);
 };
 </script>
 
