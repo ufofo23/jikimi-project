@@ -8,9 +8,9 @@
         <setting name="mapUnderscoreToCamelCase" value="true" />
     </settings>
 
-    <typeAliases>
-        <package name="org.scoula.security.account.domain" />
-        <package name="org.scoula.board.domain" />
-    </typeAliases>
+<!--    <typeAliases>-->
+<!--        <package name="org.scoula.security.account.domain" />-->
+<!--        <package name="org.scoula.board.domain" />-->
+<!--    </typeAliases>-->
 </configuration>
 

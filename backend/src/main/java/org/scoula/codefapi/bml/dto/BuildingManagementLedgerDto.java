@@ -1,23 +1,18 @@
 package org.scoula.codefapi.bml.dto;
 
+import lombok.Getter;
+
+@Getter
 public class BuildingManagementLedgerDto {
-    private String resUserAddr;
-    private String resViolationStatus;
 
-    // Getters and Setters
-    public String getResUserAddr() {
-        return resUserAddr;
-    }
+    private final String resUserAddr;
+    private final String resViolationStatus;
+    private final String resContents;
 
-    public void setResUserAddr(String resUserAddr) {
+    public BuildingManagementLedgerDto(String resUserAddr, String resViolationStatus, String resContents) {
         this.resUserAddr = resUserAddr;
-    }
-
-    public String getResViolationStatus() {
-        return resViolationStatus;
-    }
-
-    public void setResViolationStatus(String resViolationStatus) {
         this.resViolationStatus = resViolationStatus;
+        this.resContents = resContents;
     }
+
 }

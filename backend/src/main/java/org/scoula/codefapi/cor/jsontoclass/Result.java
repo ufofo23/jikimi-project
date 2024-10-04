@@ -1,6 +1,6 @@
 package org.scoula.codefapi.cor.jsontoclass;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Result {
     private String code;

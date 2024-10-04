@@ -2,24 +2,29 @@ package org.scoula.codefapi.bml.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.scoula.codefapi.bml.dto.BuildingManagementLedgerDto;
 import org.scoula.codefapi.bml.mapper.BuildingManagementLedgerMapper;
 import org.scoula.codefapi.codef.EasyCodef;
 import org.scoula.codefapi.codef.EasyCodefClientInfo;
 import org.scoula.codefapi.codef.EasyCodefServiceType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.scoula.codefapi.codef.EasyCodefClientInfo.PUBLIC_KEY;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class BuildingManagementLedgerService {
 
-    @Autowired
-    private BuildingManagementLedgerMapper ledgerMapper;
+    private final BuildingManagementLedgerMapper ledgerMapper;
 
     @SuppressWarnings("unchecked")
     public String getBuildingLedger(String organization, String loginType, String userName, String identity, String address, String zipCode) {
@@ -35,12 +40,12 @@ public class BuildingManagementLedgerService {
 
             // 4. 입력 파라미터 설정
             HashMap<String, Object> parameterMap = new HashMap<>();
-            parameterMap.put("organization", organization);
-            parameterMap.put("loginType", loginType);
-            parameterMap.put("userName", userName);
-            parameterMap.put("identity", identity);
-            parameterMap.put("address", address);
-            parameterMap.put("zipCode", zipCode);
+            parameterMap.put("organization", "0001");
+            parameterMap.put("loginType", "3");
+            parameterMap.put("userName", ""); // 이름
+            parameterMap.put("identity", ""); // 주민등록번호
+            parameterMap.put("address", "서울시 서초구 신반포로 270");
+            parameterMap.put("zipCode", "06544");
             parameterMap.put("type", "0");
             parameterMap.put("inquiryType", "1");
 
@@ -56,8 +61,11 @@ public class BuildingManagementLedgerService {
                 String resUserAddr = (String) dataMap.get("resUserAddr");
                 String resViolationStatus = (String) dataMap.getOrDefault("resViolationStatus", "");
 
+                List<Map<String, String>> resDetailList = (List<Map<String, String>>) dataMap.getOrDefault("resDetailList", new ArrayList<>());
+                String resContents = getResContents(resDetailList);
+
                 // DB에 저장
-                ledgerMapper.insertBuildingData(resUserAddr, resViolationStatus);
+                ledgerMapper.insertBuildingData(new BuildingManagementLedgerDto(resUserAddr, resViolationStatus, resContents));
 
                 return "저장 성공";
             } else {
@@ -71,4 +79,14 @@ public class BuildingManagementLedgerService {
             return "에러 발생: " + e.getMessage();
         }
     }
+
+    private String getResContents(List<Map<String, String>> resDetailList) {
+        for (Map<String, String> resDetail : resDetailList) {
+            if ("주용도".equals(resDetail.get("resType"))) {
+                return resDetail.get("resContents");
+            }
+        }
+        return "";
+    }
+
 }

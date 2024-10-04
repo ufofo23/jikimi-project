@@ -1,15 +1,15 @@
 package org.scoula.config;
 
 import org.scoula.security.config.SecurityConfig;
-import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletRegistration;
 
-public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer
-{
+@Configuration
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
     final String LOCATION = "c:/upload";
     final long MAX_FILE_SIZE = 10L * 1024 * 1024;      // 1개
     final long MAX_REQUEST_SIZE = 20L * 1024 * 1024;   // 전체

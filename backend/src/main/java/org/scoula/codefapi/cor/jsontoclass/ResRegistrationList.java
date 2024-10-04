@@ -2,7 +2,7 @@
 
 package org.scoula.codefapi.cor.jsontoclass;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResRegistrationList {
     private String resType;
