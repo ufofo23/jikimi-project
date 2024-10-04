@@ -20,8 +20,9 @@ import MainMap from '../pages/map/MainMap.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/mypage', name: 'mypage', component: MyPage },
-    // { path: '/map', name: 'map', component: Map },
+    { path: '/mypage', 
+      name: 'mypage', 
+      component: MyPage },
     {
       path: '/analyzing',
       name: 'analyzing',

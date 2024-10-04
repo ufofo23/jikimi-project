@@ -17,7 +17,7 @@
     </div>
 
     <!-- 게시글 목록 -->
-    <div v-else>
+    <div v-else class="line-remove">
       <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
         <div
           class="card-header d-flex justify-content-between align-items-center"
@@ -107,10 +107,22 @@ onMounted(() => {
 });
 </script>
 <style scoped>
+
+
 .container {
   max-width: 800px; /* 최대 너비 설정 */
   margin: 0 auto; /* 중앙 정렬 */
   padding: 0 15px; /* 좌우 패딩 추가 */
+}
+
+.container .line-remove{
+  padding: 10px 10px 10px 10px;
+  border-bottom-width: 0px;
+}
+
+
+.mb-3{
+  border-bottom: none;
 }
 
 .table-hover tbody tr:hover {
@@ -141,4 +153,5 @@ onMounted(() => {
     font-size: 0.9rem;
   }
 }
+
 </style>
