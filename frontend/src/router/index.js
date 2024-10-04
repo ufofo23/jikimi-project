@@ -22,7 +22,10 @@ import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/mypage', name: 'mypage', component: MyPage },
+
+    { path: '/mypage', 
+      name: 'mypage', 
+      component: MyPage },
     {
       path: '/analyzing',
       name: 'analyzing',
