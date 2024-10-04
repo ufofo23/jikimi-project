@@ -1,4 +1,4 @@
-package org.scoula.chatbot.dto;
+package org.scoula.chat.dto;
 
 import lombok.Getter;
 import lombok.Setter;

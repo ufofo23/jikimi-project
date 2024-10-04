@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OauthMember {
+public class OauthMemberVO {
 
     private Long id;
 
@@ -27,11 +27,10 @@ public class OauthMember {
 
     private Integer gender;
 
-    private Integer age;
-
     private String birthday;
 
     private String mobileE164;
 
     private Role role;
+
 }

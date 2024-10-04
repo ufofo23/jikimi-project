@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.scoula.oauth.domain.vo.OauthId;
-import org.scoula.oauth.domain.vo.OauthMember;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
 import org.scoula.oauth.domain.vo.OauthServerType;
 
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class NaverMemberResponse {
     private String message;
     private Response response;
 
-    public OauthMember toDomain() {
+    public OauthMemberVO toDomain() {
         if (response == null) {
             throw new IllegalStateException("Response is null");
         }
@@ -35,13 +35,6 @@ public class NaverMemberResponse {
             gender = 0;
         }
 
-        Integer age = null;
-        if (response.age != null) {
-            String[] ageRange = response.age.split("-");
-            if (ageRange.length > 0) {
-                age = Integer.valueOf(ageRange[0]);
-            }
-        }
 
         String birthday = null;
         if (response.birthday != null) {
@@ -52,12 +45,11 @@ public class NaverMemberResponse {
             }
         }
 
-        return OauthMember.builder()
+        return OauthMemberVO.builder()
                 .oauthId(new OauthId(String.valueOf(response.id), OauthServerType.NAVER))
                 .email(response.email)
                 .name(response.name)
                 .gender(gender)  // 성별 설정
-                .age(age) // 나이 범위의 첫 번째 값을 사용 (예 20-30 -> 20)
                 .birthday(birthday)
                 .mobileE164(response.mobile_e164)
                 .build();
@@ -74,11 +66,11 @@ public class NaverMemberResponse {
         private String name;
         private String email;
         private String gender;
-        private String age;
         private String birthday;
         private String profileImage;
         private String birthyear;
         private String mobile;
         private String mobile_e164;
+        private String age;
     }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.like.dictionary.mapper.LikeDictionaryMapper">
+    <insert id="create">
+        insert into like_dictionary_tbl (member_no, dictionary_no)
+        values((select member_no from member_tbl where member_id = #{userId}), #{dicNo})
+    </insert>
+
+    <select id="getList" resultType="org.scoula.dictionary.domain.DictionaryVO">
+        select * from dictionary_tbl dt
+        where dt.dictionary_no in (
+            select dictionary_no
+            from like_dictionary_tbl
+            where member_no = (
+                select member_no
+                from member_tbl
+                where member_id = #{userId}))
+        order by dictionary_title asc
+    </select>
+</mapper>

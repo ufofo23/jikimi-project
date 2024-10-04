@@ -2,30 +2,26 @@
   <div class="container-fluid custom-container">
     <div class="custom-grid">
       <!-- 왼쪽 큰 카드 -->
-      <div class="card large-card real-estate-info text-center">
+      <div
+        class="card large-card real-estate-info text-center"
+        @click="detail(currentCommonSenseNo)"
+      >
         <div class="card-body">
           <h3 class="card-title">오늘의 토막 상식 🏡</h3>
 
-          <div class="content my-4">
-            <!-- 현재 pieceSense 표시 -->
-            <div class="content my-4">
-              <!-- 현재 pieceSense 표시 -->
-              <button
-                @click="detail(currentCommonSenseNo)"
-                v-if="currentPieceSense"
-                class="sense-button"
-              >
-                {{ currentPieceSense }}
-              </button>
-
-              <!-- 설명 문구 -->
-              <div class="detail" v-if="currentPieceSense">
-                접속 할 때마다 바뀌는 토막상식으로 부동산 지식 UP!
-              </div>
-
-              <p v-else>로딩 중...</p>
+          <!-- piecesense를 별도의 공간에 표시 -->
+          <div class="sense-display my-4">
+            <div v-if="currentPieceSense">
+              <p>{{ currentPieceSense }}</p>
             </div>
+            <p v-else>로딩 중...</p>
           </div>
+
+          <div class="detail">
+            접속 할 때마다 바뀌는 토막상식으로 부동산 지식 UP!
+          </div>
+          <!-- 이미지 우측 아래로 이동 -->
+          <img src="@/assets/card1.png" alt="card1" class="card-image" />
         </div>
       </div>
 
@@ -35,25 +31,43 @@
         class="card small-card price-check text-center"
       >
         <div class="card-body">
-          <h1 class="card-title">주변 시세 확인📍</h1>
+          <h2 class="card-title">주변 시세 확인📍</h2>
           <p>(안용's 마스터피스)</p>
-
           <div class="detail">궁금한 지역의 시세를 지금 바로 확인!</div>
+          <img src="@/assets/card2.png" alt="card2" class="card-image" />
         </div>
       </router-link>
 
       <!-- 오른쪽 카드 -->
       <router-link
-        :to="{ name: 'fraudchecklist' }"
+        :to="{ name: 'ScenarioMain' }"
         class="card small-card safety-check text-center"
       >
         <div class="card-body">
-          <h1 class="card-title">이 집은 안전한가?🕵🏻‍♂️</h1>
+          <h2 class="card-title">이 집은 안전한가?🕵🏻‍♂️</h2>
           <p>바로 안전진단 받기!</p>
-
           <div class="detail">원하는 집의 안전 분석 리포트 제공!</div>
+          <img src="@/assets/card3.png" alt="card3" class="card-image" />
         </div>
       </router-link>
+    </div>
+  </div>
+
+  <div class="split-container">
+    <div class="split-grid">
+      <router-link :to="{ name: 'preventionList' }">
+        <!-- 첫 번째 컴포넌트 -->
+        <div class="split-card left-card">
+          <h3>부동산 계약이 처음이라면?</h3>
+          <p>계약 전 필수 체크리스트 →</p>
+        </div>
+      </router-link>
+
+      <!-- 두 번째 컴포넌트 -->
+      <div class="split-card right-card">
+        <h3>부동산 계약을 진행/완료했다면?</h3>
+        <p>유형별 사기 시나리오 확인 →</p>
+      </div>
     </div>
   </div>
 </template>
@@ -135,11 +149,10 @@ onMounted(() => {
 
 <style scoped>
 .detail {
-  margin-top: auto; /* 아래쪽으로 밀림 */
+  margin-top: 100px; /* 아래쪽으로 밀림 */
   font-size: 0.9rem; /* 글씨 크기를 작게 설정 */
   color: rgba(0, 0, 0, 0.6); /* 연한 색상으로 설정 */
   text-align: center; /* 가운데 정렬 */
-  margin-top: 20px; /* 위쪽에 약간의 간격을 추가 */
   font-style: italic; /* 글씨체를 이탤릭체로 표시 (선택 사항) */
 }
 
@@ -148,12 +161,20 @@ onMounted(() => {
   display: flex;
   align-items: center; /* 카드들이 화면 중앙에 위치하도록 설정 */
   justify-content: center;
-  padding: 60px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
+  padding: 60px 20px 100px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
 }
 
 .custom-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr; /* 왼쪽 카드가 더 넓도록 설정 */
+  gap: 30px; /* 카드 간의 간격을 좀 더 크게 조정 */
+  width: 100%;
+  max-width: 1200px; /* 그리드 최대 너비 설정 */
+}
+
+.split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 왼쪽 카드가 더 넓도록 설정 */
   gap: 30px; /* 카드 간의 간격을 좀 더 크게 조정 */
   width: 100%;
   max-width: 1200px; /* 그리드 최대 너비 설정 */
@@ -168,10 +189,11 @@ onMounted(() => {
   transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between; /* 제목과 본문, 이미지가 균형 있게 배치 */
   align-items: center;
   text-align: center;
-  box-sizing: border-box;
+  position: relative; /* 이미지 절대 위치 적용을 위한 설정 */
+  cursor: pointer;
 }
 
 /* 각 카드의 기본 색상 설정 */
@@ -208,16 +230,72 @@ onMounted(() => {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 호버 시 그림자 강도 증가 */
 }
 
+.split-card:hover {
+  transform: scale(1.08); /* 호버 시 카드 확대 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 호버 시 그림자 강도 증가 */
+}
 /* 카드 제목 텍스트 크기 조정 */
 .card-title {
+  margin-top: 50px;
   font-size: 1.2rem; /* 제목 크기 키움 */
   font-weight: bold;
-  margin-bottom: 15px;
 }
 
 .card-body p {
   font-size: 1.3rem; /* 본문 텍스트 크기 조정 */
   line-height: 1.6; /* 텍스트 간격 추가 */
+  margin-top: auto;
+}
+
+.split-container {
+  display: flex;
+  align-items: center; /* 카드들이 화면 중앙에 위치하도록 설정 */
+  justify-content: center;
+  padding: 0px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
+}
+
+.split-card {
+  padding: 40px; /* 카드 내부 패딩 증가 */
+  border-radius: 15px; /* 모서리 둥글기 증가 */
+  height: 100%; /* 카드가 부모 요소의 전체 높이를 차지 */
+  min-height: 300px; /* 카드의 최소 높이를 설정 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.left-card {
+  background-color: #34a853; /* 초록색 */
+  color: white;
+}
+
+.right-card {
+  background-color: #9b51e0; /* 보라색 */
+  color: white;
+}
+
+.split-card h3 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.split-card p {
+  font-size: 1.3rem;
+}
+
+/* 카드 이미지 우측 하단 배치 */
+.card-image {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 120px;
+  height: auto;
+  opacity: 0.9;
 }
 
 /* 반응형 디자인: 화면이 작은 경우 그리드 변경 */

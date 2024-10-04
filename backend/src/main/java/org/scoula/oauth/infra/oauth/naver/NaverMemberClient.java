@@ -1,8 +1,8 @@
 package org.scoula.oauth.infra.oauth.naver;
 
 import lombok.RequiredArgsConstructor;
+import org.scoula.oauth.domain.vo.OauthMemberVO;
 import org.scoula.oauth.domain.client.OauthMemberClient;
-import org.scoula.oauth.domain.vo.OauthMember;
 import org.scoula.oauth.domain.vo.OauthServerType;
 import org.scoula.oauth.infra.oauth.naver.client.NaverApiClient;
 import org.scoula.oauth.infra.oauth.naver.dto.NaverMemberResponse;
@@ -27,7 +27,7 @@ public class NaverMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public OauthMember fetch(String authCode) {
+    public OauthMemberVO fetch(String authCode) {
         NaverToken tokenInfo = naverApiClient.fetchToken(tokenRequestParams(authCode));
         NaverMemberResponse naverMemberResponse = naverApiClient.fetchMember(tokenInfo.getAccessToken());
         return naverMemberResponse.toDomain();
