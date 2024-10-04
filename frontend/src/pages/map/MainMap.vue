@@ -260,6 +260,7 @@ onMounted(() => {
       v-if="isPanelOpen"
       :selectedProperty="selectedProperty"
       @toggle-panel="togglePanel"
+      @move-map-to-coordinates="setMapCoordinates"
     />
 
     <div

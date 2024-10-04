@@ -1,12 +1,10 @@
 <template>
   <div>
     <input
-      type="text"
-      v-model="searchQuery"
-      @focus="openDaumPostcode"
-      placeholder="단지, 지역, 지하철, 학교 검색"
+      type="button"
+      @click="openDaumPostcode"
+      value="단지, 지역, 지하철, 학교 검색"
       class="search-input"
-      @click="handleClick"
     />
 
     <!-- Display the extracted address data -->
@@ -38,7 +36,6 @@ import axios from 'axios';
 const KAKAO_API_KEY = 'c6ce7f1106ed7b6e4d7d2d8a0f956afa';
 
 const addressDetails = ref(null);
-const searchQuery = ref('');
 const x = ref(null);
 const y = ref(null);
 const emit = defineEmits(['address-selected']);
@@ -46,11 +43,13 @@ let isPostcodeOpen = ref(false); // 팝업 상태 관리
 
 async function getCoordinates(address) {
   try {
-    const url = ``;
+    const url = `https://dapi.kakao.com/v2/local/search/address.json`;
 
     const response = await axios.get(url, {
       headers: {
-        Authorization: `KakaoAK ${KAKAO_API_KEY}`,
+        Authorization: `KakaoAK ${
+          import.meta.env.VITE_DAUM_API_KEY
+        }`,
       },
       params: {
         query: address,
@@ -65,7 +64,10 @@ async function getCoordinates(address) {
       return null;
     }
   } catch (error) {
-    console.error(`Failed to fetch coordinates for address: ${address}`, error);
+    console.error(
+      `Failed to fetch coordinates for address: ${address}`,
+      error
+    );
     return null;
   }
 }
@@ -88,7 +90,9 @@ const openDaumPostcode = () => {
         apartment: data.apartment,
       };
 
-      const coordinates = await getCoordinates(data.roadAddress);
+      const coordinates = await getCoordinates(
+        data.roadAddress
+      );
       if (coordinates) {
         x.value = coordinates.x;
         y.value = coordinates.y;
@@ -103,12 +107,6 @@ const openDaumPostcode = () => {
       isPostcodeOpen.value = false; // 팝업 닫힘 상태 업데이트
     },
   }).open();
-};
-
-const handleClick = () => {
-  if (!isPostcodeOpen.value) {
-    openDaumPostcode();
-  }
 };
 </script>
 
