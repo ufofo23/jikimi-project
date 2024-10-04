@@ -40,7 +40,7 @@
 
       <!-- 오른쪽 카드 -->
       <router-link
-        :to="{ name: 'fraudchecklist' }"
+        :to="{ name: 'ScenarioMain' }"
         class="card small-card safety-check text-center"
       >
         <div class="card-body">
@@ -55,7 +55,7 @@
 
   <div class="split-container">
     <div class="split-grid">
-      <router-link :to="{ name: 'beforeCheckList' }">
+      <router-link :to="{ name: 'preventionList' }">
         <!-- 첫 번째 컴포넌트 -->
         <div class="split-card left-card">
           <h3>부동산 계약이 처음이라면?</h3>

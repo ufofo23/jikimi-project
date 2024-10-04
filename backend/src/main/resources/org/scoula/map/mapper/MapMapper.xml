@@ -21,18 +21,48 @@
             pr.property_no,
             pl.road_name,
             pr.price,
-            DATE_FORMAT(CONCAT(pr.contract_year_month, LPAD(pr.contract_date, '2', '0')), '%Y-%m-%d') as date,
+            pr.formated_date AS date,
             pr.property_area,
             pr.property_addr_apt_dong,
             pr.property_addr_floor,
             pr.building_year,
             pr.contract_year_month,
             pr.contract_date,
-            pr.property_addr_apt_name
+            pr.property_addr_apt_name,
+            pr.contract_type
         from property_location as pl
         right outer join property_tbl as pr
         on pl.location_no = pr.location_no
         where pl.location_no = #{id}
+    </select>
+
+    <select id="getAddressListMove" resultType="org.scoula.map.domain.MapVO">
+        SELECT
+            pl.location_no,
+            pl.road_name AS doro_juso,
+            pl.x_coordinate,
+            pl.y_coordinate,
+            pr.formated_price as price
+        FROM property_location pl
+                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
+                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
+          AND pr.formated_date = (
+            SELECT MAX(pr2.formated_date)FROM property_tbl pr2
+            WHERE pr2.location_no = pl.location_no)
+    </select>
+
+    <select id="getAddressListMoveCluster" resultType="org.scoula.map.domain.MapVO">
+        SELECT
+            pl.location_no,
+            pl.road_name AS doro_juso,
+            pl.x_coordinate,
+            pl.y_coordinate
+        FROM property_location pl
+                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
     </select>
 
 </mapper>

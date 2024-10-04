@@ -42,8 +42,12 @@ CREATE TABLE property_tbl (
       contract_type varchar(50),
       building_type varchar(50) NOT NULL,
       deposit int,
-      rent int
+      rent int,
+      formated_date date,
+      formated_price decimal(10, 2)
 );
+
+
 
 DROP TABLE IF EXISTS property_location;
 CREATE TABLE property_location (
@@ -940,6 +944,14 @@ INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinat
 INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinate, y_coordinate) VALUES ('붓내3길 29', '12,000', 2024099, '127.124668209179', '35.8693470871875');
 INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinate, y_coordinate) VALUES ('진재로 67', '17,400', 2024099, '127.428051432426', '36.6377558640148');
 
+#  성능 향상을 위해서!!
+UPDATE property_tbl
+SET property_tbl.formated_date =  STR_TO_DATE(CONCAT(contract_year_month, property_tbl.contract_date), '%Y%m%d')
+WHERE contract_year_month <> '';
+
+UPDATE property_tbl
+SET formated_price = FORMAT(CAST(REPLACE(price, ',', '') AS UNSIGNED) / 10000, 2)
+WHERE price <> '';
 
 #부동산 위치 정보
 # INSERT INTO property_location (road_name, recent_price, recent_date)
@@ -961,5 +973,28 @@ select * from property_tbl where location_no = 1;
 
 
 
+# 줌인앤아웃 관련 테이블
+DROP TABLE IF EXISTS zoom_levels;
+CREATE TABLE zoom_levels (
+                             zoom_level INT PRIMARY KEY,
+                             lat_range DECIMAL(10, 6),
+                             lon_range DECIMAL(10, 6)
+);
+INSERT INTO zoom_levels (zoom_level, lat_range, lon_range) VALUES
+                                                               (13, 3.72996, 9.89265),
+                                                               (12, 1.84780, 4.96287),
+                                                               (11, 0.91583, 2.48355),
+                                                               (10, 0.45702, 1.24239),
+                                                               (9, 0.22827, 0.62134),
+                                                               (8, 0.11408, 0.31071),
+                                                               (7, 0.05704, 0.15536),
+                                                               (6, 0.02851, 0.07768),
+                                                               (5, 0.01425, 0.03884),
+                                                               (4, 0.00713, 0.01942),
+                                                               (3, 0.00356, 0.00971),
+                                                               (2, 0.00178, 0.00486),
+                                                               (1, 0.00089, 0.00243);
+SELECT * FROM zoom_levels;
 
 
+desc property_tbl;

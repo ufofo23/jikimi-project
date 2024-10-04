@@ -17,29 +17,30 @@
     </div>
 
     <!-- 게시글 목록 -->
+    <div v-else class="line-remove">
+      <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          @click="toggleDetails(article.faqNo)"
+          style="cursor: pointer"
+        >
+          <h3 class="mb-0">{{ article.faqQuestion }}</h3>
+          <span v-if="openSection === 'contract'">▲</span>
+          <span v-else>▼</span>
+          <span>
+            <i
+              :class="
+                openSections.includes(article.faqNo)
+                  ? 'fa-solid fa-chevron-up'
+                  : 'fa-solid fa-chevron-down'
+              "
+            ></i>
+          </span>
+        </div>
 
-    <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
-      <div
-        class="card-header d-flex justify-content-between align-items-center"
-        @click="toggleDetails(article.faqNo)"
-        style="cursor: pointer"
-      >
-        <h3 class="mb-0">{{ article.faqQuestion }}</h3>
-        <span v-if="openSection === 'contract'">▲</span>
-        <span v-else>▼</span>
-        <span>
-          <i
-            :class="
-              openSections.includes(article.faqNo)
-                ? 'fa-solid fa-chevron-up'
-                : 'fa-solid fa-chevron-down'
-            "
-          ></i>
-        </span>
-      </div>
-
-      <div v-if="openSections.includes(article.faqNo)" class="card-body">
-        <p class="card-text">{{ article.faqAnswer }}</p>
+        <div v-if="openSections.includes(article.faqNo)" class="card-body">
+          <p class="card-text">{{ article.faqAnswer }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -106,10 +107,22 @@ onMounted(() => {
 });
 </script>
 <style scoped>
+
+
 .container {
   max-width: 800px; /* 최대 너비 설정 */
   margin: 0 auto; /* 중앙 정렬 */
   padding: 0 15px; /* 좌우 패딩 추가 */
+}
+
+.container .line-remove{
+  padding: 10px 10px 10px 10px;
+  border-bottom-width: 0px;
+}
+
+
+.mb-3{
+  border-bottom: none;
 }
 
 .table-hover tbody tr:hover {
@@ -140,4 +153,5 @@ onMounted(() => {
     font-size: 0.9rem;
   }
 }
+
 </style>
