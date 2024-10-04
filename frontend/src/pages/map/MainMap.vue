@@ -1,7 +1,6 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import addressApi from '@/api/mapApi'; // addressApi.js 임포트
-import HouseSearchBar from './SearchBar.vue'; // HouseSearchBar 임포트
 import LeftPanel from './LeftPanel.vue';
 
 const mapContainer = ref(null); // 지도 컨테이너
@@ -15,6 +14,14 @@ let map,
 
 const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
 const isPanelOpen = ref(true); // 패널 열림 상태
+const isMapExpanded = ref(false);
+const someValue = ref(10);
+const doubleValue = computed(() => someValue.value * 2);
+
+// 버튼 문구를 상태에 따라 다르게 표시
+const toggleButtonText = computed(() => {
+  return isPanelOpen.value ? '지도 확대' : '지도 축소';
+});
 
 // 데이터를 서버에서 페이징 처리해서 가져오는 함수
 const fetchAddressData = async (lat, lon, zoomLevel) => {
@@ -124,6 +131,22 @@ const setMapCoordinates = ({ x, y }) => {
   }
 };
 
+const toggleMapSize = () => {
+  isMapExpanded.value = !isMapExpanded.value;
+  isPanelOpen.value = !isMapExpanded.value;
+
+  if (map) {
+    map.relayout();
+  }
+};
+
+const toggleLeftPanel = () => {
+  isPanelOpen.value = !isPanelOpen.value;
+  if (map) {
+    map.relayout();
+  }
+};
+
 // 마커 이미지 설정
 const imageSrc = '../../src/assets/image (2).png';
 const imageSize = new kakao.maps.Size(80, 80);
@@ -189,8 +212,14 @@ const updateMarkers = (newCoords) => {
       'click',
       handleClick
     );
+    kakao.maps.event.addListener(map, 'click', (event) => {
+      if (!isPanelOpen.value) {
+        toggleMapSize();
+      }
+    });
     return marker;
   });
+
   markers.push(...newMarkers); // 마커 배열에 추가
   clusterer.addMarkers(newMarkers); // 클러스터에 마커 추가
 };
@@ -226,10 +255,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <HouseSearchBar @address-selected="setMapCoordinates" />
-  <!-- HouseSearchBar 컴포넌트 추가 -->
   <div class="container">
-    <!-- LeftPanel 컴포넌트 추가 -->
     <LeftPanel
       v-if="isPanelOpen"
       :selectedProperty="selectedProperty"
@@ -242,17 +268,21 @@ onMounted(() => {
         'right-panel': isPanelOpen,
       }"
     >
+      <!-- 수정 1: 지도 좌측 상단에 버튼 추가 -->
       <button
-        v-if="!isPanelOpen"
-        @click="togglePanel"
-        class="toggle-btn-open"
+        class="toggle-panel-btn"
+        @click="toggleLeftPanel"
       >
-        목록 열기
+        {{ toggleButtonText }}
       </button>
+
       <div
         id="map"
         ref="mapContainer"
-        style="width: 100%; height: 600px"
+        :style="{
+          width: isPanelOpen ? '100%' : '100%',
+          height: '100vh',
+        }"
       ></div>
     </div>
   </div>
@@ -261,6 +291,11 @@ onMounted(() => {
 <style scoped>
 .container {
   display: flex;
+  height: 100vh;
+}
+
+.container div {
+  border-bottom: none;
 }
 
 .left-panel {
@@ -269,38 +304,48 @@ onMounted(() => {
   background-color: white;
   position: relative;
   border: 1px black;
+  height: 95vh;
 }
 
 .right-panel {
   width: 70%;
   position: relative;
+  height: 95vh;
 }
 
 .right-panel-full {
   width: 100%;
   position: relative;
+  height: 95vh;
 }
 
-.toggle-btn {
+/* 수정 1: 지도 좌측 상단에 추가된 버튼 스타일 */
+.toggle-panel-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: blue;
-  color: white;
-  padding: 5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.toggle-btn-open {
-  position: absolute;
-  z-index: 200;
   top: 10px;
   left: 10px;
-  background-color: blue;
+  z-index: 1000;
+  background-color: #007bff;
   color: white;
-  padding: 5px;
+  border: none;
+  padding: 10px;
   cursor: pointer;
   border-radius: 5px;
+}
+
+.toggle-panel-btn:hover {
+  background-color: #0056b3;
+}
+
+#map {
+  position: relative;
+}
+
+/* 버튼을 헤더가 아닌 지도 위에 정확히 위치시킴 */
+#map .toggle-panel-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
 }
 </style>

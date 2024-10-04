@@ -3,12 +3,12 @@ import useAuthStore from '@/stores/auth';
 import Main from '../pages/app/Main.vue';
 import Login from '../pages/Login.vue';
 import MyPage from '../pages/Mypage.vue';
-// import Map from '../pages/app.vue';
 import Analyzing from '@/pages/app/Analyzing.vue';
 import Study from '@/pages/app/Study.vue';
 import FAQ from '@/pages/FAQ.vue';
 import Loading from '@/pages/Loading.vue';
-import FraudChecklist from '@/pages/FraudChecklist.vue';
+import ScenarioMain from '@/pages/scenario/ScenarioMain.vue';
+// import ScenarioResult from '@/pages/scenario/ScenarioResult.vue';
 import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
 import SenseDetailPage from '@/pages/study/commonsense/SenseDetailPage.vue';
@@ -16,15 +16,16 @@ import SenseListPage from '@/pages/study/commonsense/SenseListPage.vue';
 import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
 import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 import MainMap from '../pages/map/MainMap.vue';
-import BeforeCheckListPage from '@/pages/study/BeforeCheckListPage.vue';
+import PreventionListPage from '@/pages/study/PreventionListPage.vue';
+import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
     { path: '/mypage', 
       name: 'mypage', 
-      component: MyPage,
-     },
+      component: MyPage },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -46,10 +47,15 @@ const router = createRouter({
     { path: '/', name: 'main', component: Main },
     { path: '/login', name: 'login', component: Login },
     {
-      path: '/fraudchecklist',
-      name: 'fraudchecklist',
-      component: FraudChecklist,
+      path: '/scenario',
+      name: 'ScenarioMain',
+      component: ScenarioMain,
     },
+    // {
+    //   path: '/scenario/result',
+    //   name: 'ScenarioResult',
+    //   component: ScenarioResult,
+    // },
     {
       path: '/loading',
       name: 'Loading',
@@ -87,9 +93,14 @@ const router = createRouter({
       component: MainMap,
     },
     {
-      path: '/study/beforecheck/list',
-      name: 'beforeCheckList',
-      component: BeforeCheckListPage,
+      path: '/study/prevention/list',
+      name: 'preventionList',
+      component: PreventionListPage,
+    },
+    {
+      path: '/study/prevention/detail/:no',
+      name: 'preventionDetail',
+      component: PreventionDetailPage,
     },
   ],
 });

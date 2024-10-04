@@ -61,7 +61,7 @@ const sendMessage = async () => {
 
   try {
     const response = await api.post(
-      '/api/chat',
+      '/api/chat/chatbot',
       { prompt: userInput.value },
       {
         headers: {

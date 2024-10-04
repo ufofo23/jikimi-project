@@ -1,6 +1,13 @@
 <template>
   <div>
-    <button @click="openDaumPostcode">주소 검색</button>
+    <input
+      type="text"
+      v-model="searchQuery"
+      @focus="openDaumPostcode"
+      placeholder="단지, 지역, 지하철, 학교 검색"
+      class="search-input"
+      @click="handleClick"
+    />
 
     <!-- Display the extracted address data -->
     <div v-if="addressDetails">
@@ -30,16 +37,16 @@ import axios from 'axios';
 
 const KAKAO_API_KEY = 'c6ce7f1106ed7b6e4d7d2d8a0f956afa';
 
-// ref로 상태 변수 선언
 const addressDetails = ref(null);
+const searchQuery = ref('');
 const x = ref(null);
 const y = ref(null);
-// defineEmits를 사용하여 emit 정의
 const emit = defineEmits(['address-selected']);
+let isPostcodeOpen = ref(false); // 팝업 상태 관리
 
 async function getCoordinates(address) {
   try {
-    const url = `https://dapi.kakao.com/v2/local/search/address.json`;
+    const url = ``;
 
     const response = await axios.get(url, {
       headers: {
@@ -50,27 +57,25 @@ async function getCoordinates(address) {
       },
     });
 
-    // 응답이 정상적으로 왔을 경우
     if (response.data.documents.length > 0) {
-      const { x, y } = response.data.documents[0]; // 첫 번째 결과의 좌표를 가져옵니다.
+      const { x, y } = response.data.documents[0];
       return { x, y };
     } else {
       console.log('주소를 찾을 수 없습니다.');
       return null;
     }
   } catch (error) {
-    console.error(
-      `Failed to fetch coordinates for address: ${address}`,
-      error
-    );
+    console.error(`Failed to fetch coordinates for address: ${address}`, error);
     return null;
   }
 }
 
 const openDaumPostcode = () => {
+  if (isPostcodeOpen.value) return; // 팝업이 열려 있으면 무시
+
+  isPostcodeOpen.value = true; // 팝업 상태 업데이트
   new daum.Postcode({
     oncomplete: async function (data) {
-      // addressDetails를 업데이트
       addressDetails.value = {
         zonecode: data.zonecode,
         jibunAddress: data.jibunAddress,
@@ -83,24 +88,42 @@ const openDaumPostcode = () => {
         apartment: data.apartment,
       };
 
-      // 좌표 가져오기
-      const coordinates = await getCoordinates(
-        data.roadAddress
-      );
+      const coordinates = await getCoordinates(data.roadAddress);
       if (coordinates) {
         x.value = coordinates.x;
         y.value = coordinates.y;
-        console.log('좌표:', coordinates); // x, y 좌표 출력
+        console.log('좌표:', coordinates);
 
-        // 좌표를 부모 컴포넌트로 전달하는 로직 수정
         emit('address-selected', {
           x: x.value,
           y: y.value,
         });
       }
+
+      isPostcodeOpen.value = false; // 팝업 닫힘 상태 업데이트
     },
   }).open();
 };
+
+const handleClick = () => {
+  if (!isPostcodeOpen.value) {
+    openDaumPostcode();
+  }
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+.search-input {
+  width: 90%; /* 너비 설정 */
+  height: 60px; /* 높이 조정 */
+  border-radius: 10px; /* 둥글게 */
+  border: 1px solid #ccc; /* 테두리 설정 */
+  padding: 0 15px; /* 여백 추가 */
+  font-size: 16px; /* 글자 크기 */
+}
+
+.search-input:focus {
+  border-color: rgb(0, 181, 0); /* 포커스 시 색상 변경 */
+  outline: none; /* 기본 아웃라인 제거 */
+}
+</style>
