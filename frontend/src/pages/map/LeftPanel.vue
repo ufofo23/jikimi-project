@@ -2,9 +2,7 @@
   <div class="left-panel">
     <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
-      <SearchBar
-        @address-selected="handleAddressSelected"
-      />
+      <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
     <!-- 즐겨찾기 토글 -->
@@ -40,18 +38,12 @@
         <span>{{ detailsVisible ? '▲' : '▼' }}</span>
       </h2>
       <div v-if="detailsVisible">
-        <div
-          v-if="selectedProperty && selectedProperty.length"
-        >
+        <div v-if="selectedProperty && selectedProperty.length">
           <h2 class="apart-name">
-            {{ selectedProperty[0].apartName }}
+            {{ selectedProperty[0].propertyAddrAptName }}
             <font-awesome-icon
               class="favorite-icon"
-              :icon="
-                isFavorite
-                  ? ['fas', 'star']
-                  : ['far', 'star']
-              "
+              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
               :style="{
                 color: isFavorite ? '#FFD43B' : 'black',
               }"
@@ -60,7 +52,7 @@
           </h2>
           <h4>
             {{ selectedProperty[0].doroJuso }} (건축년도:
-            {{ selectedProperty[0].buildYear }})
+            {{ selectedProperty[0].buildingYear }})
           </h4>
 
           <!-- 실거래가 표 -->
@@ -75,17 +67,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(
-                  property, index
-                ) in selectedProperty"
-                :key="index"
-              >
+              <tr v-for="(property, index) in selectedProperty" :key="index">
                 <td>{{ property.date }}</td>
-                <td>{{ property.typeTrade }}</td>
+                <td>{{ property.contractType }}</td>
                 <td>{{ property.price }}만원</td>
-                <td>{{ property.spacial }} m²</td>
-                <td>{{ property.floor }}</td>
+                <td>{{ property.propertyArea }} m²</td>
+                <td>{{ property.propertyAddrFloor }}</td>
               </tr>
             </tbody>
           </table>
@@ -127,7 +114,7 @@ watch(
   (newValue) => {
     if (newValue && newValue.length > 0) {
       isFavorite.value = wishlist.value.includes(
-        newValue[0].apartName
+        newValue[0].propertyAddrAptName
       );
     } else {
       isFavorite.value = false; // 선택된 아파트가 없으면 기본값 false
@@ -139,9 +126,7 @@ watch(
 // 즐겨찾기 아이템 토글 함수
 const toggleWishlistItem = (itemName) => {
   if (wishlist.value.includes(itemName)) {
-    wishlist.value = wishlist.value.filter(
-      (item) => item !== itemName
-    );
+    wishlist.value = wishlist.value.filter((item) => item !== itemName);
   } else {
     wishlist.value.push(itemName);
   }
@@ -151,7 +136,7 @@ const toggleWishlistItem = (itemName) => {
 const removeFromWishlist = (itemName) => {
   toggleWishlistItem(itemName);
   // 아이콘 상태 업데이트
-  if (props.selectedProperty[0]?.apartName === itemName) {
+  if (props.selectedProperty[0]?.propertyAddrAptName === itemName) {
     isFavorite.value = false; // 상세보기에서 해당 아이콘 상태 변경
   }
 };
@@ -167,13 +152,9 @@ const toggleDetails = () => {
 
 // 즐겨찾기 상태 토글
 const toggleFavorite = () => {
-  if (
-    !props.selectedProperty ||
-    props.selectedProperty.length === 0
-  )
-    return;
+  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
 
-  const apartmentName = props.selectedProperty[0].apartName;
+  const apartmentName = props.selectedProperty[0].propertyAddrAptName;
   toggleWishlistItem(apartmentName);
   isFavorite.value = wishlist.value.includes(apartmentName);
 };
@@ -181,7 +162,7 @@ const toggleFavorite = () => {
 // 아파트 선택 함수
 const selectApartment = (apartmentName) => {
   const selected = props.selectedProperty.find(
-    (prop) => prop.apartName === apartmentName
+    (prop) => prop.propertyAddrAptName === apartmentName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);

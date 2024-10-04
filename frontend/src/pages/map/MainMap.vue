@@ -27,13 +27,9 @@ const toggleButtonText = computed(() => {
 const fetchAddressData = async (lat, lon, zoomLevel) => {
   if (zoomLevel < 6) {
     try {
-      const response = await addressApi.getAddressListMove(
-        lat,
-        lon,
-        zoomLevel
-      ); // API 호출
+      const response = await addressApi.getAddressListMove(lat, lon, zoomLevel); // API 호출
       const newCoordinates = response.map((item) => ({
-        id: item.id,
+        id: item.locationNo,
         x: parseFloat(item.xcoordinate),
         y: parseFloat(item.ycoordinate),
         price: item.price,
@@ -48,12 +44,11 @@ const fetchAddressData = async (lat, lon, zoomLevel) => {
     }
   } else {
     try {
-      const response =
-        await addressApi.getAddressListMoveCluster(
-          lat,
-          lon,
-          zoomLevel
-        ); // API 호출
+      const response = await addressApi.getAddressListMoveCluster(
+        lat,
+        lon,
+        zoomLevel
+      ); // API 호출
       const newCoordinates = response.map((item) => ({
         x: parseFloat(item.xcoordinate),
         y: parseFloat(item.ycoordinate),
@@ -150,20 +145,14 @@ const toggleLeftPanel = () => {
 // 마커 이미지 설정
 const imageSrc = '../../src/assets/image (2).png';
 const imageSize = new kakao.maps.Size(80, 80);
-const markerImage = new kakao.maps.MarkerImage(
-  imageSrc,
-  imageSize
-);
+const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
 const updateMarkers = (newCoords) => {
   markers.forEach((marker) => marker.setMap(null));
   overlays.forEach((overlay) => overlay.setMap(null));
 
   const newMarkers = newCoords.map((coord) => {
-    const markerPosition = new kakao.maps.LatLng(
-      coord.y,
-      coord.x
-    );
+    const markerPosition = new kakao.maps.LatLng(coord.y, coord.x);
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       image: markerImage,
@@ -195,23 +184,14 @@ const updateMarkers = (newCoords) => {
     // 마커 클릭 이벤트에서 매물 세부 정보를 표시하도록 함
     const handleClick = async () => {
       try {
-        const data = await addressApi.getAddressDetails(
-          coord.id
-        );
+        const data = await addressApi.getAddressDetails(coord.id);
         selectedProperty.value = data; // 매물 정보 저장
       } catch (error) {
-        console.error(
-          'Failed to fetch address details:',
-          error
-        );
+        console.error('Failed to fetch address details:', error);
       }
     };
     // 마커에 클릭 이벤트 등록
-    kakao.maps.event.addListener(
-      marker,
-      'click',
-      handleClick
-    );
+    kakao.maps.event.addListener(marker, 'click', handleClick);
     kakao.maps.event.addListener(map, 'click', (event) => {
       if (!isPanelOpen.value) {
         toggleMapSize();
@@ -227,10 +207,7 @@ const updateMarkers = (newCoords) => {
 const updateMarkersCluster = (newCoords) => {
   // 새로운 마커 추가
   const newClusterMarker = newCoords.map((coord) => {
-    const markerPosition = new kakao.maps.LatLng(
-      coord.y,
-      coord.x
-    );
+    const markerPosition = new kakao.maps.LatLng(coord.y, coord.x);
     const clustermarker = new kakao.maps.Marker({
       position: markerPosition,
     });
@@ -270,10 +247,7 @@ onMounted(() => {
       }"
     >
       <!-- 수정 1: 지도 좌측 상단에 버튼 추가 -->
-      <button
-        class="toggle-panel-btn"
-        @click="toggleLeftPanel"
-      >
+      <button class="toggle-panel-btn" @click="toggleLeftPanel">
         {{ toggleButtonText }}
       </button>
 
