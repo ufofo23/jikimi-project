@@ -16,14 +16,13 @@ import SenseListPage from '@/pages/study/commonsense/SenseListPage.vue';
 import DictionaryListPage from '@/pages/study/dictionary/DictionaryListPage.vue';
 import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.vue';
 import MainMap from '../pages/map/MainMap.vue';
+import PreventionListPage from '@/pages/study/PreventionListPage.vue';
+import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/mypage', 
-      name: 'mypage', 
-      component: MyPage,
-     },
+    { path: '/mypage', name: 'mypage', component: MyPage },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -90,14 +89,22 @@ const router = createRouter({
       name: 'map',
       component: MainMap,
     },
+    {
+      path: '/study/prevention/list',
+      name: 'preventionList',
+      component: PreventionListPage,
+    },
+    {
+      path: '/study/prevention/detail/:no',
+      name: 'preventionDetail',
+      component: PreventionDetailPage,
+    },
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const requiresAuth = to.matched.some(
-    (record) => record.meta.requiresAuth
-  );
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   authStore.checkAuth(); // 인증 체크
 
