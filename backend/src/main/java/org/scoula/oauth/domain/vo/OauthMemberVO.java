@@ -27,8 +27,6 @@ public class OauthMemberVO {
 
     private Integer gender;
 
-    private Integer age;
-
     private String birthday;
 
     private String mobileE164;
