@@ -51,7 +51,7 @@ const cr = useRoute();
 const router = useRouter();
 const detail = (no) => {
   router.push({
-    name: 'preventionDetailPage',
+    name: 'preventionDetail',
     params: { no: no },
     query: cr.query,
   });
