@@ -29,4 +29,5 @@ public class DictionaryController {
     public ResponseEntity<DictionaryDTO> get(@PathVariable int no) {
         return ResponseEntity.ok(service.get(no));
     }
+
 }

@@ -30,8 +30,6 @@ public class OauthMemberDTO {
 
     private Integer gender;
 
-    private Integer age;
-
     private String birthday;
 
     private String mobileE164;
@@ -49,7 +47,6 @@ public class OauthMemberDTO {
                 .email(vo.getEmail())
                 .name(vo.getName())
                 .gender(vo.getGender())
-                .age(vo.getAge())
                 .birthday(vo.getBirthday())
                 .mobileE164(vo.getMobileE164())
                 .role(vo.getRole())

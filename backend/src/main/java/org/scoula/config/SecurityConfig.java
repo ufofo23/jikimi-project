@@ -37,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        System.out.println("SecurityConfig.configure");
+
+        log.info("http : "+http);
         log.info("HttpSecurity configuration complete");
     }
 
