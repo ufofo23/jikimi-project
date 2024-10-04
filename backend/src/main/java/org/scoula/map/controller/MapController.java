@@ -6,10 +6,7 @@ import org.scoula.map.domain.MapDetailDTO;
 import org.scoula.map.domain.MapVO;
 import org.scoula.map.service.MapService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +23,28 @@ public class MapController {
         List<MapVO> addresses = addressService.getAllAddress();
         return ResponseEntity.ok(addresses);
     }
+
+    // 중심 좌표와 레벨을 기반으로 해당 구역 안에 있는 주소 리스트를 반환하는 API
+    @GetMapping("/move")
+    public ResponseEntity<List<MapVO>> getAddressListMove(
+            @RequestParam("lat") double lat,
+            @RequestParam("lon") double lon,
+            @RequestParam("zoomLevel") int zoomLevel
+    ) {
+        List<MapVO> addressList = addressService.getAddressListMove(lat, lon, zoomLevel);
+        return ResponseEntity.ok(addressList);
+    }
+
+    @GetMapping("/movecluster")
+    public ResponseEntity<List<MapVO>> getAddressListMoveCluster(
+            @RequestParam("lat") double lat,
+            @RequestParam("lon") double lon,
+            @RequestParam("zoomLevel") int zoomLevel
+    ) {
+        List<MapVO> addressList = addressService.getAddressListMoveCluster(lat, lon, zoomLevel);
+        return ResponseEntity.ok(addressList);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<List<MapDetailDTO>> getAddressDetails(@PathVariable Long id) {
         List<MapDetailDTO> addressDetails = addressService.getAddressDetails(id); // List로 변경

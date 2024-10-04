@@ -1,7 +1,9 @@
 package org.scoula.map.service;
 
+import com.nimbusds.openid.connect.sdk.claims.Address;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.apache.ibatis.annotations.Param;
 import org.scoula.map.domain.MapDetailDTO;
 import org.scoula.map.domain.MapVO;
 import org.scoula.map.mapper.MapMapper;
@@ -20,6 +22,22 @@ public class MapServiceImpl implements MapService {
     @Override
     public List<MapVO> getAllAddress() {
         return mapper.getAdressList().stream().toList();
+    }
+
+    @Override
+    public List<MapVO> getAddressListMove(@Param("lat") double lat,
+                                            @Param("lon") double lon,
+                                            @Param("zoomLevel") int zoomLevel) {
+        log.info("****************** getAddressListMove: "+ zoomLevel + lat +"********37"+ lon + "***********127");
+        return mapper.getAddressListMove(lat, lon, zoomLevel);
+    }
+
+    @Override
+    public List<MapVO> getAddressListMoveCluster(@Param("lat") double lat,
+                                                 @Param("lon") double lon,
+                                                 @Param("zoomLevel") int zoomLevel) {
+        log.info("****************** getAddressListMove: "+ zoomLevel);
+        return mapper.getAddressListMoveCluster(lat, lon, zoomLevel);
     }
 
     @Override

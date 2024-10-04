@@ -780,6 +780,44 @@ SET ap.address_id = ad.id
 WHERE ap.address_id IS NULL;
 
 
+#  성능 향상을 위해서!!
+ALTER TABLE address_price
+    ADD transaction_date DATE;
+UPDATE address_price
+SET transaction_date = STR_TO_DATE(CONCAT(con_month, con_date), '%Y%m%d')
+WHERE con_month <> '';
+
+ALTER TABLE address_price
+    ADD formated_price DECIMAL(10,2);
+UPDATE address_price
+SET formated_price = FORMAT(CAST(REPLACE(price, ',', '') AS UNSIGNED) / 10000, 2)
+WHERE price <> '';
+
+SELECT * FROM address_price;
+SELECT * FROM address_distinct;
 
 
+
+# 줌인앤아웃 관련 테이블
+DROP TABLE IF EXISTS zoom_levels;
+CREATE TABLE zoom_levels (
+                             zoom_level INT PRIMARY KEY,
+                             lat_range DECIMAL(10, 6),
+                             lon_range DECIMAL(10, 6)
+);
+INSERT INTO zoom_levels (zoom_level, lat_range, lon_range) VALUES
+                                                               (13, 3.72996, 9.89265),
+                                                               (12, 1.84780, 4.96287),
+                                                               (11, 0.91583, 2.48355),
+                                                               (10, 0.45702, 1.24239),
+                                                               (9, 0.22827, 0.62134),
+                                                               (8, 0.11408, 0.31071),
+                                                               (7, 0.05704, 0.15536),
+                                                               (6, 0.02851, 0.07768),
+                                                               (5, 0.01425, 0.03884),
+                                                               (4, 0.00713, 0.01942),
+                                                               (3, 0.00356, 0.00971),
+                                                               (2, 0.00178, 0.00486),
+                                                               (1, 0.00089, 0.00243);
+SELECT * FROM zoom_levels;
 
