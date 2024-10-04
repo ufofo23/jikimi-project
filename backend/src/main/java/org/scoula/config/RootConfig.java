@@ -33,7 +33,7 @@ import javax.sql.DataSource;
         "org.scoula.dictionary.service",
         "org.scoula.faq.service",
         "org.scoula.map.service",
-        "org.scoula.ai.service"
+        "org.scoula.chat.service"
 })
 @Slf4j
 @EnableTransactionManagement

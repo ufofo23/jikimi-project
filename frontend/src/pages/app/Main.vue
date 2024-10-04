@@ -44,7 +44,7 @@
 
       <!-- 오른쪽 카드 -->
       <router-link
-        :to="{ name: 'fraudchecklist' }"
+        :to="{ name: 'ScenarioMain' }"
         class="card small-card safety-check text-center"
       >
         <div class="card-body">

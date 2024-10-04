@@ -3,12 +3,12 @@ import useAuthStore from '@/stores/auth';
 import Main from '../pages/app/Main.vue';
 import Login from '../pages/Login.vue';
 import MyPage from '../pages/Mypage.vue';
-// import Map from '../pages/app.vue';
 import Analyzing from '@/pages/app/Analyzing.vue';
 import Study from '@/pages/app/Study.vue';
 import FAQ from '@/pages/FAQ.vue';
 import Loading from '@/pages/Loading.vue';
-import FraudChecklist from '@/pages/FraudChecklist.vue';
+import ScenarioMain from '@/pages/scenario/ScenarioMain.vue';
+// import ScenarioResult from '@/pages/scenario/ScenarioResult.vue';
 import Introduce from '@/pages/app/Introduce.vue';
 import OauthRedirectPage from '@/pages/OauthRedirectPage.vue';
 import SenseDetailPage from '@/pages/study/commonsense/SenseDetailPage.vue';
@@ -45,10 +45,15 @@ const router = createRouter({
     { path: '/', name: 'main', component: Main },
     { path: '/login', name: 'login', component: Login },
     {
-      path: '/fraudchecklist',
-      name: 'fraudchecklist',
-      component: FraudChecklist,
+      path: '/scenario',
+      name: 'ScenarioMain',
+      component: ScenarioMain,
     },
+    // {
+    //   path: '/scenario/result',
+    //   name: 'ScenarioResult',
+    //   component: ScenarioResult,
+    // },
     {
       path: '/loading',
       name: 'Loading',

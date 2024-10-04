@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.scoula.dictionary.controller",
         "org.scoula.faq.controller",
         "org.scoula.map.controller",
-        "org.scoula.ai.controller",
+        "org.scoula.chat.controller",
         "org.scoula.oauth.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
