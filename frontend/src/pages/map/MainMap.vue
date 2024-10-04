@@ -6,26 +6,104 @@ import LeftPanel from './LeftPanel.vue';
 
 const mapContainer = ref(null); // 지도 컨테이너
 const coordinates = ref([]); // API로부터 받아온 좌표 데이터를 저장할 변수
-const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
-let map, marker, clusterer;
+let map,
+  clusterer,
+  marker,
+  markers = [], // 현재 지도에 표시된 마커들을 저장할 배열
+  clustermarker,
+  overlays = []; // 커스텀 오버레이를 저장할 배열
 
+const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
 const isPanelOpen = ref(true); // 패널 열림 상태
 
-const fetchAddressData = async () => {
-  try {
-    const response = await addressApi.getAddressList(); // API 호출
-    coordinates.value = response.map((item) => ({
-      id: item.id,
-      doroJuso: item.doroJuso,
-      x: parseFloat(item.xcoordinate), // 데이터 필드 이름을 정확히 맞춤
-      y: parseFloat(item.ycoordinate), // 데이터 필드 이름을 정확히 맞춤
-      price: item.price,
-    }));
+// 데이터를 서버에서 페이징 처리해서 가져오는 함수
+const fetchAddressData = async (lat, lon, zoomLevel) => {
+  if (zoomLevel < 6) {
+    try {
+      const response = await addressApi.getAddressListMove(
+        lat,
+        lon,
+        zoomLevel
+      ); // API 호출
+      const newCoordinates = response.map((item) => ({
+        id: item.id,
+        x: parseFloat(item.xcoordinate),
+        y: parseFloat(item.ycoordinate),
+        price: item.price,
+      }));
 
-    initializeMap(); // 데이터를 로드한 후 지도를 초기화합니다.
-  } catch (error) {
-    console.error('Failed to fetch address data:', error);
+      // 클러스터에 저장된 마커를 제거
+      clusterer.clear();
+      coordinates.value.push(...newCoordinates); // 새 데이터를 기존 데이터에 추가
+      updateMarkers(newCoordinates); // 새로운 데이터만 마커 추가
+    } catch (error) {
+      console.error('Failed to fetch address data:', error);
+    }
+  } else {
+    try {
+      const response =
+        await addressApi.getAddressListMoveCluster(
+          lat,
+          lon,
+          zoomLevel
+        ); // API 호출
+      const newCoordinates = response.map((item) => ({
+        x: parseFloat(item.xcoordinate),
+        y: parseFloat(item.ycoordinate),
+      }));
+
+      // 클러스터에 저장된 마커를 제거
+      clusterer.clear();
+      markers.forEach((marker) => {
+        marker.setMap(null); // 마커를 숨김
+      });
+      overlays.forEach((overlay) => {
+        overlay.setVisible(false); // 오버레이를 숨김
+      });
+      updateMarkersCluster(newCoordinates); // 새로운 데이터만 마커 추가
+    } catch (error) {
+      console.error('Failed to fetch address data:', error);
+    }
   }
+};
+
+// 지도 및 마커 클러스터러 초기화
+const initializeMap = () => {
+  // 지도 초기화
+  map = new kakao.maps.Map(mapContainer.value, {
+    center: new kakao.maps.LatLng(37.54699, 127.09598), // 기본 좌표
+    level: 5, // 지도 확대 레벨
+  });
+
+  // 마커 클러스터러 초기화
+  clusterer = new kakao.maps.MarkerClusterer({
+    map: map, // 클러스터러에 추가할 지도 객체
+    averageCenter: true, // 클러스터 마커의 중심을 마커들의 평균 좌표로 설정
+    minLevel: 6, // 클러스터 할 최소 줌 레벨
+    minClusterSize: 1, // 클러스터링 할 최소 마커 수 (default: 2)
+    disableClickZoom: false, // 클러스터 클릭할 때 확대 방지
+  });
+
+  // 지도 이동 및 확대/축소 이벤트 리스너 등록
+  kakao.maps.event.addListener(map, 'idle', function () {
+    // 지도의 레벨과 중심 좌표를 얻어옵니다
+    const level = map.getLevel();
+    const center = map.getCenter();
+    const lat = center.getLat();
+    const lon = center.getLng();
+
+    // 새로운 데이터를 가져옵니다
+    fetchAddressData(lat, lon, level);
+  });
+
+  // 초기 데이터 로드
+  const initialCenter = map.getCenter();
+  const initialLevel = map.getLevel();
+  fetchAddressData(
+    initialCenter.getLat(),
+    initialCenter.getLng(),
+    initialLevel
+  );
 };
 
 // 검색을 통해 지도를 특정 좌표로 이동시키는 함수
@@ -46,52 +124,24 @@ const setMapCoordinates = ({ x, y }) => {
   }
 };
 
-const initializeMap = () => {
-  if (!coordinates.value.length) {
-    console.error(
-      'No coordinates available to initialize the map'
-    );
-    return;
-  }
+// 마커 이미지 설정
+const imageSrc = '../../src/assets/image (2).png';
+const imageSize = new kakao.maps.Size(80, 80);
+const markerImage = new kakao.maps.MarkerImage(
+  imageSrc,
+  imageSize
+);
 
-  // 지도 초기화 옵션
-  const mapOption = {
-    center: new kakao.maps.LatLng(
-      37.4704921415939,
-      126.86576788731625
-    ), // 기본 지도 중심좌표
-    level: 4, // 지도 확대 레벨
-  };
+const updateMarkers = (newCoords) => {
+  markers.forEach((marker) => marker.setMap(null));
+  overlays.forEach((overlay) => overlay.setMap(null));
 
-  // 지도 초기화
-  map = new kakao.maps.Map(mapContainer.value, mapOption);
-
-  // // 마커 클러스터러 생성
-  // clusterer = new kakao.maps.MarkerClusterer({
-  //   map: map, // 클러스터를 적용할 지도
-  //   averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-  //   minLevel: 8, // 클러스터 할 최소 지도 레벨
-  //   disableClickZoom: true, // 클러스터 클릭 시 확대하지 않도록 설정
-  // });
-
-  // 마커 이미지 설정
-  const imageSrc = '../../src/assets/image (2).png';
-  const imageSize = new kakao.maps.Size(80, 80);
-  const markerImage = new kakao.maps.MarkerImage(
-    imageSrc,
-    imageSize
-  );
-
-  // 좌표 데이터를 기반으로 마커 표시 + 클러스터
-  const markers = coordinates.value.map((coord) => {
+  const newMarkers = newCoords.map((coord) => {
     const markerPosition = new kakao.maps.LatLng(
       coord.y,
       coord.x
     );
-
-    // 마커 생성
     const marker = new kakao.maps.Marker({
-      map: map,
       position: markerPosition,
       image: markerImage,
     });
@@ -105,15 +155,18 @@ const initializeMap = () => {
       event.stopPropagation(); // 이벤트 전파 방지
       handleClick();
     });
+
     // 커스텀 오버레이 생성
     const customOverlay = new kakao.maps.CustomOverlay({
       position: markerPosition, // 마커와 동일한 위치에 오버레이 표시
       content: overlayContent, // 커스텀 오버레이 내용
       clickable: false, // 오버레이 클릭을 비활성화
       yAnchor: 1,
+      zIndex: 3,
     });
 
-    // 초기에는 오버레이를 숨김
+    // 지도에 오버레이 추가
+    overlays.push(customOverlay); // 오버레이 배열에 추가
     customOverlay.setMap(map);
 
     // 마커 클릭 이벤트에서 매물 세부 정보를 표시하도록 함
@@ -122,7 +175,7 @@ const initializeMap = () => {
         const data = await addressApi.getAddressDetails(
           coord.id
         );
-        selectedProperty.value = data; // Assuming data is a list
+        selectedProperty.value = data; // 매물 정보 저장
       } catch (error) {
         console.error(
           'Failed to fetch address details:',
@@ -130,36 +183,45 @@ const initializeMap = () => {
         );
       }
     };
-
     // 마커에 클릭 이벤트 등록
     kakao.maps.event.addListener(
       marker,
       'click',
       handleClick
     );
-
     return marker;
   });
+  markers.push(...newMarkers); // 마커 배열에 추가
+  clusterer.addMarkers(newMarkers); // 클러스터에 마커 추가
+};
 
-  // //클러스터에 마커 추가
-  // clusterer.addMarkers(markers);
-  // // 마커 클러스터에 클릭 이벤트 등록
-  // kakao.maps.event.addListener(
-  //   clusterer,
-  //   'clusterclick',
-  //   function (cluster) {
-  //     const level = map.getLevel() - 1;
-  //     map.setLevel(level, { anchor: cluster.getCenter() });
-  //   }
-  // );
+const updateMarkersCluster = (newCoords) => {
+  // 새로운 마커 추가
+  const newClusterMarker = newCoords.map((coord) => {
+    const markerPosition = new kakao.maps.LatLng(
+      coord.y,
+      coord.x
+    );
+    const clustermarker = new kakao.maps.Marker({
+      position: markerPosition,
+    });
+
+    return clustermarker;
+  });
+  clusterer.addMarkers(newClusterMarker); // 클러스터에 마커 추가
 };
 
 const togglePanel = () => {
   isPanelOpen.value = !isPanelOpen.value;
+  // 패널이 열리고 닫힌 후 지도의 크기를 재설정하여 좌표와 마커가 정상적으로 보이게 함
+  setTimeout(() => {
+    if (map) {
+      map.relayout(); // 패널 상태가 바뀐 후 지도의 크기를 다시 설정
+    }
+  }, 0);
 };
-
 onMounted(() => {
-  fetchAddressData(); // 데이터를 로드하고 나서 지도 초기화 호출
+  initializeMap(); // 지도 초기화 및 데이터 로드
 });
 </script>
 
@@ -199,7 +261,6 @@ onMounted(() => {
 <style scoped>
 .container {
   display: flex;
-  /* height: 100vh; 전체 높이를 사용 */
 }
 
 .left-panel {
@@ -241,19 +302,5 @@ onMounted(() => {
   padding: 5px;
   cursor: pointer;
   border-radius: 5px;
-}
-
-.customoverlay {
-  position: absolute;
-  float: left;
-  text-align: center;
-}
-.customoverlay .price {
-  font-size: 14px;
-  bottom: 10px;
-
-  font-weight: bold;
-  color: blueviolet;
-  margin-left: -14px;
 }
 </style>
