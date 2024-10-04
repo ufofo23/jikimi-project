@@ -19,7 +19,7 @@ public class MapServiceImpl implements MapService {
 
     @Override
     public List<MapVO> getAllAddress() {
-        return mapper.getAdressList().stream().toList();
+        return mapper.getAddressList().stream().toList();
     }
 
     @Override

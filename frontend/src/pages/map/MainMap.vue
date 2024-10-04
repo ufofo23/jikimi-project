@@ -15,11 +15,11 @@ const fetchAddressData = async () => {
   try {
     const response = await addressApi.getAddressList(); // API 호출
     coordinates.value = response.map((item) => ({
-      id: item.id,
-      doroJuso: item.doroJuso,
+      id: item.locationNo,
+      doroJuso: item.roadName,
       x: parseFloat(item.xcoordinate), // 데이터 필드 이름을 정확히 맞춤
       y: parseFloat(item.ycoordinate), // 데이터 필드 이름을 정확히 맞춤
-      price: item.price,
+      price: item.recentPrice,
     }));
 
     initializeMap(); // 데이터를 로드한 후 지도를 초기화합니다.
@@ -48,18 +48,13 @@ const setMapCoordinates = ({ x, y }) => {
 
 const initializeMap = () => {
   if (!coordinates.value.length) {
-    console.error(
-      'No coordinates available to initialize the map'
-    );
+    console.error('No coordinates available to initialize the map');
     return;
   }
 
   // 지도 초기화 옵션
   const mapOption = {
-    center: new kakao.maps.LatLng(
-      37.4704921415939,
-      126.86576788731625
-    ), // 기본 지도 중심좌표
+    center: new kakao.maps.LatLng(37.4704921415939, 126.86576788731625), // 기본 지도 중심좌표
     level: 4, // 지도 확대 레벨
   };
 
@@ -77,17 +72,11 @@ const initializeMap = () => {
   // 마커 이미지 설정
   const imageSrc = '../../src/assets/image (2).png';
   const imageSize = new kakao.maps.Size(80, 80);
-  const markerImage = new kakao.maps.MarkerImage(
-    imageSrc,
-    imageSize
-  );
+  const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
   // 좌표 데이터를 기반으로 마커 표시 + 클러스터
   const markers = coordinates.value.map((coord) => {
-    const markerPosition = new kakao.maps.LatLng(
-      coord.y,
-      coord.x
-    );
+    const markerPosition = new kakao.maps.LatLng(coord.y, coord.x);
 
     // 마커 생성
     const marker = new kakao.maps.Marker({
@@ -119,24 +108,15 @@ const initializeMap = () => {
     // 마커 클릭 이벤트에서 매물 세부 정보를 표시하도록 함
     const handleClick = async () => {
       try {
-        const data = await addressApi.getAddressDetails(
-          coord.id
-        );
+        const data = await addressApi.getAddressDetails(coord.id);
         selectedProperty.value = data; // Assuming data is a list
       } catch (error) {
-        console.error(
-          'Failed to fetch address details:',
-          error
-        );
+        console.error('Failed to fetch address details:', error);
       }
     };
 
     // 마커에 클릭 이벤트 등록
-    kakao.maps.event.addListener(
-      marker,
-      'click',
-      handleClick
-    );
+    kakao.maps.event.addListener(marker, 'click', handleClick);
 
     return marker;
   });
@@ -180,18 +160,10 @@ onMounted(() => {
         'right-panel': isPanelOpen,
       }"
     >
-      <button
-        v-if="!isPanelOpen"
-        @click="togglePanel"
-        class="toggle-btn-open"
-      >
+      <button v-if="!isPanelOpen" @click="togglePanel" class="toggle-btn-open">
         목록 열기
       </button>
-      <div
-        id="map"
-        ref="mapContainer"
-        style="width: 100%; height: 600px"
-      ></div>
+      <div id="map" ref="mapContainer" style="width: 100%; height: 600px"></div>
     </div>
   </div>
 </template>
