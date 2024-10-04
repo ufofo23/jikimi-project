@@ -21,7 +21,7 @@ public class MapDetailDTO {
     private String buyer;
     private String seller;
     private String buildingYear;
-    private String typeTrade;
+    private String contractType;
     private String typeBuild;
     private String date;
     private String contractYearMonth;
