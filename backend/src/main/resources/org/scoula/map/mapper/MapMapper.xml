@@ -61,8 +61,7 @@
             pl.y_coordinate
         FROM property_location pl
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
-          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range ) AND (#{lat} + zl.lat_range )
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range ) AND (#{lon} + zl.lon_range )
     </select>
-
 </mapper>
