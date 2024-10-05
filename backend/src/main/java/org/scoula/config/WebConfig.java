@@ -3,8 +3,10 @@ package org.scoula.config;
 import org.scoula.security.config.SecurityConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletRegistration;
 
@@ -31,7 +33,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         return new String[] { "/" };
     }
 
-    // POST body 문자 인코딩 필터 설정 - UTF-8 설정
+//     POST body 문자 인코딩 필터 설정 - UTF-8 설정
 //    @Override
 //    protected Filter[] getServletFilters() {
 //        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();

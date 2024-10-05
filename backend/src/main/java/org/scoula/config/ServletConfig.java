@@ -6,8 +6,6 @@ import org.springframework.core.Ordered;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
@@ -47,4 +45,14 @@ public class ServletConfig implements WebMvcConfigurer {
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173")
+                .allowCredentials(true)
+                .allowedMethods("*")
+                .allowedHeaders("*");
+    }
+
 }
