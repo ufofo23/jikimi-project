@@ -77,9 +77,7 @@
             </tbody>
           </table>
           <div class="analyze-button-container">
-          <button @click="analyzeProperty">
-            매물 분석하기
-          </button>
+            <button @click="analyzeProperty">매물 분석하기</button>
           </div>
         </div>
         <p v-else>매물을 골라주세요.</p>
@@ -185,9 +183,19 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-router.push('/map/analyzing');
+  if (props.selectedProperty.length > 0 && props.selectedProperty[0].roadName) {
+    // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
+    const doroValue = props.selectedProperty[0].roadName;
+    const buildingName = props.selectedProperty[0].propertyAddrAptName;
+    router.push({
+      name: 'mapAnalyzing',
+      query: {
+        doro: doroValue,
+        buildingName: buildingName,
+      },
+    });
+  }
 };
-
 </script>
 
 <style scoped>
@@ -257,14 +265,14 @@ table th {
 }
 
 .analyze-button-container {
-	display: flex;
+  display: flex;
   justify-content: center;
   margin-top: 20px;
 }
 
 .analyze-button-container button {
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
