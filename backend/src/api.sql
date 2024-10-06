@@ -3,7 +3,6 @@ USE shop41;
 CREATE TABLE IF NOT EXISTS BML_tbl (
                                        id INT AUTO_INCREMENT PRIMARY KEY,
                                        bml_violation_structure VARCHAR(255),
-                                       bml_owner_addr VARCHAR(255) NOT NULL,
                                        bml_use_type VARCHAR(255) NOT NULL,
                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
