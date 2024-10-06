@@ -1,9 +1,9 @@
 USE shop41;
 
 CREATE TABLE IF NOT EXISTS BML_tbl (
-                                       id INT AUTO_INCREMENT PRIMARY KEY,
-                                       bml_violation_structure VARCHAR(255),
+                                       bml_no INT AUTO_INCREMENT PRIMARY KEY,
                                        bml_use_type VARCHAR(255) NOT NULL,
+                                       bml_violation_structure VARCHAR(255),
                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

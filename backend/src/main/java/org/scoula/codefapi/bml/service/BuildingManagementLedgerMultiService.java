@@ -45,7 +45,7 @@ public class BuildingManagementLedgerMultiService {
             parameterMap.put("organization", "0001"); // 기관코드
             parameterMap.put("loginType", "3"); // 로그인 구분 (비회원 본인인증)
             parameterMap.put("type", "0"); // ("0":지상, "1":지하, "2":공중)
-            
+
             parameterMap.put("userName", ""); // 이름
             parameterMap.put("birthDate", ""); // 주민등록번호 앞자리
             parameterMap.put("identity", ""); // 주민등록번호 뒷자리
