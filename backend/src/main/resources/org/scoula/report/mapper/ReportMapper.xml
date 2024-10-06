@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.report.mapper.ReportMapper">
+    <insert id="create">
+        insert into report_tbl (property_no, address, total_score, jeonse_rate, accord_owner, maximum_of_bond, use_type, violation_structure, kind_of_landrights, common_owner, change_owner,count, owner_state)
+        values (#{propertyNo}, #{address}, #{totalScore}, #{jeonseRate}, #{accordOwner}, #{maximumOfBond}, #{useType}, #{violationStructure}, #{kindOfLandrights}, #{commonOwner}, #{changeOwnerCount}, #{ownerState})
+
+        <selectKey resultType="int" keyProperty="reportNo" keyColumn="report_no" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="get" resultType="org.scoula.report.domain.ReportDTO">
+        select * from report_tbl where analysis_no = #{analysisNo}
+    </select>
+</mapper>
