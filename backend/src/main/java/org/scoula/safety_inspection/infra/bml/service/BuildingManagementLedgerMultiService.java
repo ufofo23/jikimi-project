@@ -8,20 +8,17 @@ import org.scoula.safety_inspection.infra.bml.dto.BuildingManagementLedgerDto;
 import org.scoula.safety_inspection.infra.bml.mapper.BuildingManagementLedgerMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.scoula.safety_inspection.codef.EasyCodefClientInfo.PUBLIC_KEY;
-import static org.scoula.safety_inspection.codef.EasyCodefUtil.encryptRSA;
-
 @Service
 @RequiredArgsConstructor
-public class BuildingManagementLedgerMultiService implements BuildingManagementLedgerService{
+public class BuildingManagementLedgerMultiService implements BuildingManagementLedgerService {
 
-    private final BuildingManagementLedgerMapper ledgerMultiMapper;
+    private final BuildingManagementLedgerMapper buildingManagementLedgerMapper;
     private final EasyCodef easyCodef;
 
     @Value("${codef.userName}")
@@ -33,55 +30,132 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
     @Value("${codef.identity}")
     private String identity;
 
+    private static final String PRODUCT_URL = "/v1/kr/public/mw/multiowned-buildings/possession-ledger";
+    private static final String ORGANIZATION = "0001";
+    private static final String LOGIN_TYPE = "3";
+    private static final String TYPE = "0";
+    private static final String TIMEOUT = "60";
+    private static final String ORIGIN_DATA_YN = "0";
+    private static final String IDENTITY_ENC_YN = "Y";
+
     @Override
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
-
         HashMap<String, Object> parameterMap = createParameterMap(payload);
-        String url = "/v1/kr/public/mw/multiowned-buildings/possession-ledger";
-        String result = easyCodef.requestProduct(url, EasyCodefServiceType.DEMO, parameterMap);
-        System.out.println("result = " + result);
 
-        processMultiResult(result, analysisNo);
+        String result = easyCodef.requestProduct(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap);
+        System.out.println("첫 번째 응답: " + result);
+
+        processBMLResult(result, payload, analysisNo);
     }
 
     private HashMap<String, Object> createParameterMap(Map<String, Object> payload) {
         HashMap<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("organization", "0001");
-        parameterMap.put("loginType", "3");
-        parameterMap.put("type", "0");
+        parameterMap.put("organization", ORGANIZATION);
+        parameterMap.put("loginType", LOGIN_TYPE);
+        parameterMap.put("type", TYPE);
         parameterMap.put("userName", userName);
         parameterMap.put("birthDate", birthDate);
         parameterMap.put("identity", identity);
         parameterMap.put("address", payload.get("addr-jibun-address"));
-        parameterMap.put("dong", payload.get("dong"));
-        parameterMap.put("ho", payload.get("ho"));
-        parameterMap.put("zipCode",payload.get("zipCode"));
-        parameterMap.put("originDataYN", ""); // 원문 DATA 포함 여부 (값이 명시되지 않음)
-        parameterMap.put("timeout", ""); // 제한시간 (값이 명시되지 않음)
-        parameterMap.put("secureNoTimeout", ""); // 보안숫자 제한시간 (값이 명시되지 않음)
+        parameterMap.put("zipCode", payload.get("zipCode"));
+        parameterMap.put("timeout", TIMEOUT);
+        parameterMap.put("originDataYN", ORIGIN_DATA_YN);
+        parameterMap.put("secureNoTimeout", TIMEOUT);
+        parameterMap.put("identityEncYn", IDENTITY_ENC_YN);
+        parameterMap.put("dong",payload.get("dong"));
+        parameterMap.put("ho",payload.get("ho"));
+
+        String identityEncYn = "Y";
+        if ("N".equals(identityEncYn)) {
+            parameterMap.put("identityEncYn", "Y");
+        } else {
+            parameterMap.put("identityEncYn", "N");
+        }
         return parameterMap;
     }
 
-    private void processMultiResult(String result, Integer analysisNo) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> responseMap = objectMapper.readValue(result, HashMap.class);
-        Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
+    private void processBMLResult(String result, Map<String, Object> payload, Integer analysisNo) throws IOException {
+        try {
+            Map<String, Object> responseMap = new ObjectMapper().readValue(result, HashMap.class);
+            Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
+            Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
 
-        if (dataMap != null) {
-            String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
-            String mainUse = getResUseType((List<Map<String, Object>>) dataMap.get("resOwnedList"));
+            if ("CF-00000".equals(resultMap.get("code"))) {
+                if (dataMap != null) {
+                    extractAndSaveDataFromDataMap(dataMap, analysisNo);
+                }
+            }
 
-            boolean resViolationStatus = !resViolationStatusStr.equals("");
+            if ("CF-03002".equals(resultMap.get("code"))) {
+                handleTwoWayCertification(dataMap, payload, analysisNo);
+            }
 
-            BuildingManagementLedgerDto ledgerDto = new BuildingManagementLedgerDto(analysisNo,resViolationStatus,mainUse);
-            ledgerMultiMapper.insertBuildingData(ledgerDto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private String getResUseType(List<Map<String, Object>> resOwnedList) {
-        if (resOwnedList != null && !resOwnedList.isEmpty()) {
-            return (String) resOwnedList.get(0).getOrDefault("resUseType", "No result.");
+    private void handleTwoWayCertification(Map<String, Object> dataMap, Map<String, Object> payload, Integer analysisNo) throws Exception {
+        String jti = dataMap.get("jti").toString();
+        long twoWayTimestamp = Long.parseLong(dataMap.get("twoWayTimestamp").toString());
+        Map<String, Object> extraInfo = (Map<String, Object>) dataMap.get("extraInfo");
+        List<Map<String, Object>> reqDongNumList = (List<Map<String, Object>>) extraInfo.get("reqDongNumList");
+        String commDongNum = reqDongNumList.get(0).get("commDongNum").toString();
+
+        HashMap<String, Object> parameterMap2 = createParameterMap(payload);
+        parameterMap2.put("dongNum", commDongNum);
+        parameterMap2.put("signedData", "{\"certSeqNum\":12345678,\"signedVals\":[\"bhEd4...-lc07xew\"],\"rValue\":\"l9JqioQn-uQ\"}");
+        parameterMap2.put("is2Way", true);
+
+        HashMap<String, Object> twoWayInfo = new HashMap<>();
+        twoWayInfo.put("jobIndex", 0);
+        twoWayInfo.put("threadIndex", 0);
+        twoWayInfo.put("jti", jti);
+        twoWayInfo.put("twoWayTimestamp", twoWayTimestamp);
+        parameterMap2.put("twoWayInfo", twoWayInfo);
+
+        String result2 = easyCodef.requestCertification(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap2);
+        System.out.println("두 번째 응답: " + result2);
+
+        extractAndSaveDataFromResult2(result2, analysisNo);
+    }
+
+    private void extractAndSaveDataFromDataMap(Map<String, Object> dataMap, Integer analysisNo) {
+        String mainUse = extractMainUse(dataMap);
+        String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
+        boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
+
+        System.out.println("mainUse = " + mainUse);
+        System.out.println("resViolationStatus = " + resViolationStatus);
+
+        BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, resViolationStatus, mainUse);
+        buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+    }
+
+    private void extractAndSaveDataFromResult2(String result2, Integer analysisNo) throws IOException {
+        Map<String, Object> responseMap = new ObjectMapper().readValue(result2, HashMap.class);
+        Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
+
+        String mainUse = extractMainUse(dataMap);
+        String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
+        boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
+
+        BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, resViolationStatus, mainUse);
+        buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+    }
+
+    private boolean extractResViolationStatus(String resViolationStatusStr) {
+        return !resViolationStatusStr.isEmpty();
+    }
+
+    private String extractMainUse(Map<String, Object> dataMap) {
+        if (dataMap.get("resDetailList") instanceof Iterable) {
+            for (Map<String, Object> detail : (Iterable<Map<String, Object>>) dataMap.get("resDetailList")) {
+                if ("주용도".equals(detail.get("resType"))) {
+                    return (String) detail.get("resContents");
+                }
+            }
         }
-        return "No result.";
+        return "";
     }
 }
