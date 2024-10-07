@@ -4,32 +4,34 @@
       <i class="fa-solid fa-paste"></i> 부동산 용어 사전
     </h1>
 
-    <!-- 필터 버튼 -->
-    <div class="filter-buttons mb-4">
-      <button
-        v-for="letter in letters"
-        :key="letter"
-        class="btn btn-outline-primary mx-1"
-        @click="filterArticles(letter)"
-      >
-        {{ letter }}
-      </button>
-      <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
-        모두 보기
-      </button>
-
-      <!-- 새 검색창 -->
-      <div class="new-search">
-        <input
-          type="text"
-          class="form-control"
-          v-model="searchTerm"
-          placeholder="검색할 단어를 입력하세요"
-          @input="filterBySearch"
-        />
-        <button class="btn btn-outline-success" @click="filterBySearch">🔍</button>
-      </div>
-    </div>
+    <div class="filter-container mb-4">
+  <div class="filter-buttons">
+    <button
+      v-for="letter in letters"
+      :key="letter"
+      class="btn btn-outline-primary mx-1"
+      @click="filterArticles(letter)"
+    >
+      {{ letter }}
+    </button>
+    <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
+      모두 보기
+    </button>
+    <button class="btn btn-outline-warning mx-1" @click="viewFavorites">
+      즐겨찾기
+    </button>
+  </div>
+  <div class="new-search">
+    <input
+      type="text"
+      class="form-control"
+      v-model="searchTerm"
+      placeholder="검색할 단어를 입력하세요"
+      @input="filterBySearch"
+    />
+    <span class="search-icon">🔍</span>
+  </div>
+</div>
 
     <!-- 로딩 상태 -->
     <div v-if="isLoading" class="text-center my-4">
@@ -54,9 +56,10 @@
           <div class="card-body text-center">
             <!-- 아이콘 클릭 이벤트에 stopPropagation() 적용 -->
             <font-awesome-icon
-              :icon="[clickedIcons[article.dictionaryNo] ? 'fas' : 'far', 'circle-question']"
-              @click.stop="toggleIcon(article.dictionaryNo)" 
-              class="question-icon"
+              :icon="[clickedIcons[article.dictionaryNo] ? 'fas' : 'far', 'star']"
+              @click.stop="toggleIcon(article.dictionaryNo)"
+              class="star-icon"
+              :style="{ color: clickedIcons[article.dictionaryNo] ? '#FFD43B' : '' }"
             />
             <h3 class="card-title d-inline-block ml-2">{{ article.dictionaryTitle }}</h3>
           </div>
@@ -82,7 +85,7 @@ const page = ref({ list: [], totalCount: 0 });
 const filterLetter = ref('');
 const searchTerm = ref(''); // 검색어 추가
 const letters = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ'.split(''); // 한글 자음만 남김
-
+const isFavoritesView = ref(false); // 즐겨찾기 모드 추가
 // 자음에 해당하는 유니코드 범위를 정의
 const consonantRanges = {
   'ㄱ': ['가'.charCodeAt(0), '깋'.charCodeAt(0)],
@@ -108,9 +111,19 @@ const toggleIcon = (dictionaryNo) => {
   clickedIcons.value[dictionaryNo] = !clickedIcons.value[dictionaryNo];
 };
 
+// 즐겨찾기 보기 함수
+const viewFavorites = () => {
+  isFavoritesView.value = !isFavoritesView.value; // 즐겨찾기 모드 토글
+};
+
 // 검색어에 따라 필터링
 const filteredArticles = computed(() => {
   let result = page.value.list;
+
+  // 즐겨찾기 모드일 때 필터링
+  if (isFavoritesView.value) {
+    result = result.filter(article => clickedIcons.value[article.dictionaryNo]);
+  }
 
   // 자음 필터링 적용
   if (filterLetter.value) {
@@ -171,11 +184,13 @@ const filterArticles = (letter) => {
 const clearFilter = () => {
   filterLetter.value = '';
   searchTerm.value = ''; // 검색어도 초기화
+  isFavoritesView.value = false; // 즐겨찾기 모드 해제
 };
 
 // 검색어에 따라 필터링하는 함수
 const filterBySearch = () => {
   filterLetter.value = ''; // 검색 시 자음 필터 초기화
+  isFavoritesView.value = false; // 모든 필터 해제 시 즐겨찾기 모드도 해제
 };
 
 // 컴포넌트가 마운트될 때 데이터 로드
@@ -187,7 +202,7 @@ onMounted(() => {
 <style scoped>
 /* 컨테이너 스타일 */
 .container {
-  max-width: 1200px;
+  max-width: 1600px; /* 최대 너비 설정 */
   margin: 0 auto;
   padding: 0 15px;
 }
@@ -200,20 +215,18 @@ onMounted(() => {
   border-bottom: none;
 }
 
-
 /* 자음 버튼 스타일 */
+
+.filter-container {
+  display: flex;
+  align-items: center; /* 수직 정렬을 위해 추가 */
+  justify-content: center; /* 수평 정렬 */
+  border-bottom: none;
+}
+
 .filter-buttons button {
   margin: 0 10px;
   padding: 3px 10px;
-}
-
-/* 검색창 스타일 */
-.new-search {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 10px;
-  margin-left: 10px;
-  border-bottom: none;
 }
 
 /* 카드 크기 수정 */
@@ -241,6 +254,41 @@ onMounted(() => {
   transform: scale(1.05);
 }
 
+.btn {
+  height: 1cm;
+}
+
+.btn-outline-primary mx-1 {
+  width: 1cm;
+  height: 1cm;
+}
+
+.btn-outline-secondary .btn-outline-warning {
+  width: 3cm; 
+  height: 1cm;
+}
+.new-search{
+  position: relative; 
+  padding-left: 20px;
+  border-bottom: none;
+}
+
+.new-search input {
+  width: 300px; /* 원하는 너비로 조정 */
+  height: 40px; /* 버튼과 높이를 맞추기 위해 40px로 조정 */
+  line-height: 40px; /* 텍스트가 중앙에 위치하도록 조정 */
+  padding: 0 10px; /* 여백 조정 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  margin-left: 10px; /* 버튼과의 간격 */
+  text-align: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px; /* 오른쪽 여백 설정 */
+  top: 50%; /* 세로 중앙 정렬 */
+  transform: translateY(-50%); /* 세로 중앙 정렬을 위한 변환 */
+}
 
 /* 아이콘 및 제목 중앙 정렬 */
 .card-body {
@@ -254,20 +302,9 @@ onMounted(() => {
   border-bottom: none;
 }
 
-.question-icon {
+.star-icon {
   cursor: pointer;
-  font-size: 24px;
-  margin-right: 8px;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
+  font-size: 20px;
+  margin-right: 8px; /* 간격 조절 */
 }
 </style>
