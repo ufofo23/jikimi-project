@@ -17,10 +17,10 @@
     >
       <h3>주소 입력</h3>
       <div class="form-group">
-        <label>도로명 주소:</label>
+        <label>주소:</label>
         <input
           type="text"
-          :value="selectedAddress.roadAddress"
+          :value="selectedAddress.propertyJibunJuso"
           readonly
           class="form-control"
         />
@@ -255,28 +255,30 @@ const submitForm = async () => {
   isLoading.value = true;
   try {
     console.log('jibun before:', selectedAddress.value);
-    const lotNumberParts = selectedAddress.value.jibunAddress.split(' ');
+    const lotNumberParts = selectedAddress.value.propertyJibunJuso.split(' ');
     const lotNumber = lotNumberParts[lotNumberParts.length - 1];
 
     // jibunAddress에서 시도, 동, 지번 번호 추출
-    const jibunAddressParts = selectedAddress.value.jibunAddress.split(' '); // 공백 기준으로 분리
+    const jibunAddressParts = selectedAddress.value.propertyJibunJuso.split(' '); // 공백 기준으로 분리
     const addr_sido = jibunAddressParts[0] || ''; // 첫 번째 요소가 시도
     const addr_dong = jibunAddressParts[1] || ''; // 두 번째 요소가 동
     const addr_lotNumber = jibunAddressParts.slice(2).join(' ') || ''; // 나머지 요소를 지번 번호로
 
     const payload = {
-      addr_sido: selectedAddress.value.addr_sido || '',
-      addr_dong: selectedAddress.value.addr_dong || '',
-      addr_lotNumber: selectedAddress.value.addr_lotNumber,
+      addr_sido: addr_sido || '',
+      addr_dong: addr_dong || '',
+      addr_lotNumber: addr_lotNumber,
       buildingName: selectedAddress.value.buildingName || '',
       dong: residenceType.value === 'yes' ? dong.value : '',
       ho: residenceType.value === 'yes' ? ho.value : '',
       realtyType: residenceType.value === 'yes' ? 1 : 0,
       deposit: progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
       name: progressType.value === 'yes' ? name.value : '', // 계약자 성명 추가
-      jibunAddress: selectedAddress.value.jibunAddress || '', // jibunAddress 추가
+      jibunAddress: selectedAddress.value.propertyJibunJuso || '', // jibunAddress 추가
       uniqueCode: selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
     };
+
+  console.log(payload);
 
     // dong과 ho는 집합 건물이 아닌 경우 빈 문자열로 보내기
     if (residenceType.value !== 'yes') {
@@ -340,10 +342,11 @@ const resetForm = (fullReset = true) => {
 
 onMounted(() => {
   resetForm(true);
-  if (route.query.doro) {
+  if (route.query) {
     selectedAddress.value = {
-      roadAddress: route.query.doro,
+      propertyJibunJuso: route.query.propertyJibunJuso,
       buildingName: route.query.buildingName,
+      propertyNo: route.query.propertyNo,
     };
   }
 });
