@@ -47,8 +47,6 @@ CREATE TABLE property_tbl (
       formated_price decimal(10, 2)
 );
 
-
-
 DROP TABLE IF EXISTS property_location;
 CREATE TABLE property_location (
        location_no int AUTO_INCREMENT PRIMARY KEY,
@@ -1028,3 +1026,10 @@ SELECT * FROM zoom_levels;
 
 
 desc property_tbl;
+
+# property에 지번 주소 추가하는 코드입니다.
+ALTER TABLE property_tbl ADD property_jibun_juso varchar(50);
+UPDATE property_tbl
+SET property_jibun_juso = concat(property_addr_sigungu, ' ', property_addr_bunji)
+WHERE property_addr_sigungu <> '';
+SELECT * FROM property_tbl;

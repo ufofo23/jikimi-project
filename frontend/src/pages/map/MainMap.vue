@@ -76,7 +76,10 @@ const fetchAddressData = async (lat, lon, zoomLevel) => {
 const initializeMap = () => {
   let mapContainer = document.getElementById('map'), // 지도를 표시할 div
     mapOption = {
-      center: new kakao.maps.LatLng(37.54699, 127.09598), // 기본 좌표
+      center: new kakao.maps.LatLng(
+        37.5538265102548,
+        126.968466927468
+      ), // 기본 좌표
       level: 5, // 지도 확대 레벨
     };
 
@@ -101,7 +104,11 @@ const initializeMap = () => {
     const lon = center.getLng();
 
     // 새로운 데이터를 가져옵니다
-    fetchAddressData(lat, lon, level);
+    setTimeout(() => {
+      if (map) {
+        fetchAddressData(lat, lon, level);
+      }
+    }, 0);
   });
 
   // 초기 데이터 로드
@@ -122,10 +129,30 @@ const initializeMap = () => {
     zoomControl,
     kakao.maps.ControlPosition.RIGHT
   );
+
+  // 초기 데이터 로드할 때 해당 좌표로 설정
+  // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLat = position.coords.latitude;
+        const currentLon = position.coords.longitude;
+        const currentPosition = new kakao.maps.LatLng(
+          currentLat,
+          currentLon
+        );
+        map.setCenter(currentPosition);
+        map.setLevel(5);
+      },
+      (error) => {
+        console.error('Geolocation failed: ', error);
+      }
+    );
+  }
 };
 
 // 검색을 통해 지도를 특정 좌표로 이동시키는 함수
-const setMapCoordinates = ({ x, y }) => {
+const setMapCoordinates = ({ x, y, buildingName }) => {
   if (map) {
     const coords = new kakao.maps.LatLng(y, x); // 좌표로 LatLng 객체 생성
     map.setCenter(coords); // 지도 중심을 변경
@@ -137,6 +164,19 @@ const setMapCoordinates = ({ x, y }) => {
         map: map,
       });
     }
+    if (buildingName) {
+      var infowindow = new kakao.maps.InfoWindow({
+        position: coords,
+        content: `${buildingName}`,
+      });
+    } else {
+      var infowindow = new kakao.maps.InfoWindow({
+        position: coords,
+        content: `선택지점`,
+      });
+    }
+    infowindow.open(map, marker);
+    map.setLevel(5, { animate: true });
   } else {
     console.error('Map is not initialized yet.');
   }
@@ -291,6 +331,44 @@ window.setOverlayMapTypeId = function () {
   }
 };
 
+// 현재 위치로 이동하는 함수
+window.moveToCurrentLocation = function () {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLat = position.coords.latitude;
+        const currentLon = position.coords.longitude;
+        const currentPosition = new kakao.maps.LatLng(
+          currentLat,
+          currentLon
+        );
+
+        // var marker = new kakao.maps.Marker({
+        //   map: map,
+        //   position: currentPosition,
+        // });
+        // var infowindow = new kakao.maps.InfoWindow({
+        //   position: currentPosition,
+        //   content: '현재위치',
+        // });
+        // infowindow.open(map, marker);
+        // marker.setOpacity(0);
+
+        // 지도 중심을 현재 위치로 이동
+        map.setCenter(currentPosition);
+        map.setLevel(5);
+      },
+      (error) => {
+        console.error('Geolocation failed: ', error);
+        alert('현재 위치를 가져올 수 없습니다.');
+      }
+    );
+  } else {
+    // Geolocation을 지원하지 않는 경우 처리
+    alert('현재 위치 기능을 사용할 수 없습니다.');
+  }
+};
+
 onMounted(() => {
   initializeMap(); // 지도 초기화 및 데이터 로드
 });
@@ -343,6 +421,13 @@ onMounted(() => {
           onclick="setOverlayMapTypeId()"
         />교통정보
       </div>
+      <!-- 현재 위치로 이동하는 버튼 추가 -->
+      <button
+        class="location-btn"
+        onclick="moveToCurrentLocation()"
+      >
+        <i class="fa-solid fa-location-crosshairs"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -432,5 +517,31 @@ onMounted(() => {
   margin-left: 15px;
   border-radius: 5px;
   /* background-color: #fff; */
+}
+
+.location-btn {
+  position: absolute;
+  bottom: 20px; /* 원하는 위치로 조정 가능 */
+  right: 15px; /* 원하는 위치로 조정 가능 */
+  z-index: 1000;
+  background-color: #007bff;
+  opacity: 0.3;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.location-btn:hover {
+  background-color: #0056b3;
+  opacity: 1;
+}
+
+.font-awesome-icon {
+  font-size: 20px;
 }
 </style>

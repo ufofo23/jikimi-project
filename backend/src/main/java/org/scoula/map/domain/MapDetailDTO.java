@@ -26,4 +26,5 @@ public class MapDetailDTO {
     private String date;
     private String contractYearMonth;
     private String contractDate;
+    private String propertyJibunJuso;
 }
