@@ -12,4 +12,6 @@ public interface LikeDictionaryMapper {
     public int create(@Param("dicNo")int dicNo, @Param("userId") String userId);
 
     public List<DictionaryVO> getList(String userId);
+
+    public int delete(int dicNo);
 }
