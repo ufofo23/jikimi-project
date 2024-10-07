@@ -73,7 +73,7 @@ async function getCoordinates(address) {
 }
 
 const openDaumPostcode = () => {
-  if (isPostcodeOpen.value) return; // 팝업이 열려 있으면 무시
+  // if (isPostcodeOpen.value == true) return; // 팝업이 열려 있으면 무시
 
   isPostcodeOpen.value = true; // 팝업 상태 업데이트
   new daum.Postcode({
@@ -101,6 +101,7 @@ const openDaumPostcode = () => {
         emit('address-selected', {
           x: x.value,
           y: y.value,
+          buildingName: data.buildingName,
         });
       }
 

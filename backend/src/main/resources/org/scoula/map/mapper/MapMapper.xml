@@ -29,7 +29,8 @@
             pr.contract_year_month,
             pr.contract_date,
             pr.property_addr_apt_name,
-            pr.contract_type
+            pr.contract_type,
+            pr.property_jibun_juso
         from property_location as pl
         right outer join property_tbl as pr
         on pl.location_no = pr.location_no
