@@ -9,4 +9,6 @@ public interface LikeDictionaryService {
     public int create(int dicNo, String token);
 
     public List<DictionaryDTO> getList(String token);
+
+    public int delete(int dicNo);
 }
