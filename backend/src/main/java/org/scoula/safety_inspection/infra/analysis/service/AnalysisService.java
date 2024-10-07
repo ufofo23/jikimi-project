@@ -3,7 +3,7 @@ package org.scoula.safety_inspection.infra.analysis.service;
 import org.scoula.safety_inspection.infra.analysis.dto.AnalysisDTO;
 import org.scoula.safety_inspection.infra.analysis.mapper.AnalysisMapper;
 import org.scoula.safety_inspection.infra.analysis.vo.AnalysisVO;
-import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterService;
+import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterMultiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +13,12 @@ import java.util.Map;
 public class AnalysisService {
 
     private final AnalysisMapper analysisMapper;
-    private final CopyOfRegisterService copyOfRegisterService;
+    private final CopyOfRegisterMultiService copyOfRegisterMultiService;
 
     @Autowired
-    public AnalysisService(AnalysisMapper analysisMapper, CopyOfRegisterService copyOfRegisterService) {
+    public AnalysisService(AnalysisMapper analysisMapper, CopyOfRegisterMultiService copyOfRegisterMultiService) {
         this.analysisMapper = analysisMapper;
-        this.copyOfRegisterService = copyOfRegisterService;
+        this.copyOfRegisterMultiService = copyOfRegisterMultiService;
     }
 
     public Integer processPropertyAnalysis(String propertyNumber, Map<String, Object> payload) {
@@ -33,13 +33,6 @@ public class AnalysisService {
         analysisMapper.insertAnalysis(analysisVO);
 
         Integer analysisNo = analysisVO.getAnalysisNo();
-
-        // 등기부 등본 처리
-        try {
-            copyOfRegisterService.getCopyOfRegister(payload, analysisNo);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         return analysisNo;
     }

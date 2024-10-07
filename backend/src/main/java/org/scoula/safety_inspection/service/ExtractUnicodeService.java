@@ -62,6 +62,7 @@ public class ExtractUnicodeService {
 
         String productUrl = "/v1/kr/public/ck/real-estate-register/status";
         String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
+        System.out.println("result = " + result);
 
         return processResult(result);
     }

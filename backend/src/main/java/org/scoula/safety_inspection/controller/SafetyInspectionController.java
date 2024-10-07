@@ -3,9 +3,8 @@ package org.scoula.safety_inspection.controller;
 import org.scoula.safety_inspection.infra.analysis.service.AnalysisService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerMultiService;
-import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerService;
-import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerServiceFactory;
-import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterService;
+import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterGeneralService;
+import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterMultiService;
 import org.scoula.safety_inspection.service.ExtractUnicodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,23 +22,29 @@ import java.util.Map;
 @RequestMapping("/api/safety-inspection")
 public class SafetyInspectionController {
     private ExtractUnicodeService extractUnicodeService;
-    private CopyOfRegisterService copyOfRegisterService;
     private AnalysisService analysisService;
-    private BuildingManagementLedgerServiceFactory buildingManagementLedgerServiceFactory;
+    private CopyOfRegisterMultiService copyOfRegisterMultiService;
+    private CopyOfRegisterGeneralService copyOfRegisterGeneralService;
+    private BuildingManagementLedgerMultiService buildingManagementLedgerMultiService;
+    private BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService;
 
     @Autowired
-    public SafetyInspectionController(ExtractUnicodeService extractUnicodeService, CopyOfRegisterService copyOfRegisterService, AnalysisService analysisService, BuildingManagementLedgerServiceFactory buildingManagementLedgerServiceFactory) {
+    public SafetyInspectionController(ExtractUnicodeService extractUnicodeService, AnalysisService analysisService, CopyOfRegisterMultiService copyOfRegisterMultiService, CopyOfRegisterGeneralService copyOfRegisterGeneralService, BuildingManagementLedgerMultiService buildingManagementLedgerMultiService, BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService) {
         this.extractUnicodeService = extractUnicodeService;
-        this.copyOfRegisterService = copyOfRegisterService;
         this.analysisService = analysisService;
-        this.buildingManagementLedgerServiceFactory = buildingManagementLedgerServiceFactory;
+        this.copyOfRegisterMultiService = copyOfRegisterMultiService;
+        this.copyOfRegisterGeneralService = copyOfRegisterGeneralService;
+        this.buildingManagementLedgerMultiService = buildingManagementLedgerMultiService;
+        this.buildingManagementLedgerGeneralService = buildingManagementLedgerGeneralService;
     }
 
     // 유니크 코드 관련
     @PostMapping("/address")
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
+            System.out.println("SafetyInspectionController.handleAccess");
             List<Map<String,String>> response = extractUnicodeService.getUniqueCode(payload);
+            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,12 +63,13 @@ public class SafetyInspectionController {
             Integer analysisNo = analysisService.processPropertyAnalysis(propertyNo, payload);
             System.out.println("analysisNo = " + analysisNo);
 
-            copyOfRegisterService.getCopyOfRegister(payload,analysisNo);
-
-
-            BuildingManagementLedgerService service = buildingManagementLedgerServiceFactory.getService(realtyType);
-
-            service.getBuildingLedger(payload, analysisNo);
+            if ("1".equals(realtyType)) {
+                copyOfRegisterMultiService.getCopyOfRegister(payload, analysisNo);
+                buildingManagementLedgerMultiService.getBuildingLedger(payload,analysisNo);
+            } else if("0".equals(realtyType)) {
+                copyOfRegisterGeneralService.getCopyOfRegister(payload, analysisNo);
+                buildingManagementLedgerGeneralService.getBuildingLedger(payload,analysisNo);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

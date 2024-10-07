@@ -35,9 +35,8 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
 
     @Override
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
-//        String password = encryptRSA(userPass, PUBLIC_KEY);
-        HashMap<String, Object> parameterMap = createParameterMap(payload);
 
+        HashMap<String, Object> parameterMap = createParameterMap(payload);
         String url = "/v1/kr/public/mw/multiowned-buildings/possession-ledger";
         String result = easyCodef.requestProduct(url, EasyCodefServiceType.DEMO, parameterMap);
         System.out.println("result = " + result);
@@ -56,6 +55,7 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
         parameterMap.put("address", payload.get("addr-jibun-address"));
         parameterMap.put("dong", payload.get("dong"));
         parameterMap.put("ho", payload.get("ho"));
+        parameterMap.put("zipCode",payload.get("zipCode"));
         parameterMap.put("originDataYN", ""); // 원문 DATA 포함 여부 (값이 명시되지 않음)
         parameterMap.put("timeout", ""); // 제한시간 (값이 명시되지 않음)
         parameterMap.put("secureNoTimeout", ""); // 보안숫자 제한시간 (값이 명시되지 않음)
@@ -68,8 +68,10 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
         Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
 
         if (dataMap != null) {
-            String resViolationStatus = (String) dataMap.getOrDefault("resViolationStatus", "");
+            String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
             String mainUse = getResUseType((List<Map<String, Object>>) dataMap.get("resOwnedList"));
+
+            boolean resViolationStatus = !resViolationStatusStr.equals("");
 
             BuildingManagementLedgerDto ledgerDto = new BuildingManagementLedgerDto(analysisNo,resViolationStatus,mainUse);
             ledgerMultiMapper.insertBuildingData(ledgerDto);

@@ -6,10 +6,10 @@ import lombok.Getter;
 public class BuildingManagementLedgerDto {
 
     private Integer analysisNo;
-    private final String resViolationStatus; // 위반건축물 여부
+    private final Boolean resViolationStatus; // 위반건축물 여부
     private final String resContents; // 주용도
 
-    public BuildingManagementLedgerDto(Integer analysisNo, String resViolationStatus, String resContents) {
+    public BuildingManagementLedgerDto(Integer analysisNo, Boolean resViolationStatus, String resContents) {
         this.analysisNo = analysisNo;
         this.resViolationStatus = resViolationStatus;
         this.resContents = resContents;

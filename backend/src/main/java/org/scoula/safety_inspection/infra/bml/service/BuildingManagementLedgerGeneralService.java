@@ -25,15 +25,6 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
     private final BuildingManagementLedgerMapper buildingManagementLedgerMapper;
     private final EasyCodef easyCodef;
 
-    @Value("${codef.eprepayNo}")
-    private String ePrepayNo;
-
-    @Value("${codef.eprepayPass}")
-    private String ePrepayPass;
-
-    @Value("${codef.userPass}")
-    private String userPass;
-
     @Value("${codef.userName}")
     private String userName;
 
@@ -45,10 +36,10 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
 
     @Override
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
-//        String password = encryptRSA(userPass, PUBLIC_KEY);
+
         HashMap<String, Object> parameterMap = createParameterMap(payload);
         String productUrl = "/v1/kr/public/mw/building-register/general";
-        String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.SANDBOX, parameterMap);
+        String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
         System.out.println("result = " + result);
 
         processBMLResult(result,analysisNo);
@@ -63,7 +54,8 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
         parameterMap.put("userName", userName);
         parameterMap.put("birthDate", birthDate);
         parameterMap.put("identity", identity);
-        parameterMap.put("address", payload.get("addr_jibun_address")); // 주소 (필수)
+        parameterMap.put("address", payload.get("addr-jibun-address")); // 주소 (필수)
+        parameterMap.put("zipCode",payload.get("zipCode"));
         parameterMap.put("timeout", "60"); // 제한 시간 (초 단위)
         parameterMap.put("originDataYN", "0"); // 원문 데이터 포함 여부 ("0": 미포함, "1": 포함, 기본값: "0")
         parameterMap.put("secureNoTimeout", "60"); // 보안 숫자 제한 시간 (초 단위, 기본값: 60초)
@@ -82,8 +74,10 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
             Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
 
             if (dataMap != null) {
-                String resViolationStatus = (String) dataMap.getOrDefault("resViolationStatus", "");
+                String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
                 String mainUse = extractMainUse(dataMap);
+
+                boolean resViolationStatus = !resViolationStatusStr.equals("");
 
                 // DB에 데이터 저장 (address 제외)
                 BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, resViolationStatus, mainUse);
