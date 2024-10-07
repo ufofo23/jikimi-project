@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.safety_inspection.infra.analysis.mapper.AnalysisMapper">
+
+    <insert id="insertAnalysis" parameterType="org.scoula.safety_inspection.infra.analysis.vo.AnalysisVO" useGeneratedKeys="true" keyProperty="analysisNo">
+    INSERT INTO analysis_tbl (property_no) VALUES (#{propertyNo})
+    </insert>
+<!--    <select id="selectAnalysis" resultType="org.scoula.safety_inspection.infra.analysis.vo.AnalysisVO">-->
+<!--        SELECT AnalysisVO from analysis_tbl where property_no = #{propertyNo}-->
+<!--    </select>-->
+
+</mapper>
