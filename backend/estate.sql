@@ -552,8 +552,8 @@ VALUES
     ('오피스텔 투자', '오피스텔은 주거와 업무를 동시에 해결할 수 있어 실거주 및 임대 수익을 동시에 기대할 수 있는 상품이다. 하지만 상가로 분류되어 세금 부담이 클 수 있다.', '오피스텔, 투자로 괜찮을까?'),
     ('리모델링 투자', '기존 주택을 리모델링하여 가치를 높이는 투자 방식이다. 리모델링 후 주택 가치 상승을 기대할 수 있지만, 리모델링 비용 대비 이익이 높지 않을 수 있다.', '리모델링, 투자로 가치 있을까?')
     ;
-
-
+select * from like_dictionary_tbl;
+select * from member_tbl;
 # 부동산 상식 찜 목록
 INSERT INTO like_common_sense_tbl (member_no, common_sense_no)
 VALUES

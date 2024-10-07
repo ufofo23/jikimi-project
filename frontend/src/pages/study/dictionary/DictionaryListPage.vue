@@ -77,6 +77,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'; // Font Awesome 
 import api from '@/api/dictionaryApi'; // API 모듈
 import { getInitial } from 'hangul-js'; // hangul-js 라이브러리 임포트
 
+import likeApi from '@/api/like/likeDictionaryApi';
+
 const cr = useRoute();
 const router = useRouter();
 const isLoading = ref(true);
@@ -107,13 +109,27 @@ const consonantRanges = {
 const clickedIcons = ref({}); // 각 article의 아이콘 상태를 저장하는 객체
 
 // 아이콘 클릭 시 상태 변경 함수
-const toggleIcon = (dictionaryNo) => {
+const toggleIcon = async (dictionaryNo) => {
+  if (clickedIcons.value[dictionaryNo]){
+    try{
+      const response = await likeApi.delete(dictionaryNo);
+    } catch(error){
+      console.error(error);
+    }
+  } else {
+    try{
+      const response = await likeApi.create(dictionaryNo);
+    } catch(error){
+      console.error(error);
+    }
+  }
   clickedIcons.value[dictionaryNo] = !clickedIcons.value[dictionaryNo];
 };
 
 // 즐겨찾기 보기 함수
 const viewFavorites = () => {
   isFavoritesView.value = !isFavoritesView.value; // 즐겨찾기 모드 토글
+  console.log(isFavoritesView);
 };
 
 // 검색어에 따라 필터링
@@ -166,6 +182,11 @@ const load = async () => {
       page.value = { list: response, totalCount: response.length };
     } else {
       console.warn('응답이 배열이 아닙니다:', response);
+    }
+    
+    const likeDics = await likeApi.getList();
+    for(let likeDic of likeDics){
+      clickedIcons.value[likeDic.dictionaryNo] = true;
     }
   } catch (error) {
     console.error('게시글 로드 실패:', error);
