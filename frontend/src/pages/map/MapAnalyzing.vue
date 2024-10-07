@@ -79,17 +79,66 @@
               title="1-4자리 숫자만 입력 가능합니다"
             />
           </div>
-          <button type="submit" class="submit-button" :disabled="isLoading">
-            제출
+        </form>
+      </div>
+      </div>
+
+      <!-- 거래 진행 여부 선택 처리 -->
+      <div class="contract-in-progress">
+        <p>지금 부동산 계약을 하는 중인가요?</p>
+        <div class="button-group">
+          <button
+            @click="handleProgressType('yes')"
+            :class="['progress-option-button', { active: progressType === 'yes' }]"
+          >
+            예
           </button>
+          <button
+            @click="handleProgressType('no')"
+            :class="['progress-option-button', { active: progressType === 'no' }]"
+          >
+            아니오
+          </button>
+        </div>
+      </div>
+
+      <!-- 계약 중인 경우 전세금, 계약자 성명 입력 폼 -->
+      <div v-if="progressType === 'yes'" class="detail-form">
+        <form @submit.prevent="submitForm">
+          <div class="form-group">
+            <label>전세금:</label>
+            <input
+              type="text"
+              v-model="deposit"
+              required
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>집주인 성명:</label>
+            <input
+              type="text"
+              v-model="name"
+              required
+              class="form-control"
+            />
+          </div>
         </form>
       </div>
 
-      <!-- 아파트/오피스텔이 아닌 경우 바로 제출 버튼 -->
-      <div v-if="residenceType === 'no'" class="submit-section">
-        <button @click="submitForm" class="submit-button" :disabled="isLoading">
-          제출
-        </button>
+      <!-- 아파트/오피스텔이 아닌 경우 & 계약 중이 아닌 경우 바로 제출 버튼 -->
+      
+      <!-- 통합된 제출 버튼 -->
+      <div class="submit-section">
+      <button 
+        @click="submitForm" 
+        class="submit-button" 
+        :disabled="isLoading || !residenceType || !progressType 
+        || (residenceType === 'yes' && (!dong || !ho)) || (progressType === 'yes' && (!deposit || !name))"
+      >
+        제출
+      </button>
+
       </div>
     </div>
 
@@ -125,7 +174,6 @@
       {{ errorMessage }}
       <button @click="errorMessage = ''" class="close-error">✕</button>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -143,7 +191,10 @@ const ho = ref('');
 const errorMessage = ref('');
 const isLoading = ref(false);
 const residenceType = ref(null);
+const progressType = ref(null); // 거래 진행 여부 상태 추가
 const showAddressForm = ref(false);
+const deposit = ref(''); // 전세금 상태 추가
+const name = ref(''); // 계약자 성명 상태 추가
 
 // API 설정
 const api = axios.create({
@@ -158,22 +209,6 @@ const handleError = (error, customMessage) => {
     customMessage || '처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
   isLoading.value = false;
 };
-
-// 주소 목록 조회
-// const fetchAddresses = async () => {
-//   if (isLoading.value) return;
-
-//   isLoading.value = true;
-//   try {
-//     const response = await api.post('/address');
-//     addresses.value = response.data.res;
-//     showAddressForm.value = false;
-//   } catch (error) {
-//     handleError(error, '주소 목록을 가져오는 데 실패했습니다.');
-//   } finally {
-//     isLoading.value = false;
-//   }
-// };
 
 // Daum 우편번호 검색
 const openDaumPostcode = () => {
@@ -204,34 +239,60 @@ const handleResidenceType = (type) => {
   }
 };
 
+// 거래 진행 여부 선택 처리
+const handleProgressType = (type) => {
+  progressType.value = type;
+  if (type === 'no') {
+    deposit.value = '';
+    name.value = ''; 
+  }
+}
+
 // 폼 제출
 const submitForm = async () => {
   if (isLoading.value) return;
 
   isLoading.value = true;
   try {
-    console.log('jibun before:', selectedAddress.value.jibunAddress);
+    console.log('jibun before:', selectedAddress.value);
     const lotNumberParts = selectedAddress.value.jibunAddress.split(' ');
     const lotNumber = lotNumberParts[lotNumberParts.length - 1];
 
+    // jibunAddress에서 시도, 동, 지번 번호 추출
+    const jibunAddressParts = selectedAddress.value.jibunAddress.split(' '); // 공백 기준으로 분리
+    const addr_sido = jibunAddressParts[0] || ''; // 첫 번째 요소가 시도
+    const addr_dong = jibunAddressParts[1] || ''; // 두 번째 요소가 동
+    const addr_lotNumber = jibunAddressParts.slice(2).join(' ') || ''; // 나머지 요소를 지번 번호로
+
     const payload = {
-      addr_sido: selectedAddress.value.sido || '',
-      addr_dong: selectedAddress.value.bname || '',
-      addr_lotNumber: lotNumber,
+      addr_sido: selectedAddress.value.addr_sido || '',
+      addr_dong: selectedAddress.value.addr_dong || '',
+      addr_lotNumber: selectedAddress.value.addr_lotNumber,
       buildingName: selectedAddress.value.buildingName || '',
       dong: residenceType.value === 'yes' ? dong.value : '',
       ho: residenceType.value === 'yes' ? ho.value : '',
       realtyType: residenceType.value === 'yes' ? 1 : 0,
+      deposit: progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
+      name: progressType.value === 'yes' ? name.value : '', // 계약자 성명 추가
+      jibunAddress: selectedAddress.value.jibunAddress || '', // jibunAddress 추가
+      uniqueCode: selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
     };
+
+    // dong과 ho는 집합 건물이 아닌 경우 빈 문자열로 보내기
+    if (residenceType.value !== 'yes') {
+      payload.dong = '';
+      payload.ho = '';
+    }
 
     const response = await api.post('/address', payload);
     if (Array.isArray(response.data) && response.data.length > 0) {
       addresses.value = response.data;
       showAddressForm.value = false;
       selectedAddress.value = null;
-      // residenceType.value = null;
       dong.value = '';
       ho.value = '';
+      deposit.value = ''; // 제출 후 전세금 초기화
+      name.value = ''; // 제출 후 계약자 성명 초기화
     } else {
       errorMessage.value = '조회된 주소가 없습니다.';
     }
@@ -272,9 +333,9 @@ const resetForm = (fullReset = true) => {
   }
   dong.value = '';
   ho.value = '';
-  // residenceType.value = null;
+  deposit.value = ''; // 전세금 초기화
+  name.value = ''; // 계약자 성명 초기화
   errorMessage.value = '';
-  console.log('realtyType:', residenceType.value);
 };
 
 onMounted(() => {
@@ -394,7 +455,7 @@ onMounted(() => {
   margin: 10px 0;
 }
 
-.option-button {
+.option-button, .progress-option-button {
   padding: 8px 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -402,7 +463,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.option-button.active {
+.option-button.active, .progress-option-button.active {
   background-color: rgb(0, 181, 0);
   color: white;
   border-color: rgb(0, 181, 0);

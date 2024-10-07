@@ -192,6 +192,7 @@ const analyzeProperty = () => {
       query: {
         doro: doroValue,
         buildingName: buildingName,
+        
       },
     });
   }
