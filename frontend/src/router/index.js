@@ -18,6 +18,7 @@ import DictionaryDetailPage from '@/pages/study/dictionary/DictionaryDetailPage.
 import MainMap from '../pages/map/MainMap.vue';
 import PreventionListPage from '@/pages/study/PreventionListPage.vue';
 import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
+import MapAnalyzing from '@/pages/map/MapAnalyzing.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -102,6 +103,11 @@ const router = createRouter({
       name: 'preventionDetail',
       component: PreventionDetailPage,
     },
+    {
+      path: '/map/analyzing',
+      name: 'mapAnalyzing',
+      component: MapAnalyzing,
+    }
   ],
 });
 
