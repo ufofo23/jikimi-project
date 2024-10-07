@@ -34,4 +34,9 @@ public class LikeDictionaryServiceImpl implements LikeDictionaryService {
                 .map(DictionaryDTO::of)
                 .toList();
     }
+
+    @Override
+    public int delete(int dicNo) {
+        return mapper.delete(dicNo);
+    }
 }

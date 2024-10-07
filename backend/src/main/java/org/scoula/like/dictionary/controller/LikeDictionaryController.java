@@ -27,4 +27,9 @@ public class LikeDictionaryController {
         return ResponseEntity.ok(service.getList(token));
     }
 
+    @DeleteMapping("/{dicNo}")
+    public ResponseEntity<Integer> delete(@PathVariable int dicNo) {
+        return ResponseEntity.ok(service.delete(dicNo));
+    }
+
 }

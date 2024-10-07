@@ -7,7 +7,7 @@ import org.scoula.map.domain.MapVO;
 import java.util.List;
 
 public interface MapMapper {
-    public List<MapVO> getAdressList();
+    public List<MapVO> getAddressList();
 
     public List<MapDetailDTO> getAddressDetails(Long id);
 

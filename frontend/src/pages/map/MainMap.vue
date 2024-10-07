@@ -15,8 +15,6 @@ let map,
 const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
 const isPanelOpen = ref(true); // 패널 열림 상태
 const isMapExpanded = ref(false);
-const someValue = ref(10);
-const doubleValue = computed(() => someValue.value * 2);
 
 // 버튼 문구를 상태에 따라 다르게 표시
 const toggleButtonText = computed(() => {
@@ -33,7 +31,7 @@ const fetchAddressData = async (lat, lon, zoomLevel) => {
         zoomLevel
       ); // API 호출
       const newCoordinates = response.map((item) => ({
-        id: item.id,
+        id: item.locationNo,
         x: parseFloat(item.xcoordinate),
         y: parseFloat(item.ycoordinate),
         price: item.price,
@@ -76,12 +74,18 @@ const fetchAddressData = async (lat, lon, zoomLevel) => {
 
 // 지도 및 마커 클러스터러 초기화
 const initializeMap = () => {
-  // 지도 초기화
-  map = new kakao.maps.Map(mapContainer.value, {
-    center: new kakao.maps.LatLng(37.54699, 127.09598), // 기본 좌표
-    level: 5, // 지도 확대 레벨
-  });
+  let mapContainer = document.getElementById('map'), // 지도를 표시할 div
+    mapOption = {
+      center: new kakao.maps.LatLng(
+        37.5538265102548,
+        126.968466927468
+      ), // 기본 좌표
+      level: 5, // 지도 확대 레벨
+    };
 
+  map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+  map.setMaxLevel(12);
   // 마커 클러스터러 초기화
   clusterer = new kakao.maps.MarkerClusterer({
     map: map, // 클러스터러에 추가할 지도 객체
@@ -100,7 +104,11 @@ const initializeMap = () => {
     const lon = center.getLng();
 
     // 새로운 데이터를 가져옵니다
-    fetchAddressData(lat, lon, level);
+    setTimeout(() => {
+      if (map) {
+        fetchAddressData(lat, lon, level);
+      }
+    }, 0);
   });
 
   // 초기 데이터 로드
@@ -111,10 +119,40 @@ const initializeMap = () => {
     initialCenter.getLng(),
     initialLevel
   );
+  // 컨트롤러 관련!!!!!!!!
+  // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+  map.addControl(
+    mapTypeControl,
+    kakao.maps.ControlPosition.TOPRIGHT
+  );
+  map.addControl(
+    zoomControl,
+    kakao.maps.ControlPosition.RIGHT
+  );
+
+  // 초기 데이터 로드할 때 해당 좌표로 설정
+  // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLat = position.coords.latitude;
+        const currentLon = position.coords.longitude;
+        const currentPosition = new kakao.maps.LatLng(
+          currentLat,
+          currentLon
+        );
+        map.setCenter(currentPosition);
+        map.setLevel(5);
+      },
+      (error) => {
+        console.error('Geolocation failed: ', error);
+      }
+    );
+  }
 };
 
 // 검색을 통해 지도를 특정 좌표로 이동시키는 함수
-const setMapCoordinates = ({ x, y }) => {
+const setMapCoordinates = ({ x, y, buildingName }) => {
   if (map) {
     const coords = new kakao.maps.LatLng(y, x); // 좌표로 LatLng 객체 생성
     map.setCenter(coords); // 지도 중심을 변경
@@ -126,24 +164,21 @@ const setMapCoordinates = ({ x, y }) => {
         map: map,
       });
     }
+    if (buildingName) {
+      var infowindow = new kakao.maps.InfoWindow({
+        position: coords,
+        content: `${buildingName}`,
+      });
+    } else {
+      var infowindow = new kakao.maps.InfoWindow({
+        position: coords,
+        content: `선택지점`,
+      });
+    }
+    infowindow.open(map, marker);
+    map.setLevel(5, { animate: true });
   } else {
     console.error('Map is not initialized yet.');
-  }
-};
-
-const toggleMapSize = () => {
-  isMapExpanded.value = !isMapExpanded.value;
-  isPanelOpen.value = !isMapExpanded.value;
-
-  if (map) {
-    map.relayout();
-  }
-};
-
-const toggleLeftPanel = () => {
-  isPanelOpen.value = !isPanelOpen.value;
-  if (map) {
-    map.relayout();
   }
 };
 
@@ -214,7 +249,7 @@ const updateMarkers = (newCoords) => {
     );
     kakao.maps.event.addListener(map, 'click', (event) => {
       if (!isPanelOpen.value) {
-        toggleMapSize();
+        togglePanel();
       }
     });
     return marker;
@@ -242,6 +277,8 @@ const updateMarkersCluster = (newCoords) => {
 
 const togglePanel = () => {
   isPanelOpen.value = !isPanelOpen.value;
+  isMapExpanded.value = !isPanelOpen.value;
+
   // 패널이 열리고 닫힌 후 지도의 크기를 재설정하여 좌표와 마커가 정상적으로 보이게 함
   setTimeout(() => {
     if (map) {
@@ -249,6 +286,89 @@ const togglePanel = () => {
     }
   }, 0);
 };
+
+// 지도 컨트롤러 관련 기능
+// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+let mapTypeControl = new kakao.maps.MapTypeControl();
+
+// 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+let zoomControl = new kakao.maps.ZoomControl();
+
+// 지도 타입 정보를 가지고 있을 객체입니다
+let mapTypes = {
+  useDistrict: kakao.maps.MapTypeId.USE_DISTRICT,
+  terrain: kakao.maps.MapTypeId.TERRAIN,
+  traffic: kakao.maps.MapTypeId.TRAFFIC,
+};
+
+// 체크 박스를 선택하면 호출되는 함수입니다
+// 전역 스코프에서 함수 선언
+window.setOverlayMapTypeId = function () {
+  var chkUseDistrict = document.getElementById(
+      'chkUseDistrict'
+    ),
+    chkTerrain = document.getElementById('chkTerrain'),
+    chkTraffic = document.getElementById('chkTraffic');
+
+  // 지도 타입을 제거합니다
+  for (var type in mapTypes) {
+    map.removeOverlayMapTypeId(mapTypes[type]);
+  }
+
+  // 지적편집도정보 체크박스가 체크되어있으면 지도에 지적편집도정보 지도타입을 추가합니다
+  if (chkUseDistrict.checked) {
+    map.addOverlayMapTypeId(mapTypes.useDistrict);
+  }
+
+  // 지형정보 체크박스가 체크되어있으면 지도에 지형정보 지도타입을 추가합니다
+  if (chkTerrain.checked) {
+    map.addOverlayMapTypeId(mapTypes.terrain);
+  }
+
+  // 교통정보 체크박스가 체크되어있으면 지도에 교통정보 지도타입을 추가합니다
+  if (chkTraffic.checked) {
+    map.addOverlayMapTypeId(mapTypes.traffic);
+  }
+};
+
+// 현재 위치로 이동하는 함수
+window.moveToCurrentLocation = function () {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLat = position.coords.latitude;
+        const currentLon = position.coords.longitude;
+        const currentPosition = new kakao.maps.LatLng(
+          currentLat,
+          currentLon
+        );
+
+        // var marker = new kakao.maps.Marker({
+        //   map: map,
+        //   position: currentPosition,
+        // });
+        // var infowindow = new kakao.maps.InfoWindow({
+        //   position: currentPosition,
+        //   content: '현재위치',
+        // });
+        // infowindow.open(map, marker);
+        // marker.setOpacity(0);
+
+        // 지도 중심을 현재 위치로 이동
+        map.setCenter(currentPosition);
+        map.setLevel(5);
+      },
+      (error) => {
+        console.error('Geolocation failed: ', error);
+        alert('현재 위치를 가져올 수 없습니다.');
+      }
+    );
+  } else {
+    // Geolocation을 지원하지 않는 경우 처리
+    alert('현재 위치 기능을 사용할 수 없습니다.');
+  }
+};
+
 onMounted(() => {
   initializeMap(); // 지도 초기화 및 데이터 로드
 });
@@ -260,6 +380,7 @@ onMounted(() => {
       v-if="isPanelOpen"
       :selectedProperty="selectedProperty"
       @toggle-panel="togglePanel"
+      @move-map-to-coordinates="setMapCoordinates"
     />
 
     <div
@@ -269,21 +390,44 @@ onMounted(() => {
       }"
     >
       <!-- 수정 1: 지도 좌측 상단에 버튼 추가 -->
-      <button
-        class="toggle-panel-btn"
-        @click="toggleLeftPanel"
-      >
+      <button class="toggle-panel-btn" @click="togglePanel">
         {{ toggleButtonText }}
       </button>
 
+      <!-- 지도가 보여지는 지점 -->
       <div
         id="map"
         ref="mapContainer"
         :style="{
           width: isPanelOpen ? '100%' : '100%',
-          height: '100vh',
+          height: '100%',
         }"
       ></div>
+      <!-- 지도 아래쪽에 새로운 버튼 컨트롤러 추가 -->
+      <div class="custom_maptypecontrol">
+        <input
+          type="checkbox"
+          id="chkUseDistrict"
+          onclick="setOverlayMapTypeId()"
+        />지적편집도
+        <input
+          type="checkbox"
+          id="chkTerrain"
+          onclick="setOverlayMapTypeId()"
+        />지형정보
+        <input
+          type="checkbox"
+          id="chkTraffic"
+          onclick="setOverlayMapTypeId()"
+        />교통정보
+      </div>
+      <!-- 현재 위치로 이동하는 버튼 추가 -->
+      <button
+        class="location-btn"
+        onclick="moveToCurrentLocation()"
+      >
+        <i class="fa-solid fa-location-crosshairs"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -304,25 +448,25 @@ onMounted(() => {
   background-color: white;
   position: relative;
   border: 1px black;
-  height: 95vh;
+  height: 90vh;
 }
 
 .right-panel {
   width: 70%;
   position: relative;
-  height: 95vh;
+  height: 90vh;
 }
 
 .right-panel-full {
   width: 100%;
   position: relative;
-  height: 95vh;
+  height: 90vh;
 }
 
 /* 수정 1: 지도 좌측 상단에 추가된 버튼 스타일 */
 .toggle-panel-btn {
   position: absolute;
-  top: 10px;
+  top: 15px;
   left: 10px;
   z-index: 1000;
   background-color: #007bff;
@@ -347,5 +491,57 @@ onMounted(() => {
   top: 10px;
   left: 10px;
   z-index: 1000;
+}
+
+/* 지도 아래쪽에 지적편집도, 지형정보, 교통정보 버튼 컨트롤 */
+.custom_maptypecontrol {
+  position: absolute;
+  background-color: white;
+  padding: 20px;
+  bottom: 20px;
+  left: 38%;
+  width: auto;
+  z-index: 1000;
+  justify-content: space-between;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.custom_maptypecontrol:hover {
+  border-color: grey;
+  opacity: 1;
+}
+.custom_maptypecontrol input {
+  margin-left: 15px;
+  border-radius: 5px;
+  /* background-color: #fff; */
+}
+
+.location-btn {
+  position: absolute;
+  bottom: 20px; /* 원하는 위치로 조정 가능 */
+  right: 15px; /* 원하는 위치로 조정 가능 */
+  z-index: 1000;
+  background-color: #007bff;
+  opacity: 0.3;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.location-btn:hover {
+  background-color: #0056b3;
+  opacity: 1;
+}
+
+.font-awesome-icon {
+  font-size: 20px;
 }
 </style>

@@ -60,9 +60,8 @@ export default {
 
   async getAddressDetails(id) {
     try {
-      const { data } = await axiosInstance.get(
-        `${BASE_URL}/${id}`
-      );
+      const { data } = await axiosInstance.get(`${BASE_URL}/${id}`);
+      console.log(data);
       return data;
     } catch (error) {
       throw error;

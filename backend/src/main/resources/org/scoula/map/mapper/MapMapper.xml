@@ -4,77 +4,65 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.scoula.map.mapper.MapMapper">
 
-    <select id="getAdressList" resultType="org.scoula.map.domain.MapVO">
-        # 최신 데이터 순으로 실거래가 전체 보여주기
-        WITH RankedData AS (
-            SELECT
-                ad.id,
-                ad.road_name AS doro_juso,
-                ad.x_coordinate,
-                ad.y_coordinate,
-                ap.no,
-                FORMAT(CAST(REPLACE(ap.price, ',', '') AS UNSIGNED) / 10000, 2) AS price,
-                ROW_NUMBER() OVER (PARTITION BY ad.id ORDER BY CONCAT(ap.con_month, ap.con_date) DESC) AS row_num
-            FROM address_distinct ad
-                     RIGHT OUTER JOIN address_price ap ON ad.id = ap.address_id
-        )
-        SELECT *
-        FROM RankedData
-        WHERE row_num = 1
-        LIMIT 100;
+    <select id="getAddressList" resultType="org.scoula.map.domain.MapVO">
+        #최신 데이터 순으로 실거래가 전체 보여주기
+        select pl.location_no, pl.road_name, pl.x_coordinate, pl.y_coordinate, pl.recent_price
+        from property_location pl
+        right join property_tbl pr
+        on pl.location_no = pr.location_no
+        WHERE property_doro_juso in (SELECT property_doro_juso FROM property_tbl
+                                     group by property_doro_juso
+                                     HAVING COUNT(property_doro_juso) > 1)
     </select>
+
     <select id="getAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
-        SELECT
-            ad.id,
-            ap.no,
-            ad.road_name AS doro_juso,
-            ap.price,
-            ap.transaction_date AS date,
-            ap.spacial,
-            ap.dong,
-            ap.floor,
-            ap.buyer,
-            ap.seller,
-            ap.build_year,
-            ap.type_trade,
-            ap.type_build,
-            ap.apart_name,
-            ap.con_month,
-            ap.con_date,
-            ap.apart_name
-        FROM address_distinct ad
-        RIGHT OUTER JOIN address_price ap ON ad.id = ap.address_id
-        WHERE ad.id = #{id}
-        ORDER BY date DESC;-- id로 필터링
+        select
+            pl.location_no,
+            pr.property_no,
+            pl.road_name,
+            pr.price,
+            pr.formated_date AS date,
+            pr.property_area,
+            pr.property_addr_apt_dong,
+            pr.property_addr_floor,
+            pr.building_year,
+            pr.contract_year_month,
+            pr.contract_date,
+            pr.property_addr_apt_name,
+            pr.contract_type,
+            pr.property_jibun_juso
+        from property_location as pl
+        right outer join property_tbl as pr
+        on pl.location_no = pr.location_no
+        where pl.location_no = #{id}
     </select>
 
     <select id="getAddressListMove" resultType="org.scoula.map.domain.MapVO">
         SELECT
-            ad.id,
-            ad.road_name AS doro_juso,
-            ad.x_coordinate,
-            ad.y_coordinate,
-            ap.formated_price as price
-        FROM address_distinct ad
-                 INNER JOIN address_price ap ON ad.id = ap.address_id
+            pl.location_no,
+            pl.road_name AS doro_juso,
+            pl.x_coordinate,
+            pl.y_coordinate,
+            pr.formated_price as price
+        FROM property_location pl
+                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE ad.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
-          AND ad.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
-          AND ap.transaction_date = (
-            SELECT MAX(ap2.transaction_date)FROM address_price ap2
-            WHERE ap2.address_id = ad.id)
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
+          AND pr.formated_date = (
+            SELECT MAX(pr2.formated_date)FROM property_tbl pr2
+            WHERE pr2.location_no = pl.location_no)
     </select>
 
     <select id="getAddressListMoveCluster" resultType="org.scoula.map.domain.MapVO">
         SELECT
-            ad.id,
-            ad.road_name AS doro_juso,
-            ad.x_coordinate,
-            ad.y_coordinate
-        FROM address_distinct ad
+            pl.location_no,
+            pl.road_name AS doro_juso,
+            pl.x_coordinate,
+            pl.y_coordinate
+        FROM property_location pl
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE ad.y_coordinate BETWEEN (#{lat} - zl.lat_range / 2) AND (#{lat} + zl.lat_range / 2)
-          AND ad.x_coordinate BETWEEN (#{lon} - zl.lon_range / 2) AND (#{lon} + zl.lon_range / 2)
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range ) AND (#{lat} + zl.lat_range )
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range ) AND (#{lon} + zl.lon_range )
     </select>
-
 </mapper>

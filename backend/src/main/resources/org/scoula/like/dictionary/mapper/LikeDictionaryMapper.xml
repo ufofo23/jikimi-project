@@ -18,4 +18,8 @@
                 where member_id = #{userId}))
         order by dictionary_title asc
     </select>
+
+    <delete id="delete">
+        delete from like_dictionary_tbl where dictionary_no = #{dicNo}
+    </delete>
 </mapper>
