@@ -121,7 +121,9 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
     }
 
     private void extractAndSaveDataFromDataMap(Map<String, Object> dataMap, Integer analysisNo) {
-        String mainUse = extractMainUse(dataMap);
+
+        List<Map<String, Object>> resOwnedList = (List<Map<String, Object>>) dataMap.get("resOwnedList");
+        String mainUse = getResUseType(resOwnedList);
         String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
         boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
 
@@ -136,7 +138,8 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
         Map<String, Object> responseMap = new ObjectMapper().readValue(result2, HashMap.class);
         Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
 
-        String mainUse = extractMainUse(dataMap);
+        List<Map<String, Object>> resOwnedList = (List<Map<String, Object>>) dataMap.get("resOwnedList");
+        String mainUse = getResUseType(resOwnedList);
         String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
         boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
 
@@ -148,14 +151,14 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
         return !resViolationStatusStr.isEmpty();
     }
 
-    private String extractMainUse(Map<String, Object> dataMap) {
-        if (dataMap.get("resDetailList") instanceof Iterable) {
-            for (Map<String, Object> detail : (Iterable<Map<String, Object>>) dataMap.get("resDetailList")) {
-                if ("주용도".equals(detail.get("resType"))) {
-                    return (String) detail.get("resContents");
-                }
+    private String getResUseType(List<Map<String, Object>> resOwnedList) {
+        if (resOwnedList != null && !resOwnedList.isEmpty()) {
+            Map<String, Object> firstItem = resOwnedList.get(0);
+            if (firstItem != null) {
+                return (String) firstItem.getOrDefault("resUseType", "결과값이 없습니다.");
             }
         }
-        return "";
+        return "결과값이 없습니다.";
     }
+
 }
