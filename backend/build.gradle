@@ -31,6 +31,7 @@ tasks.withType(JavaCompile) {
 
 dependencies {
 
+  //2024.09.24 챗봇
   implementation 'io.projectreactor:reactor-core:3.4.0'
   implementation 'org.springframework:spring-webflux:5.3.10'
   implementation 'io.projectreactor.netty:reactor-netty:1.0.24'

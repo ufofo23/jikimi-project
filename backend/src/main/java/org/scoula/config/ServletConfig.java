@@ -1,6 +1,7 @@
 package org.scoula.config;
 
 import org.scoula.oauth.controller.OauthServerTypeConverter;
+import org.scoula.oauth.controller.OauthServerTypeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;

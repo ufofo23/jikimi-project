@@ -11,10 +11,10 @@ import javax.servlet.ServletRegistration;
 
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer
 {
-    final String LOCATION = "c:/upload";
-    final long MAX_FILE_SIZE = 10L * 1024 * 1024;      // 1개
-    final long MAX_REQUEST_SIZE = 20L * 1024 * 1024;   // 전체
-    final int FILE_SIZE_THRESHOLD = 5 * 1024 * 1024;   // 임시파일 5메가 미만 메모리 직접처리
+//    final String LOCATION = "c:/upload";
+//    final long MAX_FILE_SIZE = 10L * 1024 * 1024;      // 1개
+//    final long MAX_REQUEST_SIZE = 20L * 1024 * 1024;   // 전체
+//    final int FILE_SIZE_THRESHOLD = 5 * 1024 * 1024;   // 임시파일 5메가 미만 메모리 직접처리
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
