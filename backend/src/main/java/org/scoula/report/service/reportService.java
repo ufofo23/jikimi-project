@@ -12,6 +12,6 @@ public interface reportService {
     public int create(ReportDTO report);
 
     /* Algorithm */
-    public ReportDTO analysis(int analysisNo);
+    public ReportDTO analysis(int analysisNo, int propertyNo, String address, int jeonsePrice, int price, String ContractName);
 
 }

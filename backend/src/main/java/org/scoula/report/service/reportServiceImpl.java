@@ -5,6 +5,10 @@ import lombok.extern.log4j.Log4j;
 import org.scoula.report.domain.ReportDTO;
 import org.scoula.report.domain.ReportVO;
 import org.scoula.report.mapper.ReportMapper;
+import org.scoula.safety_inspection.infra.bml.dto.BuildingManagementLedgerDto;
+import org.scoula.safety_inspection.infra.bml.mapper.BuildingManagementLedgerMapper;
+import org.scoula.safety_inspection.infra.cors.dto.CopyOfRegisterDto;
+import org.scoula.safety_inspection.infra.cors.mapper.CopyOfRegisterMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -16,8 +20,8 @@ import java.util.Optional;
 public class reportServiceImpl implements reportService {
 
     final private ReportMapper mapper;
-    final private CorMapper corMapper;
-    final private BmlMapper bmlMapper;
+    final private CopyOfRegisterMapper corMapper;
+    final private BuildingManagementLedgerMapper bmlMapper;
 
     @Override
     public ReportDTO get(int analysisNo) {
@@ -36,7 +40,7 @@ public class reportServiceImpl implements reportService {
     public ReportDTO analysis(int analysisNo, int propertyNo, String address, int jeonsePrice, int price, String ContractName) {
         ReportDTO report = new ReportDTO();
 
-        CopyOfRegisterDto cor = corMapper.selectCopyOfResister(analysisNo);
+        CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
         BuildingManagementLedgerDto bml = bmlMapper.selectBuildingData(analysisNo);
 
         report.setPropertyNo(propertyNo);
@@ -45,14 +49,14 @@ public class reportServiceImpl implements reportService {
 
         if(ContractName != null) {
             report.setAccordOwner(
-                    isAccordOwner(ContractName, cor.getOwnerShip())
+                    isAccordOwner(ContractName, cor.getOwnership())
             );
         }
 
         report.setMaximumOfBond(cor.getMaximumOfBond());
-        report.setUseType(bml.getUseType());
-        report.setViolationStructure(bml.isViolationStructure());
-        report.setKindOfLandrights(cor.getKindOfLandrights());
+        report.setUseType(bml.getResContents());
+        report.setViolationStructure(bml.getResViolationStatus());
+//        report.setKindOfLandrights(cor.getKindOfLandrights());
         report.setCommonOwner(cor.getCommonOwner());
         report.setChangeOwnerCount(cor.getChangeOwnerCount());
         report.setOwnerState(cor.getOwnerState());
@@ -109,14 +113,14 @@ public class reportServiceImpl implements reportService {
         if(report.isViolationStructure())
             return 0;
 
-        // 대지권 등기에 따른 감점 (대지권 등기에 따라 어떻게 값이 들어가는 지 확인 필요)
-        String landrights = report.getKindOfLandrights();
-        if(landrights.equals("미등기"))
-            totalScore -= 10;
-        else if(landrights.equals("불명확"))
-            totalScore -= 15;
-        else if(landrights.equals("없음"))
-            return 0;
+//        // 대지권 등기에 따른 감점 (대지권 등기에 따라 어떻게 값이 들어가는 지 확인 필요)
+//        String landrights = report.getKindOfLandrights();
+//        if(landrights.equals("미등기"))
+//            totalScore -= 10;
+//        else if(landrights.equals("불명확"))
+//            totalScore -= 15;
+//        else if(landrights.equals("없음"))
+//            return 0;
 
         // 총점 50점 기준
         if(totalScore < 50)
