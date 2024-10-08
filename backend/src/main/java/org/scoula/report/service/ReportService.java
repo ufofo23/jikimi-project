@@ -2,7 +2,9 @@ package org.scoula.report.service;
 
 import org.scoula.report.domain.ReportDTO;
 
-public interface reportService {
+import java.util.Map;
+
+public interface ReportService {
 
     /* GET */
     // 특정 레코드 가져오기
@@ -12,6 +14,6 @@ public interface reportService {
     public int create(ReportDTO report);
 
     /* Algorithm */
-    public ReportDTO analysis(int analysisNo, int propertyNo, String address, int jeonsePrice, int price, String ContractName);
+    public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload);
 
 }
