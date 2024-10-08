@@ -1,248 +1,104 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">
-      <i class="fa-solid fa-paste"></i> 게시글 목록
-    </h1>
-
-    <!-- 로딩 상태 -->
-    <div v-if="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">로딩 중...</span>
-      </div>
-    </div>
-
-    <!-- 에러 메시지 -->
-    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
-      {{ errorMessage }}
-    </div>
-
-    <!-- 게시글 목록 테이블 -->
-    <div v-else>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th style="width: 80px">번호</th>
-            <th>제목</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="article in articles" :key="article.commonSenseNo">
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseNo }}
-            </td>
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseTitle }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- 페이지 네이션 -->
-      <div class="d-flex justify-center mt-4">
-        <nav
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-          aria-label="Pagination"
-        >
-          <!-- Previous 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page - 1)"
-            :class="{ 'opacity-50 cursor-not-allowed': pageRequest.page === 1 }"
-            :disabled="pageRequest.page === 1"
-          >
-            <span class="sr-only">Previous</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-
-          <!-- 페이지 번호 버튼들 -->
-          <a
-            v-for="pageNum in totalPages"
-            :key="pageNum"
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            :class="{
-              'bg-indigo-600 text-white z-10': pageRequest.page === pageNum,
-              'hover:bg-gray-50': pageRequest.page !== pageNum,
-            }"
-            @click.prevent="handlePageChange(pageNum)"
-          >
-            {{ pageNum }}
-          </a>
-
-          <!-- 점으로 표시된 부분 -->
-          <span
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-            v-if="totalPages > 5 && pageRequest.page + 2 < totalPages"
-          >
-            ...
-          </span>
-
-          <!-- Next 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page + 1)"
-            :class="{
-              'opacity-50 cursor-not-allowed': pageRequest.page === totalPages,
-            }"
-            :disabled="pageRequest.page === totalPages"
-          >
-            <span class="sr-only">Next</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </nav>
-      </div>
-    </div>
+  <div class="carousel-wrapper">
+    <!-- 캐러셀 컴포넌트 등록 -->
+    <el-carousel
+      ref="carouselCardRef"
+      :interval="7000"
+      :autoplay="false"
+      height="600px"
+      type="card"
+      arrow="always"
+      :animation="false"
+    >
+      <!-- 각 카드 컴포넌트를 캐러셀 아이템으로 등록하고 데이터를 전달 -->
+      <el-carousel-item name="CardCommonSense">
+        <CardCommonSense
+          :currentPieceSense="currentPieceSense"
+          :currentCommonSenseNo="currentCommonSenseNo"
+        />
+      </el-carousel-item>
+    </el-carousel>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/senseApi'; // API 모듈
+import { ref, onMounted } from 'vue';
+import 'element-plus/es/components/carousel/style/css'; // Element Plus 캐러셀 CSS import
+import { ElCarousel, ElCarouselItem } from 'element-plus';
 
-const article = ref({});
-const route = useRoute();
-const router = useRouter();
+// 카드 컴포넌트 import
+import CardCommonSense from '@/components/Cards/CardCommonSense.vue';
 
-// 게시글 상세 보기
-const detail = (no) => {
-  router.push({
-    name: 'senseDetailPage',
-    params: { no: no },
-    query: router.query,
-  });
+// 캐러셀 제어를 위한 참조 변수
+const carouselCardRef = ref(null);
+
+// 캐러셀 제어 메서드
+const next = () => {
+  carouselCardRef.value?.next();
 };
 
-// 상태 관리
-const page = reactive({
-  list: [],
-  totalCount: 0,
-});
-const isLoading = ref(true);
-const errorMessage = ref('');
-
-// 페이지 요청 상태
-const pageRequest = reactive({
-  page: parseInt(route.query.page) || 1,
-  amount: parseInt(route.query.amount) || 10,
-});
-
-// 총 페이지 계산 속성
-const totalPages = computed(() => {
-  return Math.ceil(page.totalCount / pageRequest.amount);
-});
-
-// 게시글 목록 계산 속성
-const articles = computed(() => page.list);
-
-// 페이지 변경 핸들러
-const handlePageChange = async (pageNum) => {
-  if (pageNum < 1 || pageNum > totalPages.value) return;
-  router.push({
-    query: { page: pageNum, amount: pageRequest.amount },
-  });
+const prev = () => {
+  carouselCardRef.value?.prev();
 };
 
-// 데이터 로드 함수
-const load = async () => {
-  isLoading.value = true;
-  errorMessage.value = '';
-  try {
-    const response = await api.getList({
-      page: pageRequest.page,
-      amount: pageRequest.amount,
-    });
-    page.list = response.list;
-    page.totalCount = response.totalCount;
-  } catch (error) {
-    console.error('게시글 로드 실패:', error);
-    errorMessage.value =
-      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
-  } finally {
-    isLoading.value = false;
-  }
+const setToFirst = () => {
+  carouselCardRef.value?.setActiveItem(0);
 };
 
-// query 파라미터 변경 감지
-watch(
-  () => route.query,
-  async (newQuery) => {
-    pageRequest.page = parseInt(newQuery.page) || 1;
-    pageRequest.amount = parseInt(newQuery.amount) || 10;
-    await load();
-  }
-);
-
-// 컴포넌트가 마운트될 때 데이터 로드
-onMounted(() => {
-  load();
-});
+// 첫 번째 카드에서 필요한 데이터 상태 관리
+const currentPieceSense = ref('Some sense data');
+const currentCommonSenseNo = ref('1');
 </script>
 
 <style scoped>
-/* 중앙 정렬 및 테이블 스타일 */
-.container {
-  max-width: 800px;
+.carousel-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Viewport Height을 100%로 설정 */
+  margin: 0;
+  padding: 0;
+}
+/* 캐러셀 컨테이너 스타일 */
+.carousel-wrapper {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 15px;
+  position: relative;
+  text-align: center; /* 중앙 정렬 */
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f5f5f5;
+/* 캐러셀 항목의 스타일 */
+.el-carousel__item {
+  display: flex; /* flexbox를 사용하여 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  transform: scale(0.7); /* 좌우 카드의 크기를 축소 */
+  opacity: 0.5; /* 좌우 카드의 투명도 조정 */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* 부드러운 트랜지션 */
 }
 
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
+.el-carousel__item.is-active {
+  transform: scale(1); /* 중앙 카드 확대 */
+  opacity: 1; /* 중앙 카드의 투명도 100% */
 }
 
-/* 페이지네이션 버튼 스타일 */
-nav a {
-  padding: 0.5rem 1rem;
-}
-nav a.disabled {
-  pointer-events: none;
-  opacity: 0.5;
+/* 캐러셀 제어 버튼 */
+.controls {
+  margin-top: 20px;
+  text-align: center;
 }
 
-/* 반응형 페이지네이션 */
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
-  }
+button {
+  margin: 0 5px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-  .table th,
-  .table td {
-    font-size: 0.9rem;
-  }
-
-  nav a {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-  }
+button:hover {
+  background-color: #0056b3;
 }
 </style>
