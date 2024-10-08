@@ -124,24 +124,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import likeReportApi from '@/api/like/likeReportApi'; // likeReportApi 가져오기
 
-// 임시 데이터
-const originalData = ref([
-  { date: '2024-01-01', address: '부산 북구', score: '안전' },
-  { date: '2024-01-02', address: '부산 강서구', score: '안전' },
-  { date: '2024-01-03', address: '대구 수성구', score: '안전' },
-  { date: '2024-01-04', address: '부산 사하구', score: '안전' },
-  { date: '2024-01-05', address: '부산 진구', score: '위험' },
-  { date: '2024-01-06', address: '대구 북구', score: '위험' },
-  { date: '2024-01-07', address: '서울 강서구', score: '안전' },
-  { date: '2024-01-08', address: '부산 중구', score: '판단불가' },
-  { date: '2024-01-09', address: '부산 동구', score: '안전' },
-  { date: '2024-01-10', address: '부산 서구', score: '불가' },
-  { date: '2024-01-11', address: '부산 남구', score: '판단불가' },
-  { date: '2024-01-12', address: '서울 강남구', score: '안전' },
-]);
-
+const originalData = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = 10;
 const isLoading = ref(false);
@@ -151,6 +137,21 @@ const isResultDropdownOpen = ref(false); // 진단 결과 드롭다운 상태
 const selectedResult = ref('전체'); // 선택된 단일 결과 옵션
 const selectedSortOrder = ref('latest'); // 선택된 정렬 기준
 const selectedItems = ref([]); // 선택된 항목을 저장할 배열
+
+// 데이터 로드 함수
+const loadReports = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  try {
+    const response = await likeReportApi.getList();
+    originalData.value = response; // API로부터 받은 데이터를 저장
+  } catch (error) {
+    console.error('보고서 로드 실패:', error);
+    errorMessage.value = '보고서를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // 총 페이지 계산
 const totalPages = computed(() => {
@@ -237,6 +238,12 @@ const sortByDate = (order) => {
   selectedSortOrder.value = order;
   isDateDropdownOpen.value = false; // 드롭다운 닫기
 };
+
+// 컴포넌트가 마운트될 때 데이터 로드
+onMounted(() => {
+  loadReports();
+});
+
 </script>
 
 <style scoped>
