@@ -1,66 +1,44 @@
 <template>
-  <div class="carousel-wrapper mt-4">
-    <!-- 캐러셀 컴포넌트 -->
-    <el-carousel
-      :interval="7000"
-      :autoplay="false"
-      height="400px"
-      arrow="always"
-      type="card"
-      :animation="false"
-    >
-      <!-- 게시글을 순회하여 각 게시글을 캐러셀 아이템으로 보여주기 -->
-      <el-carousel-item
+  <div class="scroll-container" ref="scrollContainer">
+    <div class="scroll-wrapper">
+      <div
         v-for="article in articles"
-        :key="article.commonSenseNo"
+        :key="article.commonSenseNo + Math.random()"
+        class="card"
       >
-        <CardCommonSense
+        <PieceSenseCard
           :commonSenseTitle="article.commonSenseTitle"
           :commonSenseNo="article.commonSenseNo"
           :commonSenseContent="article.commonSenseContent"
           :commonPieceSense="article.pieceSense"
         />
-      </el-carousel-item>
-    </el-carousel>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, reactive } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/senseApi'; // API 모듈
+import api from '@/api/senseApi';
+import PieceSenseCard from '@/components/Cards/\bPieceSenseCard.vue';
 
-// CardCommonSense 컴포넌트 import
-import CardCommonSense from '@/components/Cards/CardCommonSense.vue';
-
-// 게시글 목록 상태 관리
 const page = reactive({
   list: [],
   totalCount: 0,
 });
 const isLoading = ref(true);
 const errorMessage = ref('');
-const route = useRoute();
-const router = useRouter();
-// 페이지 요청 상태
 const pageRequest = reactive({
-  page: parseInt(route.query.page) || 1,
-  amount: parseInt(route.query.amount) || 37,
+  page: 1,
+  amount: 37,
 });
 
-// 게시글 목록 계산 속성
 const articles = computed(() => page.list);
 
-// 게시글 상세 보기 함수
-const detail = (no) => {
-  router.push({
-    name: 'senseDetailPage',
-    params: { no: no },
-    query: router.query,
-  });
-};
+// 자동 스크롤을 위한 ref
+const scrollContainer = ref(null);
 
-// 데이터 로드 함수
+// 데이터 로드
 const load = async () => {
   isLoading.value = true;
   errorMessage.value = '';
@@ -69,6 +47,10 @@ const load = async () => {
       page: pageRequest.page,
       amount: pageRequest.amount,
     });
+
+    console.log('게시글 목록:', response.list); // ✅ 리스트 출력
+    console.log('총 게시글 수:', response.totalCount); // ✅ 총 게시글 수 출력
+
     page.list = response.list;
     page.totalCount = response.totalCount;
   } catch (error) {
@@ -78,15 +60,68 @@ const load = async () => {
   }
 };
 
-// 컴포넌트가 마운트될 때 데이터 로드
+// 자동 스크롤 함수
+const startAutoScroll = () => {
+  setInterval(() => {
+    if (scrollContainer.value) {
+      // 부드럽게 스크롤하는 방식
+      scrollContainer.value.scrollBy({ left: 310, behavior: 'smooth' });
+
+      // 끝까지 스크롤하면 처음으로 다시 돌아가기
+      if (
+        scrollContainer.value.scrollLeft >=
+        scrollContainer.value.scrollWidth - scrollContainer.value.clientWidth
+      ) {
+        scrollContainer.value.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    }
+  }, 3000); // 3초마다 자동 스크롤
+};
+
 onMounted(() => {
   load();
+  startAutoScroll(); // 자동 스크롤 시작
 });
 </script>
 
 <style scoped>
-.carousel-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
+/* 컨테이너 스타일 */
+.scroll-container {
+  display: flex;
+  height: 100vh; /* 화면 전체 높이를 사용하여 중앙 정렬 */
+  align-items: center; /* 세로 방향 중앙 정렬 */
+
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+  -ms-overflow-style: none; /* IE에서 스크롤바 숨기기 */
+  background: transparent; /* 배경색 제거 */
+  padding: 0; /* 패딩 제거 */
+  border: none; /* 경계선 제거 */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari에서 스크롤바 숨기기 */
+}
+
+.scroll-wrapper {
+  display: flex;
+  gap: 10;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  background: none; /* 배경색 없음 */
+  box-shadow: none; /* 그림자 없음 */
+}
+
+.card {
+  flex: 0 0 380px; /* 카드의 고정된 크기 */
+  scroll-snap-align: start;
+  background-color: transparent; /* 카드 배경을 투명하게 */
+  border: none; /* 경계선 제거 */
+  padding: 0;
+  margin: 0;
+  box-shadow: none !important; /* 그림자 제거 */
 }
 </style>
