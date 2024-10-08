@@ -21,4 +21,5 @@ public class MapDetailDTO {
     private String buildingYear;
     private String contractType;
     private String propertyType;
+
 }
