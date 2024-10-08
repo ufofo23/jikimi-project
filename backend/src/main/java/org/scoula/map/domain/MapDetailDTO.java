@@ -10,21 +10,15 @@ import lombok.NoArgsConstructor;
 public class MapDetailDTO {
     private int locationNo;
     private int propertyNo;
-    private String apartName;
     private String doroJuso;
-    private String roadName;
-    private String price;
+    private String jibunJuso;
+    private int zipcode;
+    private int price;
+    private String date;
     private String propertyArea;
-    private String propertyAddrAptDong;
     private String propertyAddrFloor;
     private String propertyAddrAptName;
-    private String buyer;
-    private String seller;
     private String buildingYear;
     private String contractType;
-    private String typeBuild;
-    private String date;
-    private String contractYearMonth;
-    private String contractDate;
-    private String propertyJibunJuso;
+    private String propertyType;
 }

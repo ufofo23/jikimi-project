@@ -9,8 +9,27 @@ let map,
   clusterer,
   marker,
   markers = [], // 현재 지도에 표시된 마커들을 저장할 배열
-  clustermarker,
   overlays = []; // 커스텀 오버레이를 저장할 배열
+
+const selectedTradeType = ref('전체');
+const selectedBuildingType = ref('전체');
+
+// Property Type 별 필터링
+const handleBuildingTypeUpdate = (newBuildingType) => {
+  selectedBuildingType.value = newBuildingType;
+  console.log(
+    'Updated Building Type: ',
+    selectedBuildingType.value
+  );
+};
+// Trade Type 별 필터링
+const handleTransactionTypeUpdate = (newTradeType) => {
+  selectedTradeType.value = newTradeType;
+  console.log(
+    'Updated Trade Type: ',
+    selectedTradeType.value
+  );
+};
 
 const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
 const isPanelOpen = ref(true); // 패널 열림 상태
@@ -22,14 +41,21 @@ const toggleButtonText = computed(() => {
 });
 
 // 데이터를 서버에서 페이징 처리해서 가져오는 함수
-const fetchAddressData = async (lat, lon, zoomLevel) => {
-  if (zoomLevel < 6) {
+const fetchAddressData = async (
+  lat,
+  lon,
+  zoomLevel,
+  page = 1,
+  limit = 200
+) => {
+  if (zoomLevel < 5) {
     try {
-      const response = await addressApi.getAddressListMove(
-        lat,
-        lon,
-        zoomLevel
-      ); // API 호출
+      const response =
+        await addressApi.getAddressListMoveAll(
+          lat,
+          lon,
+          zoomLevel
+        ); // API 호출
       const newCoordinates = response.map((item) => ({
         id: item.locationNo,
         x: parseFloat(item.xcoordinate),
@@ -47,25 +73,41 @@ const fetchAddressData = async (lat, lon, zoomLevel) => {
   } else {
     try {
       const response =
-        await addressApi.getAddressListMoveCluster(
+        await addressApi.getAddressListMoveClusterAll(
           lat,
           lon,
-          zoomLevel
-        ); // API 호출
+          zoomLevel,
+          page,
+          limit
+        );
+      overlays.forEach((overlay) => overlay.setMap(null));
+
       const newCoordinates = response.map((item) => ({
+        id: item.locationNo,
         x: parseFloat(item.xcoordinate),
         y: parseFloat(item.ycoordinate),
+        price: item.price,
       }));
 
-      // 클러스터에 저장된 마커를 제거
-      clusterer.clear();
-      markers.forEach((marker) => {
-        marker.setMap(null); // 마커를 숨김
-      });
-      overlays.forEach((overlay) => {
-        overlay.setVisible(false); // 오버레이를 숨김
-      });
-      updateMarkersCluster(newCoordinates); // 새로운 데이터만 마커 추가
+      if (newCoordinates.length > 0) {
+        // Update the cluster with new markers
+        updateMarkersCluster(newCoordinates);
+
+        // If the data length equals the limit, fetch the next page recursively
+        if (newCoordinates.length === limit) {
+          await fetchAddressData(
+            lat,
+            lon,
+            zoomLevel,
+            page + 1,
+            limit
+          );
+        } else {
+          console.log('All data has been loaded.');
+        }
+      } else {
+        console.log('No more data to load.');
+      }
     } catch (error) {
       console.error('Failed to fetch address data:', error);
     }
@@ -80,7 +122,7 @@ const initializeMap = () => {
         37.5538265102548,
         126.968466927468
       ), // 기본 좌표
-      level: 5, // 지도 확대 레벨
+      level: 3, // 지도 확대 레벨
     };
 
   map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
@@ -90,18 +132,48 @@ const initializeMap = () => {
   clusterer = new kakao.maps.MarkerClusterer({
     map: map, // 클러스터러에 추가할 지도 객체
     averageCenter: true, // 클러스터 마커의 중심을 마커들의 평균 좌표로 설정
-    minLevel: 6, // 클러스터 할 최소 줌 레벨
+    minLevel: 5, // 클러스터 할 최소 줌 레벨
     minClusterSize: 1, // 클러스터링 할 최소 마커 수 (default: 2)
     disableClickZoom: false, // 클러스터 클릭할 때 확대 방지
+    averageCenter: false, // 마커 중심을 계산하지 않도록 설정
   });
 
+  // 클러스터 크기에 따른 문구 표시 (50+, 100+, 200+)
+  clusterer.setTexts(function (size) {
+    if (size >= 200) {
+      return '200+';
+    } else if (size >= 100) {
+      return '100+';
+    } else if (size >= 50) {
+      return '50+';
+    } else {
+      return size.toString(); // 그 이하일 때는 마커 개수 그대로 표시
+    }
+  });
+
+  // 클러스터 크기를 구분하는 기준 설정
+  clusterer.setCalculator(function (size) {
+    if (size < 50) {
+      return 0; // 스타일 배열의 첫 번째 인덱스
+    } else if (size < 100) {
+      return 1; // 스타일 배열의 두 번째 인덱스
+    } else if (size < 200) {
+      return 2; // 스타일 배열의 세 번째 인덱스
+    } else {
+      return 3; // 스타일 배열의 네 번째 인덱스
+    }
+  });
   // 지도 이동 및 확대/축소 이벤트 리스너 등록
   kakao.maps.event.addListener(map, 'idle', function () {
     // 지도의 레벨과 중심 좌표를 얻어옵니다
+    clusterer.removeMarkers(markers); // Remove all existing markers
+    markers = []; // Clear the marker array to prepare for new markers
     const level = map.getLevel();
     const center = map.getCenter();
     const lat = center.getLat();
     const lon = center.getLng();
+    markers.forEach((marker) => marker.setMap(null));
+    overlays.forEach((overlay) => overlay.setMap(null));
 
     // 새로운 데이터를 가져옵니다
     setTimeout(() => {
@@ -182,18 +254,12 @@ const setMapCoordinates = ({ x, y, buildingName }) => {
   }
 };
 
-// 마커 이미지 설정
-const imageSrc = '../../src/assets/image (2).png';
-const imageSize = new kakao.maps.Size(80, 80);
-const markerImage = new kakao.maps.MarkerImage(
-  imageSrc,
-  imageSize
-);
-
 const updateMarkers = (newCoords) => {
-  markers.forEach((marker) => marker.setMap(null));
-  overlays.forEach((overlay) => overlay.setMap(null));
-
+  // 마커 이미지 설정
+  const markerImage = new kakao.maps.MarkerImage(
+    '../../src/assets/image-2.svg',
+    new kakao.maps.Size(80, 80)
+  );
   const newMarkers = newCoords.map((coord) => {
     const markerPosition = new kakao.maps.LatLng(
       coord.y,
@@ -257,22 +323,53 @@ const updateMarkers = (newCoords) => {
 
   markers.push(...newMarkers); // 마커 배열에 추가
   clusterer.addMarkers(newMarkers); // 클러스터에 마커 추가
+
+  kakao.maps.event.addListener(
+    clusterer,
+    'clustered',
+    function (clusters) {
+      overlays.forEach((overlay) => overlay.setMap(null));
+    }
+  );
 };
 
+// 클러스터 마커 업데이트 함수
 const updateMarkersCluster = (newCoords) => {
-  // 새로운 마커 추가
-  const newClusterMarker = newCoords.map((coord) => {
-    const markerPosition = new kakao.maps.LatLng(
-      coord.y,
-      coord.x
-    );
-    const clustermarker = new kakao.maps.Marker({
-      position: markerPosition,
-    });
+  const markerImageSVG = new kakao.maps.MarkerImage(
+    '../../src/assets/marker.svg',
+    new kakao.maps.Size(0, 0)
+  );
 
-    return clustermarker;
-  });
-  clusterer.addMarkers(newClusterMarker); // 클러스터에 마커 추가
+  // Batch adding markers
+  const batchSize = 200;
+  let currentIndex = 0;
+
+  const addMarkersBatch = () => {
+    const batchMarkers = newCoords
+      .slice(currentIndex, currentIndex + batchSize)
+      .map((coord) => {
+        const markerPosition = new kakao.maps.LatLng(
+          coord.y,
+          coord.x
+        );
+        const marker = new kakao.maps.Marker({
+          position: markerPosition,
+          image: markerImageSVG,
+        });
+
+        markers.push(marker); // Add the new marker to the markers array
+        return marker;
+      });
+
+    clusterer.addMarkers(batchMarkers); // Add new markers to the clusterer
+    currentIndex += batchSize;
+
+    if (currentIndex < newCoords.length) {
+      requestAnimationFrame(addMarkersBatch); // Asynchronously process the next batch
+    }
+  };
+
+  addMarkersBatch(); // Start processing the first batch of markers
 };
 
 const togglePanel = () => {
@@ -381,8 +478,9 @@ onMounted(() => {
       :selectedProperty="selectedProperty"
       @toggle-panel="togglePanel"
       @move-map-to-coordinates="setMapCoordinates"
+      @updateTransactionType="handleTransactionTypeUpdate"
+      @updateBuildingType="handleBuildingTypeUpdate"
     />
-
     <div
       :class="{
         'right-panel-full': !isPanelOpen,

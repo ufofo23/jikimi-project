@@ -2,7 +2,104 @@
   <div class="left-panel">
     <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
-      <SearchBar @address-selected="handleAddressSelected" />
+      <SearchBar
+        @address-selected="handleAddressSelected"
+      />
+    </div>
+
+    <!-- 매매전월세 건물유형 관련 -->
+    <div class="filter-container">
+      <!-- 거래유형 -->
+      <div class="filter-buttons">
+        <button @click="toggleFilter('transactionType')">
+          매매/전월세
+        </button>
+        <button @click="toggleFilter('buildingType')">
+          건물유형
+        </button>
+      </div>
+
+      <!-- 매매/전월세 -->
+      <div
+        v-if="activeFilter === 'transactionType'"
+        class="dropdown"
+      >
+        <button
+          :class="{
+            active: selectedTransaction === '전체',
+          }"
+          @click="selectTransaction('전체')"
+        >
+          전체
+        </button>
+        <button
+          :class="{
+            active: selectedTransaction === '매매',
+          }"
+          @click="selectTransaction('1')"
+        >
+          매매
+        </button>
+        <button
+          :class="{
+            active: selectedTransaction === '전세',
+          }"
+          @click="selectTransaction('2')"
+        >
+          전세
+        </button>
+        <button
+          :class="{
+            active: selectedTransaction === '월세',
+          }"
+          @click="selectTransaction('3')"
+        >
+          월세
+        </button>
+      </div>
+      <div
+        v-if="activeFilter === 'buildingType'"
+        class="dropdown"
+      >
+        <button
+          :class="{
+            active: selectedBuilding === '전체',
+          }"
+          @click="selectBuilding('전체')"
+        >
+          전체
+        </button>
+        <button
+          :class="{
+            active: selectedBuilding === '연립다세대',
+          }"
+          @click="selectBuilding('3')"
+        >
+          연립다세대
+        </button>
+        <button
+          :class="{
+            active: selectedBuilding === '오피스텔',
+          }"
+          @click="selectBuilding('2')"
+        >
+          오피스텔
+        </button>
+        <button
+          :class="{ active: selectedBuilding === '아파트' }"
+          @click="selectBuilding('1')"
+        >
+          아파트
+        </button>
+        <button
+          :class="{
+            active: selectedBuilding === '단독다가구',
+          }"
+          @click="selectBuilding('4')"
+        >
+          단독다가구
+        </button>
+      </div>
     </div>
 
     <!-- 즐겨찾기 토글 -->
@@ -38,12 +135,18 @@
         <span>{{ detailsVisible ? '▲' : '▼' }}</span>
       </h2>
       <div v-if="detailsVisible">
-        <div v-if="selectedProperty && selectedProperty.length">
+        <div
+          v-if="selectedProperty && selectedProperty.length"
+        >
           <h2 class="apart-name">
             {{ selectedProperty[0].propertyAddrAptName }}
             <font-awesome-icon
               class="favorite-icon"
-              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
+              :icon="
+                isFavorite
+                  ? ['fas', 'star']
+                  : ['far', 'star']
+              "
               :style="{
                 color: isFavorite ? '#FFD43B' : 'black',
               }"
@@ -67,17 +170,24 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(property, index) in selectedProperty" :key="index">
+              <tr
+                v-for="(
+                  property, index
+                ) in selectedProperty"
+                :key="index"
+              >
                 <td>{{ property.date }}</td>
                 <td>{{ property.contractType }}</td>
-                <td>{{ property.price }}만원</td>
+                <td>{{ property.price }}억 원</td>
                 <td>{{ property.propertyArea }} m²</td>
                 <td>{{ property.propertyAddrFloor }}</td>
               </tr>
             </tbody>
           </table>
           <div class="analyze-button-container">
-            <button @click="analyzeProperty">매물 분석하기</button>
+            <button @click="analyzeProperty">
+              매물 분석하기
+            </button>
           </div>
         </div>
         <p v-else>매물을 골라주세요.</p>
@@ -97,9 +207,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-  'toggle-panel',
   'update:selectedProperty',
   'move-map-to-coordinates', // 상위 컴포넌트로 좌표 전달을 위한 이벤트 추가
+  'updateTransactionType', // 여기에 오타 수정
+  'updateBuildingType',
 ]);
 
 // 즐겨찾기와 상세보기 토글 상태 관리
@@ -130,7 +241,9 @@ watch(
 // 즐겨찾기 아이템 토글 함수
 const toggleWishlistItem = (itemName) => {
   if (wishlist.value.includes(itemName)) {
-    wishlist.value = wishlist.value.filter((item) => item !== itemName);
+    wishlist.value = wishlist.value.filter(
+      (item) => item !== itemName
+    );
   } else {
     wishlist.value.push(itemName);
   }
@@ -140,7 +253,10 @@ const toggleWishlistItem = (itemName) => {
 const removeFromWishlist = (itemName) => {
   toggleWishlistItem(itemName);
   // 아이콘 상태 업데이트
-  if (props.selectedProperty[0]?.propertyAddrAptName === itemName) {
+  if (
+    props.selectedProperty[0]?.propertyAddrAptName ===
+    itemName
+  ) {
     isFavorite.value = false; // 상세보기에서 해당 아이콘 상태 변경
   }
 };
@@ -156,9 +272,14 @@ const toggleDetails = () => {
 
 // 즐겨찾기 상태 토글
 const toggleFavorite = () => {
-  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
+  if (
+    !props.selectedProperty ||
+    props.selectedProperty.length === 0
+  )
+    return;
 
-  const apartmentName = props.selectedProperty[0].propertyAddrAptName;
+  const apartmentName =
+    props.selectedProperty[0].propertyAddrAptName;
   toggleWishlistItem(apartmentName);
   isFavorite.value = wishlist.value.includes(apartmentName);
 };
@@ -183,20 +304,46 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-  if (props.selectedProperty.length > 0 && props.selectedProperty[0].roadName) {
+  if (
+    props.selectedProperty.length > 0 &&
+    props.selectedProperty[0].roadName
+  ) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
-    const propertyJibunJuso = props.selectedProperty[0].propertyJibunJuso;
-    const buildingName = props.selectedProperty[0].propertyAddrAptName;
+    const propertyJibunJuso =
+      props.selectedProperty[0].propertyJibunJuso;
+    const buildingName =
+      props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     router.push({
       name: 'mapAnalyzing',
       query: {
         propertyJibunJuso: propertyJibunJuso,
         buildingName: buildingName,
-        propertyNo: propertyNo,        
+        propertyNo: propertyNo,
       },
     });
   }
+};
+
+// 매매전월세 건물유형 관련
+const activeFilter = ref(null); // 필터 toggle 관련
+const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트값
+const selectedBuilding = ref('전체'); // 건물유형 디폴트값
+
+const toggleFilter = (filterType) => {
+  activeFilter.value =
+    activeFilter.value === filterType ? null : filterType;
+};
+
+const selectTransaction = (type) => {
+  selectedTransaction.value = type;
+  // activeFilter.value = null; // 선택이후 닫기
+  emit('updateTransactionType', selectedTransaction.value);
+};
+const selectBuilding = (type) => {
+  selectedBuilding.value = type;
+  // activeFilter.value = null; // 선택이후 닫기
+  emit('updateBuildingType', selectedBuilding.value);
 };
 </script>
 
@@ -283,5 +430,46 @@ table th {
 
 .analyze-button-container button:hover {
   background-color: #45a049;
+}
+
+/* 매매전월세 건물유형 관련 CSS */
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-buttons button {
+  padding: 10px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.dropdown {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.dropdown button {
+  padding: 4px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.dropdown button.active {
+  background-color: mediumaquamarine;
+  color: white;
+  border: 1px solid mediumaquamarine;
 }
 </style>
