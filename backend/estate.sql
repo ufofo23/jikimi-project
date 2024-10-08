@@ -78,51 +78,24 @@ CREATE TABLE analysis_tbl (
 
 DROP TABLE IF EXISTS cor_tbl;
 CREATE TABLE cor_tbl (
-    cor_no int PRIMARY KEY AUTO_INCREMENT,
-    analysis_no int NOT NULL,
-    cor_addr_city varchar(50) NOT NULL,
-    cor_addr_gu varchar(50) NOT NULL,
-    cor_addr_dong varchar(50) NOT NULL,
-    cor_addr_ji int NOT NULL,
-    cor_addr_bun int NOT NULL,
-    cor_addr_apt_name varchar(50),
-    cor_addr_apt_dong int,
-    cor_addr_apt_ho int,
-    use_of_building varchar(50) NOT NULL,
-    part_of_ownership varchar(50) NOT NULL,
-    kind_of_landrights varchar(50) NOT NULL,
-    ownership varchar(50) NOT NULL,
-    change_ownership_cnt int NOT NULL,
-    mortgage tinyint NOT NULL,
-    maximum_of_bond int NOT NULL,
-    FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no) ON DELETE CASCADE
+                         cor_no INT PRIMARY KEY AUTO_INCREMENT,
+                         analysis_no INT,
+                         owner_state DOUBLE,
+                         type_of_ownership VARCHAR(255),
+                         common_owner VARCHAR(255),
+                         change_owner_count INT,
+                         maximum_of_bond INT,
+                         FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no)
 );
 
 DROP TABLE IF EXISTS bml_tbl;
 CREATE TABLE bml_tbl (
-    bml_no int PRIMARY KEY AUTO_INCREMENT,
-    analysis_no int NOT NULL,
-    bml_property_code varchar(50) NOT NULL,
-    bml_addr_city varchar(50) NOT NULL,
-    bml_addr_gu varchar(50) NOT NULL,
-    bml_addr_dong varchar(50) NOT NULL,
-    bml_addr_ji int NOT NULL,
-    bml_addr_bun int NOT NULL,
-    bml_addr_apt_name varchar(50),
-    bml_addr_apt_dong int,
-    bml_addr_apt_ho int,
-    bml_use_type varchar(50) NOT NULL,
-    bml_area int NOT NULL,
-    bml_floor int NOT NULL,
-    bml_structure varchar(50) NOT NULL,
-    bml_owner varchar(50) NOT NULL,
-    bml_owner_identity_no int NOT NULL,
-    bml_owner_addr varchar(50) NOT NULL,
-    bml_ownership_stake int NOT NULL,
-    bml_violation_structure tinyint NOT NULL,
-    FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no) ON DELETE CASCADE
+                         bml_no INT PRIMARY KEY AUTO_INCREMENT,
+                         analysis_no INT,
+                         violation_structure BOOLEAN,
+                         use_type VARCHAR(255),
+                         FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no)
 );
-
 DROP TABLE IF EXISTS report_tbl;
 CREATE TABLE report_tbl (
     report_no int PRIMARY KEY AUTO_INCREMENT,
@@ -459,31 +432,6 @@ VALUES
         3
     );
 
-# 등기부등본
-INSERT INTO cor_tbl (analysis_no, cor_addr_city, cor_addr_gu, cor_addr_dong, cor_addr_ji, cor_addr_bun, cor_addr_apt_name, cor_addr_apt_dong, cor_addr_apt_ho, use_of_building, part_of_ownership, kind_of_landrights, ownership, change_ownership_cnt, mortgage, maximum_of_bond)
-VALUES
-    (
-        1, '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 203, '공동주택(아파트)', '135.92', '소유권대지권', '소유자  김재연  741115-*******', 1, 0, 0
-    ),
-    (
-        2, '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 204, '공동주택(아파트)', '135.92', '소유권대지권', '소유자  박영순  460228-*******', 0, 1, 54000
-    ),
-    (
-        3, '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 205, '공동주택(아파트)', '135.92', '소유권대지권', '소유자 홍길동 640101-*******', 0, 1, 60000
-    );
-
-# 건축물 관리 대장
-INSERT INTO bml_tbl (analysis_no, bml_property_code, bml_addr_city, bml_addr_gu, bml_addr_dong, bml_addr_ji, bml_addr_bun, bml_addr_apt_name, bml_addr_apt_dong, bml_addr_apt_ho, bml_use_type, bml_area, bml_floor, bml_structure, bml_owner, bml_owner_identity_no, bml_owner_addr, bml_ownership_stake, bml_violation_structure)
-VALUES
-    (
-        1, '11022009007223', '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 203, '공동주택(아파트)', '135.92', 2, '철근콘크리트구조', '김재연', 741115, '서울특별시 서초구 반포동 래미안퍼스티지 112동 303호', 100, 0
-    ),
-    (
-        2, '11022009007223', '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 204, '공동주택(아파트)', '135.92', 2, '철근콘크리트구조', '박영순', 460228, '서울특별시 서초구 반포동 래미안퍼스티지 112동 304호', 100, 0
-    ),
-    (
-        3, '11022009007223', '서울특별시', '서초구', '반포동', 18, 1, '래미안퍼스티지', 112, 205, '공동주택(아파트)', '135.92', 2, '철근콘크리트구조', '홍길동', 640101, '서울특별시 서초구 반포동 래미안퍼스티지 112동 305호', 100, 0
-    );
 
 # 레포트
 INSERT INTO report_tbl (analysis_no, mortgage, violation_structure, deposit, rent, price, contract_start_date, change_ownership_cnt, accord_owner, main_use)

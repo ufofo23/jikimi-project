@@ -1,6 +1,7 @@
 package org.scoula.config;
 
 import org.scoula.oauth.controller.OauthServerTypeConverter;
+import org.scoula.oauth.controller.OauthServerTypeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
+        "org.scoula.safety_inspection",
         "org.scoula.commonsense.controller",
         "org.scoula.dictionary.controller",
         "org.scoula.faq.controller",
