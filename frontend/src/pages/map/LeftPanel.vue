@@ -306,18 +306,17 @@ const router = useRouter();
 const analyzeProperty = () => {
   if (
     props.selectedProperty.length > 0 &&
-    props.selectedProperty[0].roadName
+    props.selectedProperty[0].doroJuso
   ) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
-    const propertyJibunJuso =
-      props.selectedProperty[0].propertyJibunJuso;
+    const jibunJuso = props.selectedProperty[0].jibunJuso;
     const buildingName =
       props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     router.push({
       name: 'mapAnalyzing',
       query: {
-        propertyJibunJuso: propertyJibunJuso,
+        jibunJuso: jibunJuso,
         buildingName: buildingName,
         propertyNo: propertyNo,
       },
