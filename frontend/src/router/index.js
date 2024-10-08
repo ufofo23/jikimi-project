@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import useAuthStore from '@/stores/auth';
 import Main from '../pages/app/Main.vue';
 import Login from '../pages/Login.vue';
-import MyPage from '../pages/Mypage.vue';
+import MyPage from '../pages/mypage/Mypage.vue';
 import Analyzing from '@/pages/app/Analyzing.vue';
 import Study from '@/pages/app/Study.vue';
 import FAQ from '@/pages/FAQ.vue';
@@ -19,6 +19,8 @@ import MainMap from '../pages/map/MainMap.vue';
 import PreventionListPage from '@/pages/study/PreventionListPage.vue';
 import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
 import MapAnalyzing from '@/pages/map/MapAnalyzing.vue';
+import MyReport from '@/pages/mypage/MyReport.vue';
+import Report from '@/pages/app/Report.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,10 @@ const router = createRouter({
     { path: '/mypage', 
       name: 'mypage', 
       component: MyPage },
+
+    { path: '/myreport',
+      name: 'myreport',
+      component: MyReport },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -107,7 +113,7 @@ const router = createRouter({
       path: '/map/analyzing',
       name: 'mapAnalyzing',
       component: MapAnalyzing,
-    }
+    },
   ],
 });
 
