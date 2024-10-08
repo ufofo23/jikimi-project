@@ -36,7 +36,6 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
     private static final String TYPE = "0";
     private static final String TIMEOUT = "60";
     private static final String ORIGIN_DATA_YN = "0";
-    private static final String IDENTITY_ENC_YN = "Y";
 
     @Override
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
@@ -61,7 +60,6 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
         parameterMap.put("timeout", TIMEOUT);
         parameterMap.put("originDataYN", ORIGIN_DATA_YN);
         parameterMap.put("secureNoTimeout", TIMEOUT);
-        parameterMap.put("identityEncYn", IDENTITY_ENC_YN);
 
         String identityEncYn = "Y";
         if ("N".equals(identityEncYn)) {
@@ -123,8 +121,6 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
         String resViolationStatusStr = (String) dataMap.getOrDefault("resViolationStatus", "");
         boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
 
-        System.out.println("mainUse = " + mainUse);
-        System.out.println("resViolationStatus = " + resViolationStatus);
 
         BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, resViolationStatus, mainUse);
         buildingManagementLedgerMapper.insertBuildingData(ledgerData);

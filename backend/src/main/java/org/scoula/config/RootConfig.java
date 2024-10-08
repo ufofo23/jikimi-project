@@ -11,17 +11,38 @@ import org.scoula.safety_inspection.codef.EasyCodef;
 import org.scoula.safety_inspection.codef.EasyCodefClientInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@MapperScan("org.scoula")
+@MapperScan(basePackages = {
+        "org.scoula.oauth.mapper",
+        "org.scoula.safety_inspection",
+        "org.scoula.commonsense.mapper",
+        "org.scoula.dictionary.mapper",
+        "org.scoula.faq.mapper",
+        "org.scoula.map.mapper",
+        "org.scoula.like.dictionary.mapper",
+        "org.scoula.prevention.mapper"})
+@ComponentScan(basePackages = {
+        "org.scoula.oauth",
+        "org.scoula.safety_inspection",
+        "org.scoula.commonsense.service",
+        "org.scoula.dictionary.service",
+        "org.scoula.faq.service",
+        "org.scoula.map.service",
+        "org.scoula.chat.service",
+        "org.scoula.like.dictionary.service",
+        "org.scoula.prevention.service"
+})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
@@ -46,7 +67,6 @@ public class RootConfig {
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/org/scoula/mapper/*.xml"));
         sqlSessionFactory.setConfigLocation(new PathMatchingResourcePatternResolver().getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
         return sqlSessionFactory.getObject();
@@ -68,5 +88,10 @@ public class RootConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }

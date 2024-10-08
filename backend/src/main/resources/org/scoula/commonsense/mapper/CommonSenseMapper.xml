@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.commonsense.mapper.CommonSenseMapper">
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from common_sense_tbl
+    </select>
+
+    <select id="getPage" resultType="org.scoula.commonsense.domain.CommonSenseVO">
+        select * from common_sense_tbl order by common_sense_no desc
+        limit #{offset}, #{amount}
+    </select>
+
+    <select id="getList" resultType="org.scoula.commonsense.domain.CommonSenseVO">
+        select * from common_sense_tbl
+        order by common_sense_no desc
+    </select>
+
+    <select id="get" resultType="org.scoula.commonsense.domain.CommonSenseVO">
+        select * from common_sense_tbl
+        where common_sense_no = #{no}
+    </select>
+</mapper>

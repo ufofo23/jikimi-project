@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.prevention.mapper.PreventionMapper">
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from prevention_tbl
+    </select>
+
+    <select id="getPage" resultType="org.scoula.prevention.domain.PreventionVO">
+        select * from prevention_tbl order by prevention_no desc
+            limit #{offset}, #{amount}
+    </select>
+
+    <select id="getList" resultType="org.scoula.prevention.domain.PreventionVO">
+        select * from prevention_tbl
+        order by prevention_no desc
+    </select>
+
+    <select id="get" resultType="org.scoula.prevention.domain.PreventionVO">
+        select * from prevention_tbl
+        where prevention_no = #{no}
+    </select>
+</mapper>
