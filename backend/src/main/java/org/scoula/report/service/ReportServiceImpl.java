@@ -11,13 +11,14 @@ import org.scoula.safety_inspection.infra.cors.dto.CopyOfRegisterDto;
 import org.scoula.safety_inspection.infra.cors.mapper.CopyOfRegisterMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Log4j
 @Service
 @RequiredArgsConstructor
-public class reportServiceImpl implements reportService {
+public class ReportServiceImpl implements ReportService {
 
     final private ReportMapper mapper;
     final private CopyOfRegisterMapper corMapper;
@@ -37,19 +38,19 @@ public class reportServiceImpl implements reportService {
     }
 
     @Override
-    public ReportDTO analysis(int analysisNo, int propertyNo, String address, int jeonsePrice, int price, String ContractName) {
+    public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload) {
         ReportDTO report = new ReportDTO();
 
         CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
         BuildingManagementLedgerDto bml = bmlMapper.selectBuildingData(analysisNo);
 
-        report.setPropertyNo(propertyNo);
-        report.setAddress(address);
-        report.setJeonseRate(jeonsePrice/price);
+        report.setPropertyNo(Integer.parseInt(propertyNo));
+        report.setAddress(payload.get("addr-jibun-address").toString());
+        report.setJeonseRate((Integer)payload.get("jeonsePrice") / (Integer) payload.get("price"));
 
-        if(ContractName != null) {
+        if(payload.get("contractName") != null) {
             report.setAccordOwner(
-                    isAccordOwner(ContractName, cor.getOwnership())
+                    isAccordOwner(payload.get("contractName").toString(), cor.getOwnership())
             );
         }
 
@@ -62,7 +63,7 @@ public class reportServiceImpl implements reportService {
         report.setOwnerState(cor.getOwnerState());
 
         report.setTotalScore(
-            getTotalScore(report, price)
+            getTotalScore(report, (Integer) payload.get("price"))
         );
 
         return report;
