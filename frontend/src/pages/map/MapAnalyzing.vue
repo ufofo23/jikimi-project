@@ -8,7 +8,9 @@
       :disabled="isLoading"
     />
 
-    <div v-if="isLoading" class="loading-spinner">검색 중...</div>
+    <div v-if="isLoading" class="loading-spinner">
+      검색 중...
+    </div>
 
     <!-- 주소 입력 폼 -->
     <div
@@ -20,7 +22,7 @@
         <label>주소:</label>
         <input
           type="text"
-          :value="selectedAddress.propertyJibunJuso"
+          :value="selectedAddress.jibunJuso"
           readonly
           class="form-control"
         />
@@ -41,13 +43,19 @@
         <div class="button-group">
           <button
             @click="handleResidenceType('yes')"
-            :class="['option-button', { active: residenceType === 'yes' }]"
+            :class="[
+              'option-button',
+              { active: residenceType === 'yes' },
+            ]"
           >
             예
           </button>
           <button
             @click="handleResidenceType('no')"
-            :class="['option-button', { active: residenceType === 'no' }]"
+            :class="[
+              'option-button',
+              { active: residenceType === 'no' },
+            ]"
           >
             아니오
           </button>
@@ -55,7 +63,10 @@
       </div>
 
       <!-- 아파트/오피스텔인 경우 동/호수 입력 폼 -->
-      <div v-if="residenceType === 'yes'" class="detail-form">
+      <div
+        v-if="residenceType === 'yes'"
+        class="detail-form"
+      >
         <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>동:</label>
@@ -81,99 +92,125 @@
           </div>
         </form>
       </div>
-      </div>
+    </div>
 
-      <!-- 거래 진행 여부 선택 처리 -->
-      <div class="contract-in-progress">
-        <p>지금 부동산 계약을 하는 중인가요?</p>
-        <div class="button-group">
-          <button
-            @click="handleProgressType('yes')"
-            :class="['progress-option-button', { active: progressType === 'yes' }]"
-          >
-            예
-          </button>
-          <button
-            @click="handleProgressType('no')"
-            :class="['progress-option-button', { active: progressType === 'no' }]"
-          >
-            아니오
-          </button>
+    <!-- 거래 진행 여부 선택 처리 -->
+    <div class="contract-in-progress">
+      <p>지금 부동산 계약을 하는 중인가요?</p>
+      <div class="button-group">
+        <button
+          @click="handleProgressType('yes')"
+          :class="[
+            'progress-option-button',
+            { active: progressType === 'yes' },
+          ]"
+        >
+          예
+        </button>
+        <button
+          @click="handleProgressType('no')"
+          :class="[
+            'progress-option-button',
+            { active: progressType === 'no' },
+          ]"
+        >
+          아니오
+        </button>
+      </div>
+    </div>
+
+    <!-- 계약 중인 경우 전세금, 계약자 성명 입력 폼 -->
+    <div v-if="progressType === 'yes'" class="detail-form">
+      <form @submit.prevent="submitForm">
+        <div class="form-group">
+          <label>전세금:</label>
+          <input
+            type="text"
+            v-model="deposit"
+            required
+            class="form-control"
+          />
         </div>
-      </div>
+        <div class="form-group">
+          <label>집주인 성명:</label>
+          <input
+            type="text"
+            v-model="name"
+            required
+            class="form-control"
+          />
+        </div>
+      </form>
+    </div>
 
-      <!-- 계약 중인 경우 전세금, 계약자 성명 입력 폼 -->
-      <div v-if="progressType === 'yes'" class="detail-form">
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label>전세금:</label>
-            <input
-              type="text"
-              v-model="deposit"
-              required
-              class="form-control"
-            />
-          </div>
-          <div class="form-group">
-            <label>집주인 성명:</label>
-            <input
-              type="text"
-              v-model="name"
-              required
-              class="form-control"
-            />
-          </div>
-        </form>
-      </div>
+    <!-- 아파트/오피스텔이 아닌 경우 & 계약 중이 아닌 경우 바로 제출 버튼 -->
 
-      <!-- 아파트/오피스텔이 아닌 경우 & 계약 중이 아닌 경우 바로 제출 버튼 -->
-      
-      <!-- 통합된 제출 버튼 -->
-      <div class="submit-section">
-      <button 
-        @click="submitForm" 
-        class="submit-button" 
-        :disabled="isLoading || !residenceType || !progressType 
-        || (residenceType === 'yes' && (!dong || !ho)) || (progressType === 'yes' && (!deposit || !name))"
+    <!-- 통합된 제출 버튼 -->
+    <div class="submit-section">
+      <button
+        @click="submitForm"
+        class="submit-button"
+        :disabled="
+          isLoading ||
+          !residenceType ||
+          !progressType ||
+          (residenceType === 'yes' && (!dong || !ho)) ||
+          (progressType === 'yes' && (!deposit || !name))
+        "
       >
         제출
       </button>
-
-      </div>
     </div>
+  </div>
 
-    <!-- 유니크 코드 목록 -->
-    <div v-if="addresses.length && !showAddressForm" class="address-list">
-      <h3>유니크 코드 목록</h3>
-      <div
-        v-for="address in addresses"
-        :key="address.commonUniqueNo"
-        class="address-item"
-      >
-        <div class="address-details">
-          <p class="unique-code">유니크 코드: {{ address.commonUniqueNo }}</p>
-          <p class="address">주소: {{ address.commAddrLotNumber }}</p>
-          <p class="status">상태: {{ address.resState }}</p>
-        </div>
-        <button
-          @click="sendUniqueCode(address.commonUniqueNo)"
-          class="select-button"
-          :disabled="isLoading"
-        >
-          선택
-        </button>
+  <!-- 유니크 코드 목록 -->
+  <div
+    v-if="addresses.length && !showAddressForm"
+    class="address-list"
+  >
+    <h3>유니크 코드 목록</h3>
+    <div
+      v-for="address in addresses"
+      :key="address.commonUniqueNo"
+      class="address-item"
+    >
+      <div class="address-details">
+        <p class="unique-code">
+          유니크 코드: {{ address.commonUniqueNo }}
+        </p>
+        <p class="address">
+          주소: {{ address.commAddrLotNumber }}
+        </p>
+        <p class="status">상태: {{ address.resState }}</p>
       </div>
-
-      <!-- 새 주소 검색 버튼 -->
-      <button @click="resetForm(true)" class="new-search-button">
-        새로운 주소 검색
+      <button
+        @click="sendUniqueCode(address.commonUniqueNo)"
+        class="select-button"
+        :disabled="isLoading"
+      >
+        선택
       </button>
     </div>
 
-    <div v-if="errorMessage" class="error-message" role="alert">
-      {{ errorMessage }}
-      <button @click="errorMessage = ''" class="close-error">✕</button>
-    </div>
+    <!-- 새 주소 검색 버튼 -->
+    <button
+      @click="resetForm(true)"
+      class="new-search-button"
+    >
+      새로운 주소 검색
+    </button>
+  </div>
+
+  <div
+    v-if="errorMessage"
+    class="error-message"
+    role="alert"
+  >
+    {{ errorMessage }}
+    <button @click="errorMessage = ''" class="close-error">
+      ✕
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -206,7 +243,8 @@ const api = axios.create({
 const handleError = (error, customMessage) => {
   console.error(error);
   errorMessage.value =
-    customMessage || '처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
+    customMessage ||
+    '처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
   isLoading.value = false;
 };
 
@@ -244,9 +282,9 @@ const handleProgressType = (type) => {
   progressType.value = type;
   if (type === 'no') {
     deposit.value = '';
-    name.value = ''; 
+    name.value = '';
   }
-}
+};
 
 // 폼 제출
 const submitForm = async () => {
@@ -255,30 +293,37 @@ const submitForm = async () => {
   isLoading.value = true;
   try {
     console.log('jibun before:', selectedAddress.value);
-    const lotNumberParts = selectedAddress.value.propertyJibunJuso.split(' ');
-    const lotNumber = lotNumberParts[lotNumberParts.length - 1];
+    const lotNumberParts =
+      selectedAddress.value.jibunJuso.split(' ');
+    const lotNumber =
+      lotNumberParts[lotNumberParts.length - 1];
 
     // jibunAddress에서 시도, 동, 지번 번호 추출
-    const jibunAddressParts = selectedAddress.value.propertyJibunJuso.split(' '); // 공백 기준으로 분리
+    const jibunAddressParts =
+      selectedAddress.value.jibunJuso.split(' '); // 공백 기준으로 분리
     const addr_sido = jibunAddressParts[0] || ''; // 첫 번째 요소가 시도
     const addr_dong = jibunAddressParts[1] || ''; // 두 번째 요소가 동
-    const addr_lotNumber = jibunAddressParts.slice(2).join(' ') || ''; // 나머지 요소를 지번 번호로
+    const addr_lotNumber =
+      jibunAddressParts.slice(2).join(' ') || ''; // 나머지 요소를 지번 번호로
 
     const payload = {
       addr_sido: addr_sido || '',
       addr_dong: addr_dong || '',
       addr_lotNumber: addr_lotNumber,
-      buildingName: selectedAddress.value.buildingName || '',
+      buildingName:
+        selectedAddress.value.buildingName || '',
       dong: residenceType.value === 'yes' ? dong.value : '',
       ho: residenceType.value === 'yes' ? ho.value : '',
       realtyType: residenceType.value === 'yes' ? 1 : 0,
-      deposit: progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
+      deposit:
+        progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
       name: progressType.value === 'yes' ? name.value : '', // 계약자 성명 추가
-      jibunAddress: selectedAddress.value.propertyJibunJuso || '', // jibunAddress 추가
-      uniqueCode: selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
+      jibunAddress: selectedAddress.value.jibunJuso || '', // jibunAddress 추가
+      uniqueCode:
+        selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
     };
 
-  console.log(payload);
+    console.log(payload);
 
     // dong과 ho는 집합 건물이 아닌 경우 빈 문자열로 보내기
     if (residenceType.value !== 'yes') {
@@ -287,7 +332,10 @@ const submitForm = async () => {
     }
 
     const response = await api.post('/address', payload);
-    if (Array.isArray(response.data) && response.data.length > 0) {
+    if (
+      Array.isArray(response.data) &&
+      response.data.length > 0
+    ) {
       addresses.value = response.data;
       showAddressForm.value = false;
       selectedAddress.value = null;
@@ -310,7 +358,10 @@ const sendUniqueCode = async (uniqueCode) => {
   if (isLoading.value) return;
 
   isLoading.value = true;
-  console.log('residenceType in send:', residenceType.value);
+  console.log(
+    'residenceType in send:',
+    residenceType.value
+  );
   try {
     const payload = {
       uniqueCode,
@@ -344,7 +395,7 @@ onMounted(() => {
   resetForm(true);
   if (route.query) {
     selectedAddress.value = {
-      propertyJibunJuso: route.query.propertyJibunJuso,
+      jibunJuso: route.query.jibunJuso,
       buildingName: route.query.buildingName,
       propertyNo: route.query.propertyNo,
     };
@@ -458,7 +509,8 @@ onMounted(() => {
   margin: 10px 0;
 }
 
-.option-button, .progress-option-button {
+.option-button,
+.progress-option-button {
   padding: 8px 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -466,7 +518,8 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.option-button.active, .progress-option-button.active {
+.option-button.active,
+.progress-option-button.active {
   background-color: rgb(0, 181, 0);
   color: white;
   border-color: rgb(0, 181, 0);
