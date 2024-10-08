@@ -2,7 +2,10 @@ package org.scoula.like.report.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.scoula.common.pagination.Page;
+import org.scoula.common.pagination.PageRequest;
 import org.scoula.like.report.domain.LikeReportDTO;
+import org.scoula.like.report.domain.LikeReportVO;
 import org.scoula.like.report.mapper.LikeReportMapper;
 import org.scoula.oauth.jwt.JwtUtil;
 import org.scoula.report.domain.ReportDTO;
@@ -25,6 +28,19 @@ public class LikeReportImpl implements LikeReportService {
         String userId = jwtUtil.getUserIdFromToken(token);
 
         return mapper.create(reportNo, userId);
+    }
+
+    @Override
+    public Page<LikeReportDTO> getPage(String token, PageRequest pageRequest) {
+
+        token = token.substring(7);
+        String userId = jwtUtil.getUserIdFromToken(token);
+
+        List<LikeReportVO> likeReport = mapper.getPage(userId, pageRequest);
+        int totalCount = mapper.getTotalCount();
+
+        return Page.of(pageRequest, totalCount,
+                likeReport.stream().map(LikeReportDTO::of).toList());
     }
 
     @Override

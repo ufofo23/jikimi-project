@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.scoula.like.report.mapper.LikeReportMapper">
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from member_report_tbl
+    </select>
+
+    <select id="getPage" resultType="org.scoula.like.report.domain.LikeReportVO">
+        select * from member_report_tbl
+        where mr.report_no in (
+            select report_no
+            from member_report_tbl
+            where member_no = (
+                select member_no
+                from member_tbl
+                where member_id = #{userId}))
+        order by member_report_no
+        limit #{pageRequest.offset}, #{pageRequest.amount}
+    </select>
+
     <insert id="create">
         insert into member_report_tbl (member_no, report_no)
         values((select member_no from member_tbl where member_id = #{userId}), #{reportNo})
