@@ -20,10 +20,10 @@ public class ReportDTO {
     private int maximumOfBond; // 채권최고액
     private String useType; // 주용도
     private boolean violationStructure; // 위반건축물 여부
-    private String kindOfLandrights; // 대지권등기
+//    private String kindOfLandrights; // 대지권등기
     private String commonOwner; // 공동소유 / 단독소유
-    private int changeOwnerCount; // 소유권 변동 횟수
-    private String ownerState; // 전유부분
+    private String changeOwnerCount; // 소유권 변동 횟수
+    private Double ownerState; // 전유부분
 
     // VO -> DTO
     public static ReportDTO of(ReportVO vo) {
@@ -37,7 +37,7 @@ public class ReportDTO {
                 .maximumOfBond(vo.getMaximumOfBond())
                 .useType(vo.getUseType())
                 .violationStructure(vo.isViolationStructure())
-                .kindOfLandrights(vo.getKindOfLandrights())
+//                .kindOfLandrights(vo.getKindOfLandrights())
                 .commonOwner(vo.getCommonOwner())
                 .changeOwnerCount(vo.getChangeOwnerCount())
                 .ownerState(vo.getOwnerState())
@@ -55,7 +55,7 @@ public class ReportDTO {
                 .maximumOfBond(maximumOfBond)
                 .useType(useType)
                 .violationStructure(violationStructure)
-                .kindOfLandrights(kindOfLandrights)
+//                .kindOfLandrights(kindOfLandrights)
                 .commonOwner(commonOwner)
                 .changeOwnerCount(changeOwnerCount)
                 .ownerState(ownerState)
