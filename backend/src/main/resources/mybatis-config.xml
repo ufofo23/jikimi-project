@@ -16,7 +16,7 @@
     </typeAliases>
 
     <mappers>
-        <mapper resource="org/scoula/mapper/OauthMemberMapper.xml"/>
+        <mapper resource="org/scoula/oauth/mapper/OauthMemberMapper.xml"/>
     </mappers>
 </configuration>
 

@@ -25,8 +25,6 @@
           style="cursor: pointer"
         >
           <h3 class="mb-0">{{ article.faqQuestion }}</h3>
-          <span v-if="openSection === 'contract'">▲</span>
-          <span v-else>▼</span>
           <span>
             <i
               :class="
@@ -107,21 +105,18 @@ onMounted(() => {
 });
 </script>
 <style scoped>
-
-
 .container {
   max-width: 800px; /* 최대 너비 설정 */
   margin: 0 auto; /* 중앙 정렬 */
   padding: 0 15px; /* 좌우 패딩 추가 */
 }
 
-.container .line-remove{
+.container .line-remove {
   padding: 10px 10px 10px 10px;
   border-bottom-width: 0px;
 }
 
-
-.mb-3{
+.mb-3 {
   border-bottom: none;
 }
 
@@ -153,5 +148,4 @@ onMounted(() => {
     font-size: 0.9rem;
   }
 }
-
 </style>
