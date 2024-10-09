@@ -14,6 +14,7 @@ import java.util.Date;
 public class ReportDTO {
 
     private int reportNo;
+    private int analysisNo;
     private int propertyNo;
     private String address; // 주소
     private int totalScore; // 총점
@@ -23,15 +24,19 @@ public class ReportDTO {
     private String useType; // 주용도
     private boolean violationStructure; // 위반건축물 여부
     private Date contractStartDate; // 계약 시작일
-//    private String kindOfLandrights; // 대지권등기
+    //    private String kindOfLandrights; // 대지권등기
     private String commonOwner; // 공동소유 / 단독소유
     private String changeOwnerCount; // 소유권 변동 횟수
     private Double ownerState; // 전유부분
+    private String contractName; // 계약자 성명
+    private String ownership; // 소유자 성명
+    private int price;
 
     // VO -> DTO
     public static ReportDTO of(ReportVO vo) {
         return vo == null ? null : ReportDTO.builder()
                 .reportNo(vo.getReportNo())
+                .analysisNo(vo.getAnalysisNo())
                 .propertyNo(vo.getPropertyNo())
                 .address(vo.getAddress())
                 .totalScore(vo.getTotalScore())
@@ -45,12 +50,17 @@ public class ReportDTO {
                 .commonOwner(vo.getCommonOwner())
                 .changeOwnerCount(vo.getChangeOwnerCount())
                 .ownerState(vo.getOwnerState())
+                .contractName(vo.getContractName())
+                .ownership(vo.getOwnership())
+                .price(vo.getPrice())
                 .build();
     }
 
     // DTO -> VO
     public ReportVO toVO() {
         return ReportVO.builder()
+                .propertyNo(propertyNo)
+                .analysisNo(analysisNo)
                 .propertyNo(propertyNo)
                 .address(address)
                 .totalScore(totalScore)
@@ -64,6 +74,9 @@ public class ReportDTO {
                 .commonOwner(commonOwner)
                 .changeOwnerCount(changeOwnerCount)
                 .ownerState(ownerState)
+                .contractName(contractName)
+                .ownership(ownership)
+                .price(price)
                 .build();
     }
 }
