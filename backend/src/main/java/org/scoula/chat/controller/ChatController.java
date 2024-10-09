@@ -1,6 +1,5 @@
 package org.scoula.chat.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.scoula.chat.dto.ChatRequest;
 import org.scoula.chat.dto.ChatResponse;
 import org.scoula.chat.service.ChatService;
@@ -33,7 +32,6 @@ public class ChatController {
     }
     @PostMapping(value = "/scenario", produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
     public Mono<ChatResponse> getScenarioResponse(@RequestBody ChatRequest request) {
-        System.out.println("ChatController.getScenarioResponse");
         return scenarioService.getResponse(null,request.getSelectedAnswers())
                 .map(ChatResponse::new);
     }

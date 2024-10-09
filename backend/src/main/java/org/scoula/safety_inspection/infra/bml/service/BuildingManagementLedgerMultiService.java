@@ -2,12 +2,15 @@ package org.scoula.safety_inspection.infra.bml.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.scoula.exception.CustomException;
 import org.scoula.safety_inspection.codef.EasyCodef;
 import org.scoula.safety_inspection.codef.EasyCodefServiceType;
 import org.scoula.safety_inspection.infra.bml.dto.BuildingManagementLedgerDto;
 import org.scoula.safety_inspection.infra.bml.mapper.BuildingManagementLedgerMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,7 +19,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class BuildingManagementLedgerMultiService implements BuildingManagementLedgerService {
+public class BuildingManagementLedgerMultiService{
 
     private final BuildingManagementLedgerMapper buildingManagementLedgerMapper;
     private final EasyCodef easyCodef;
@@ -37,7 +40,7 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
     private static final String TIMEOUT = "60";
     private static final String ORIGIN_DATA_YN = "0";
 
-    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
         HashMap<String, Object> parameterMap = createParameterMap(payload);
 
@@ -73,24 +76,31 @@ public class BuildingManagementLedgerMultiService implements BuildingManagementL
         return parameterMap;
     }
 
-    private void processBMLResult(String result, Map<String, Object> payload, Integer analysisNo) throws IOException {
+    private void processBMLResult(String result, Map<String, Object> payload, Integer analysisNo) {
         try {
             Map<String, Object> responseMap = new ObjectMapper().readValue(result, HashMap.class);
             Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
             Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
 
-            if ("CF-00000".equals(resultMap.get("code"))) {
+            String responseCode = (String) resultMap.get("code");
+
+            if ("CF-00000".equals(responseCode)) {
                 if (dataMap != null) {
                     extractAndSaveDataFromDataMap(dataMap, analysisNo);
                 }
             }
 
-            if ("CF-03002".equals(resultMap.get("code"))) {
+            if ("CF-03002".equals(responseCode)) {
                 handleTwoWayCertification(dataMap, payload, analysisNo);
+            }
+
+            else{
+                throw new RuntimeException();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw  new RuntimeException(e);
         }
     }
 

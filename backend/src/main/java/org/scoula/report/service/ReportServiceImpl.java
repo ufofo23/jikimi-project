@@ -46,7 +46,7 @@ public class ReportServiceImpl implements ReportService {
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("addr-jibun-address").toString());
-        report.setJeonseRate((Integer)payload.get("jeonsePrice") / (Integer) payload.get("price"));
+        report.setJeonseRate(Integer.parseInt(payload.get("jeonsePrice").toString()) / Integer.parseInt(payload.get("price").toString()) );
 
         if(payload.get("contractName") != null) {
             report.setAccordOwner(
@@ -63,8 +63,8 @@ public class ReportServiceImpl implements ReportService {
         report.setOwnerState(cor.getOwnerState());
 
         report.setTotalScore(
-            getTotalScore(report, (Integer) payload.get("price"))
-        );
+            getTotalScore(report, Integer.parseInt(payload.get("price").toString())
+        ));
 
         return report;
     }

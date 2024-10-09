@@ -3,6 +3,7 @@ package org.scoula.chat.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class WebClientService {
     private final WebClient webClient;
@@ -28,13 +30,13 @@ public class WebClientService {
     public Mono<String> sendRequestToAPI(String prompt, String modelName, String additionalContext, Map<String, Object> options) {
         String fullPrompt;
         if(prompt!= null) {
-            fullPrompt = additionalContext;
+            fullPrompt = additionalContext + " " + prompt ;
         } else {
-            fullPrompt = additionalContext + " " + prompt;
+            fullPrompt = additionalContext;
         }
 
         String requestBody = createRequestBody(fullPrompt, modelName, options);
-        System.out.println("requestBody = " + requestBody);
+        log.info("ChatService RequestBody: {}", requestBody);
 
         return webClient.post()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +54,6 @@ public class WebClientService {
         requestBodyMap.put("messages", List.of(message));
 
         try {
-            System.out.println(objectMapper.writeValueAsString(requestBodyMap));
             return objectMapper.writeValueAsString(requestBodyMap);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error creating JSON request", e);
@@ -61,6 +62,7 @@ public class WebClientService {
 
     private String extractContentFromResponse(String responseBody) {
         try {
+            System.out.println("responseBody = " + responseBody);
             JsonNode rootNode = objectMapper.readTree(responseBody);
             return rootNode.path("choices").get(0).path("message").path("content").asText();
         } catch (JsonProcessingException e) {

@@ -8,6 +8,7 @@ import org.scoula.safety_inspection.infra.cors.mapper.CopyOfRegisterMapper;
 import org.scoula.safety_inspection.infra.cors.jsontoclass.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ import static org.scoula.safety_inspection.codef.EasyCodefClientInfo.PUBLIC_KEY;
 import static org.scoula.safety_inspection.codef.EasyCodefUtil.encryptRSA;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CopyOfRegisterMultiService {
 
@@ -45,17 +45,24 @@ public class CopyOfRegisterMultiService {
     private static final String PHONE_NO = "01000000000";
     private static final String REGISTER_SUMMARY_YN = "1";
 
-    public void getCopyOfRegister(Map<String, Object> payload, Integer analysisNo) throws Exception {
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void getCopyOfRegister(Map<String, Object> payload, Integer analysisNo) {
 
-        String password = encryptRSA(userPass, PUBLIC_KEY);
-        HashMap<String, Object> parameterMap = createParameterMap(payload, password);
+        try{
 
-        String productUrl = "/v1/kr/public/ck/real-estate-register/status";
-        String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
-        System.out.println("result = " + result);
+            String password = encryptRSA(userPass, PUBLIC_KEY);
+            HashMap<String, Object> parameterMap = createParameterMap(payload, password);
+
+            String productUrl = "/v1/kr/public/ck/real-estate-register/status";
+            String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
+            System.out.println("result = " + result);
 
 
-        processRegisterResult(result, analysisNo);
+            processRegisterResult(result, analysisNo);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     private HashMap<String, Object> createParameterMap(Map<String, Object> payload, String password) {

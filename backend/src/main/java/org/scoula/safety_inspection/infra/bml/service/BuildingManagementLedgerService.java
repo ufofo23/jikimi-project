@@ -1,5 +1,6 @@
 package org.scoula.safety_inspection.infra.bml.service;
 
+
 import java.util.Map;
 
 public interface BuildingManagementLedgerService {
