@@ -3,9 +3,9 @@ import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
 const BASE_URL = '/api/like/report';
 
 export default {
-  async getList() {
+  async getList(params) {
     try {
-      const { data } = await axiosInstance.get(BASE_URL);
+      const { data } = await axiosInstance.get(BASE_URL, { params });
       return data;
     } catch (error) {
       throw error;
