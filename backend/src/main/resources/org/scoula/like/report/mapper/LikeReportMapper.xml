@@ -7,8 +7,8 @@
     </select>
 
     <select id="getPage" resultType="org.scoula.like.report.domain.LikeReportVO">
-        select * from member_report_tbl
-        where mr.report_no in (
+        select * from member_report_tbl mr
+        where mr.report_no = (
             select report_no
             from member_report_tbl
             where member_no = (
