@@ -13,7 +13,7 @@ public interface LikeReportMapper {
 
     int getTotalCount();
 
-    List<LikeReportVO> getPage(@Param("userId") String userId, @Param("pageRequest") PageRequest pageRequest);
+    List<ReportVO> getPage(@Param("userId") String userId, @Param("pageRequest") PageRequest pageRequest);
 
     public int create(@Param("reportNo") int reportNo, @Param("userId") String userId);
 

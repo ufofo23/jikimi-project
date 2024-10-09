@@ -93,6 +93,15 @@ LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
 SELECT count(*) from property_location;
 
+-- member_report sample
+# desc member_report_tbl;
+# desc report_tbl;
+# insert into report_tbl (analysis_no, mortgage, violation_structure, contract_start_date, change_ownership_cnt, accord_owner, main_use)
+# values (1,0,0,'2024-10-09',3,1,'아파트');
+# insert into member_report_tbl (member_no, report_no)
+# values (4,1);
+# select * from report_tbl;
+
 DROP TABLE IF EXISTS like_property_tbl;
 CREATE TABLE like_property_tbl (
     like_property_no int PRIMARY KEY AUTO_INCREMENT,
