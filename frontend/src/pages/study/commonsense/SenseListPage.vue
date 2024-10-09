@@ -20,7 +20,7 @@
 <script setup>
 import { ref, onMounted, computed, reactive } from 'vue';
 import api from '@/api/senseApi';
-import PieceSenseCard from '@/components/Cards/\bPieceSenseCard.vue';
+import PieceSenseCard from '@/components/Cards/PieceSenseCard.vue';
 
 const page = reactive({
   list: [],
