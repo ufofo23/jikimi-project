@@ -11,7 +11,7 @@ public interface LikeReportService {
 
     public int create(int reportNo, String token);
 
-    public Page<LikeReportDTO> getPage(String token, PageRequest pageRequest);
+    public Page<ReportDTO> getPage(String token, PageRequest pageRequest);
 
     public List<ReportDTO> getList(String token);
 

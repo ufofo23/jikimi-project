@@ -56,13 +56,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in paginatedData" :key="index">
+          <tr v-for="article in articles" :key="article.reportNo">
             <td class="text-center">
               <input type="checkbox" v-model="selectedItems" :value="item" />
             </td>
-            <td class="text-center">{{ item.date }}</td>
-            <td class="text-center">{{ item.address }}</td>
-            <td class="text-center">{{ item.score }}</td>
+            <td class="text-center">{{ formatDate(article.contractStartDate) }}</td>
+            <td class="text-center">{{ article.address }}</td>
+            <td class="text-center">{{ article.totalScore }}</td>
           </tr>
         </tbody>
       </table>
@@ -124,8 +124,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, reactive } from 'vue';
 import likeReportApi from '@/api/like/likeReportApi'; // likeReportApi 가져오기
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const originalData = ref([]);
 const currentPage = ref(1);
@@ -138,13 +142,42 @@ const selectedResult = ref('전체'); // 선택된 단일 결과 옵션
 const selectedSortOrder = ref('latest'); // 선택된 정렬 기준
 const selectedItems = ref([]); // 선택된 항목을 저장할 배열
 
+// date 포맷
+const formatDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 1을 더해 월을 조정
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// 페이지 요청 상태
+const pageRequest = reactive({
+  page: parseInt(route.query.page) || 1,
+  amount: parseInt(route.query.amount) || 10,
+});
+
+// 상태 관리
+const page = reactive({
+  list: [],
+  totalCount: 0,
+});
+
+// 게시글 목록 계산 속성
+const articles = computed(() => page.list);
+
 // 데이터 로드 함수
 const loadReports = async () => {
   isLoading.value = true;
   errorMessage.value = '';
   try {
-    const response = await likeReportApi.getList();
-    originalData.value = response; // API로부터 받은 데이터를 저장
+    const response = await likeReportApi.getList({
+      page: pageRequest.page,
+      amount: pageRequest.amount,
+    }); // API에서 데이터 가져오기
+    page.list = response.list;
+    page.totalCount = response.totalCount;
   } catch (error) {
     console.error('보고서 로드 실패:', error);
     errorMessage.value = '보고서를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
@@ -158,23 +191,16 @@ const totalPages = computed(() => {
   return Math.ceil(filteredData.value.length / itemsPerPage);
 });
 
-// 필터링된 데이터
+// 필터링된 데이터를 제공하는 computed 함수
 const filteredData = computed(() => {
-  let data = originalData.value.filter((item) => {
-    if (selectedResult.value === '전체') {
-      return true; // 모든 데이터 표시
-    }
-    return item.score === selectedResult.value; // 선택된 진단 결과와 일치하는 데이터만 필터링
-  });
-
-  // 날짜 정렬
-  if (selectedSortOrder.value === 'oldest') {
-    data.sort((a, b) => new Date(a.date) - new Date(b.date)); // 오래된 순으로 정렬
-  } else {
-    data.sort((a, b) => new Date(b.date) - new Date(a.date)); // 최신 순으로 정렬
-  }
-
-  return data; // 여기서 반환
+  // originalData.value가 배열인지 확인하고, 배열일 때만 filter 적용
+  return Array.isArray(originalData.value) ? originalData.value.filter((item) => {
+    return selectedResult.value === '전체' || item.score === selectedResult.value; // 선택된 진단 결과에 따라 필터링
+  }).sort((a, b) => {
+    return selectedSortOrder.value === 'oldest' 
+      ? new Date(a.date) - new Date(b.date) 
+      : new Date(b.date) - new Date(a.date);
+  }) : [];
 });
 
 // 페이지네이션된 데이터
@@ -183,110 +209,83 @@ const paginatedData = computed(() => {
   return filteredData.value.slice(start, start + itemsPerPage);
 });
 
-// 페이지 변경 함수
+// 페이지 변경 핸들러
 const changePage = (pageNum) => {
-  currentPage.value = pageNum;
+  if (pageNum > 0 && pageNum <= totalPages.value) {
+    currentPage.value = pageNum;
+  }
 };
 
-// 이전 페이지
+// 이전 페이지로 이동
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
   }
 };
 
-// 다음 페이지
+// 다음 페이지로 이동
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
 };
 
-// 선택된 모든 항목 토글
-const toggleSelectAll = (event) => {
-  if (event.target.checked) {
-    selectedItems.value = paginatedData.value.map(item => item); // 모든 항목 선택
-  } else {
-    selectedItems.value = []; // 모든 항목 선택 해제
-  }
+// 진단 결과 선택 핸들러
+const selectResult = (result) => {
+  selectedResult.value = result;
+  currentPage.value = 1; // 결과 선택 후 페이지를 1로 초기화
 };
 
-// 선택된 항목 삭제
-const deleteSelected = () => {
-  originalData.value = originalData.value.filter(item => !selectedItems.value.includes(item));
-  selectedItems.value = []; // 삭제 후 선택 해제
-};
-
-// 날짜 드롭다운 토글
+// 날짜 드롭다운 토글 핸들러
 const toggleDateDropdown = () => {
   isDateDropdownOpen.value = !isDateDropdownOpen.value;
 };
 
-// 진단 결과 드롭다운 토글
+// 진단 결과 드롭다운 토글 핸들러
 const toggleResultDropdown = () => {
   isResultDropdownOpen.value = !isResultDropdownOpen.value;
 };
 
-// 진단 결과 선택
-const selectResult = (result) => {
-  selectedResult.value = result;
-  isResultDropdownOpen.value = false; // 드롭다운 닫기
+// 선택된 항목 삭제 핸들러
+const deleteSelected = () => {
+  if (selectedItems.value.length > 0) {
+    // API 호출하여 선택된 항목 삭제 로직 추가
+    console.log('삭제할 항목:', selectedItems.value);
+  } else {
+    alert('삭제할 항목이 선택되지 않았습니다.');
+  }
 };
 
-// 정렬 기준 선택
-const sortByDate = (order) => {
-  selectedSortOrder.value = order;
-  isDateDropdownOpen.value = false; // 드롭다운 닫기
-};
-
-// 컴포넌트가 마운트될 때 데이터 로드
-onMounted(() => {
-  loadReports();
-});
-
+// 컴포넌트 마운트 시 데이터 로드
+onMounted(loadReports);
 </script>
 
 <style scoped>
-.nav-container {
-  display: flex;
-  justify-content: space-between; /* Keeps the delete button on the right */
-  align-items: center; /* Aligns items vertically */
+.container {
+  max-width: 1200px;
+  margin: auto;
 }
-
-.pagination {
-  flex-grow: 1; /* Allows the pagination to take available space */
-  text-align: center; /* Centers the pagination items */
+.table th,
+.table td {
+  vertical-align: middle; /* 수직 중앙 정렬 */
 }
-
-.dropdown-menu {
-  position: absolute; /* 드롭다운 위치 조정 */
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 0.25rem;
-  z-index: 1000; /* 드롭다운이 다른 요소들 위에 나타나도록 설정 */
-  min-width: 100px; /* 드롭다운 최소 너비 설정 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-  display: none; /* 기본적으로 숨김 */
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1; /* 마우스 오버 시 배경색 변경 */
 }
-
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+}
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
 .dropdown-menu.show {
-  display: block; /* show 클래스가 있을 때 보이도록 설정 */
+  display: block;
+  position: absolute;
+  will-change: transform;
 }
-
-.dropdown-item {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s; /* 부드러운 배경색 전환 효과 */
-  text-align: center;
-}
-
-.dropdown-item:hover {
-  background-color: #f8f9fa; /* 호버 시 배경색 변경 */
-}
-
-/* 드롭다운 메뉴의 위치를 조정하기 위한 추가 스타일 */
-.position-relative {
-  position: relative; /* 드롭다운 메뉴의 부모 요소에 위치 설정 */
-}
-
 </style>
