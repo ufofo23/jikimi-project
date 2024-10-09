@@ -1,213 +1,132 @@
 <template>
   <!-- ====== Navbar Section Start -->
-  <header class="absolute top-0 left-0 z-50 w-full">
-    <div class="container border-none">
-      <div class="relative -mx-4 flex items-center justify-between border-none">
-        <div class="w-60 max-w-full px-4 border-none">
-          <a href="/#" class="block w-full py-5 border-none">
-            <!-- 로고 부분 유지 -->
-            <router-link :to="{ name: 'main' }">
-              <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
-            </router-link>
-            <img
-              src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo-white.svg"
-              alt="logo"
-              class="hidden dark:block"
-            />
-          </a>
+  <header class="navbar">
+    <div class="container">
+      <div class="navbar-content">
+        <div class="logo">
+          <!-- 로고 부분 유지 -->
+          <router-link :to="{ name: 'main' }">
+            <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
+          </router-link>
         </div>
 
-        <!-- 네비게이션 메뉴 -->
-        <nav class="flex-grow">
-          <ul class="flex items-center space-x-6 lg:space-x-8">
-            <li class="border-none">
-              <router-link
-                :to="{ name: 'analyzing' }"
-                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+        <!-- 햄버거 메뉴 버튼 (모바일용) -->
+        <button class="menu-toggle" @click="toggleNavbar">
+          &#9776;
+          <!-- 햄버거 메뉴 아이콘 -->
+        </button>
+
+        <nav :class="{ 'nav-open': isNavbarOpen }" class="nav-menu">
+          <ul class="nav-list">
+            <li>
+              <router-link :to="{ name: 'map' }" class="nav-item"
+                >Map</router-link
               >
-                Analyzing
-              </router-link>
             </li>
-            <li class="border-none">
-              <router-link
-                :to="{ name: 'map' }"
-                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+            <li class="dropdown">
+              <router-link :to="{ name: 'study' }" class="nav-item"
+                >Study</router-link
               >
-                Map
-              </router-link>
+              <ul class="dropdown-menu">
+                <li>
+                  <router-link
+                    :to="{ path: '/study/commonsense/list' }"
+                    class="dropdown-item"
+                    >부동산 토막 상식</router-link
+                  >
+                </li>
+                <li>
+                  <router-link
+                    :to="{ path: '/study/dictionary/list' }"
+                    class="dropdown-item"
+                    >부동산 용어 사전</router-link
+                  >
+                </li>
+              </ul>
             </li>
-            <li class="border-none">
-              <div class="relative dropdown">
-                <router-link
-                  :to="{ name: 'study' }"
-                  class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
-                >
-                  Study
-                </router-link>
-                <ul
-                  class="dropdown-menu absolute bg-white rounded-lg shadow-lg p-3 hidden"
-                >
-                  <li>
-                    <router-link
-                      :to="{ path: '/study/commonsense/list' }"
-                      class="block py-2 text-dark dark:text-white hover:text-primary"
-                    >
-                      부동산 토막 상식
-                    </router-link>
-                  </li>
-                  <li>
-                    <router-link
-                      :to="{ path: '/study/dictionary/list' }"
-                      class="block py-2 text-dark dark:text-white hover:text-primary"
-                    >
-                      부동산 용어 사전
-                    </router-link>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="border-none">
-              <router-link
-                :to="{ name: 'faq' }"
-                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+            <li>
+              <router-link :to="{ name: 'faq' }" class="nav-item"
+                >FAQ</router-link
               >
-                FAQ
-              </router-link>
             </li>
-            <li class="border-none">
-              <router-link
-                :to="{ name: 'introduce' }"
-                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+            <li>
+              <router-link :to="{ name: 'introduce' }" class="nav-item"
+                >About us</router-link
               >
-                About us
-              </router-link>
             </li>
           </ul>
-        </nav>
 
-        <!-- 로그인/로그아웃 관련 항목들 -->
-        <div class="hidden justify-end pr-16 sm:flex lg:pr-0 border-none">
-          <div
-            class="flex items-center space-x-4 sm:absolute sm:right-0 sm:top-0 sm:mt-3 sm:mr-4"
-          >
+          <div class="auth-menu">
             <div v-if="!isAuthenticated">
-              <router-link
-                :to="{ name: 'login' }"
-                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
+              <router-link :to="{ name: 'login' }" class="auth-item"
+                >Sign in</router-link
               >
-                Sign in
-              </router-link>
             </div>
             <div v-else>
-              <button
-                @click="logout"
-                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
+              <button @click="logout" class="auth-item">Logout</button>
+              <router-link :to="{ name: 'mypage' }" class="auth-item"
+                >MyPage</router-link
               >
-                Logout
-              </button>
-              <router-link
-                :to="{ name: 'mypage' }"
-                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
-              >
-                MyPage
-              </router-link>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
     </div>
   </header>
   <!-- ====== Navbar Section End -->
 
   <!-- ====== Hero Section Start -->
-  <div class="relative min-h-screen flex bg-gray-100 dark:bg-dark border-none">
+  <div class="hero-section">
     <!-- 왼쪽 섹션 -->
-    <div
-      class="flex-1 bg-white rounded-br-[100px] pt-[120px] pb-[110px] lg:pt-[150px] flex flex-col justify-center items-start px-8 lg:px-12 border-none"
-    >
-      <div class="hero-content border-none">
-        <h1
-          class="mb-5 text-4xl font-bold !leading-[1.208] text-dark dark:text-white sm:text-[42px] lg:text-[40px] xl:text-5xl border-none"
-        >
-          내 집은<br />
-          안전할까? <br />
-        </h1>
-        <p class="mb-8 text-base text-body-color dark:text-dark-6 border-none">
-          계약 진행 단계에 따라 반드시 필요한 체크리스트를 준비했어요. <br />
-          지금 바로 확인해보세요!
+    <div class="left-section">
+      <div class="hero-compo">
+        <div class="hero-content">
+          <h1 class="hero-title">내 집은<br />안전할까?</h1>
+        </div>
+
+        <p class="hero-description">
+          계약 진행 단계에 따라 반드시 필요한 <br />체크리스트와 발생 가능
+          시나리오를 준비했어요. <br />지금 바로 확인해보세요!
         </p>
-        <ul class="flex flex-wrap items-center border-none">
-          <li class="border-none">
-            <a
-              href="javascript:void(0)"
-              class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white rounded-md bg-primary hover:bg-blue-dark lg:px-7 border-none"
+        <ul class="button-list">
+          <li>
+            <router-link :to="{ name: 'preventionList' }" class="button-primary"
+              >계약이 처음이라면?</router-link
             >
-              계약이 처음이라면?
-            </a>
           </li>
-          <li class="ml-4 border-none">
-            <a
-              href="javascript:void(0)"
-              class="inline-flex items-center justify-center py-3 px-5 text-center text-base font-medium text-[#464646] dark:text-white hover:text-primary border-none"
+          <li>
+            <router-link :to="{ name: 'ScenarioMain' }" class="button-secondary"
+              >계약 진행/완료 상태라면!</router-link
             >
-              <span class="mr-2 border-none"> </span>
-              계약 진행/완료 상태라면!
-            </a>
           </li>
         </ul>
-        <div class="clients pt-16 border-none">
-          <h6
-            class="flex items-center mb-6 text-xs font-normal text-body-color dark:text-dark-6 border-none"
-          >
-            Some Of Our Clients
-            <span
-              class="inline-block w-8 h-px ml-3 bg-body-color border-none"
-            ></span>
-          </h6>
-          <div class="flex items-center gap-4 xl:gap-[50px] border-none">
+
+        <div class="clients">
+          <h6 class="clients-title">Some Of Our Clients</h6>
+          <div class="clients-logos">
             <a
               v-for="(client, index) in clients"
               :key="index"
               :href="client.link"
-              class="block py-3 border-none"
+              class="client-logo"
             >
-              <img :src="client.logo" :alt="client.name" class="border-none" />
+              <img :src="client.logo" :alt="client.name" />
             </a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 오른쪽 섹션 -->
-    <div
-      class="flex-1 bg-gray-100 dark:bg-dark pt-[120px] pb-[110px] lg:pt-[150px] flex justify-center items-center border-none"
-    >
-      <div class="relative z-10 inline-block pt-11 lg:pt-0 border-none">
-        <img
-          src="@/assets/map2.png"
-          alt="hero"
-          class="max-w-full lg:ml-auto border-none"
-        />
-        <ul class="flex flex-wrap items-center mt-8 border-none">
-          <li class="border-none">
-            <a
-              href="javascript:void(0)"
-              class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white rounded-md bg-primary hover:bg-blue-dark lg:px-7 border-none"
-            >
-              안전 진단 받기
-            </a>
-          </li>
-          <li class="ml-4 border-none">
-            <a
-              href="javascript:void(0)"
-              class="inline-flex items-center justify-center py-3 px-5 text-center text-base font-medium text-[#464646] dark:text-white hover:text-primary border-none"
-            >
-              <span class="mr-2 border-none"> </span>
-              지도를 통해 원하시는 지역의 시세를 확인하고, 등기부 등본 분석을
-              통해 안전 진단 리포트를 제공해 드릴게요.
-            </a>
-          </li>
-        </ul>
+    <div class="right-section">
+      <div class="map-container">
+        <img src="@/assets/map.png" alt="hero" class="map-image" />
+        <router-link :to="{ name: 'map' }" class="button-primary right-button"
+          >안전 진단 받기</router-link
+        >
+        <p class="map-description">
+          지도를 통해 원하시는 지역의 시세를 확인하고, 등기부 등본 분석을 통해
+          안전 진단 리포트를 제공해 드릴게요.
+        </p>
       </div>
     </div>
   </div>
@@ -222,12 +141,12 @@ import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
 const open = ref(false);
 const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
 const router = useRouter(); // 라우터 사용
+const isNavbarOpen = ref(false); // 햄버거 메뉴 열림 상태
+const isDropdownOpen = ref(false); // 드롭다운 열림 상태
 
-// 드롭다운 토글 기능
 const toggleNavbar = () => {
-  open.value = !open.value;
+  isNavbarOpen.value = !isNavbarOpen.value;
 };
-
 // 외부 클릭 감지
 const handleClickOutside = (event: MouseEvent) => {
   if (
@@ -242,10 +161,6 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside);
 });
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
 // 상태 관리: 인증 여부
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
@@ -256,23 +171,7 @@ const logout = () => {
 };
 
 // 클라이언트 로고 정보
-const clients = ref([
-  {
-    name: 'Ayroui',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/ayroui.svg',
-    link: 'javascript:void(0)',
-  },
-  {
-    name: 'GrayGrids',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/graygrids.svg',
-    link: 'javascript:void(0)',
-  },
-  {
-    name: 'UIdeck',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/uideck.svg',
-    link: 'javascript:void(0)',
-  },
-]);
+const clients = ref([]);
 
 // senseApi를 통해 데이터를 로드할 함수 (API 정의 필요)
 const pieceSenseList = ref([]); // API에서 받은 데이터를 저장할 곳
@@ -305,7 +204,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 /* 네비게이션 바의 선 제거 */
 .container,
 .flex,
@@ -345,10 +244,193 @@ img {
 }
 
 /* 불필요한 하단의 border 관련된 다른 클래스 제거 */
-
 .lg:px-12,
 .lg:pr-0,
 .rounded-md {
   border: none !important;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/* 메뉴 토글 버튼 (모바일용) */
+.menu-toggle {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* 기본 스타일 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 네비게이션 바 스타일 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 1000;
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+}
+
+.nav-item {
+  margin: 0 1rem;
+  color: #333;
+  text-decoration: none;
+}
+
+.auth-menu {
+  margin-left: 1rem;
+}
+
+/* Hero 섹션 스타일 */
+.hero-section {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 80px; /* 네비게이션 바 높이만큼 여백 */
+}
+.hero-compo {
+  margin-left: 6rem;
+}
+.left-section,
+.right-section {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.left-section {
+  background-color: #f5f7fb; /* 밝은 회색 배경 추가 */
+  border-bottom-right-radius: 80px; /* 우측 하단 모서리 둥글게 */
+}
+
+.right-section {
+  background-color: transparent;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-description {
+  margin-bottom: 2rem;
+}
+
+.button-list {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+.button-primary,
+.button-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.button-primary {
+  background-color: #0066cc;
+  color: white;
+}
+
+.right-button {
+}
+
+.button-secondary {
+  border: 1px solid #0066cc;
+  color: #0066cc;
+}
+
+.map-image {
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+  }
+
+  .nav-menu.nav-open {
+    display: flex;
+  }
+
+  .nav-list {
+    flex-direction: column;
+  }
+
+  .nav-item {
+    margin: 0.5rem 0;
+  }
+
+  .hero-section {
+    flex-direction: column;
+  }
+
+  .left-section,
+  .right-section {
+    padding: 1rem;
+  }
+
+  .button-list {
+    flex-direction: column;
+  }
+
+  .button-primary,
+  .button-secondary {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>
