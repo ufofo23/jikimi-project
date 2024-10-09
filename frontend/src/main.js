@@ -15,7 +15,8 @@ import { faCircleQuestion as faSolidCircleQuestion } from '@fortawesome/free-sol
 import VueAwesomePaginate from 'vue-awesome-paginate';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
-
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
 // 필요한 아이콘을 라이브러리에 추가
 library.add(fas, far);
 
@@ -30,3 +31,4 @@ app.use(pinia); // 이미 생성한 pinia 사용
 app.use(router);
 
 app.mount('#app');
+app.use(ElementPlus);
