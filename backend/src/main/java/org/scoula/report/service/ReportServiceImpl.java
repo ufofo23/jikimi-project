@@ -11,9 +11,9 @@ import org.scoula.safety_inspection.infra.cors.dto.CopyOfRegisterDto;
 import org.scoula.safety_inspection.infra.cors.mapper.CopyOfRegisterMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j
 @Service
@@ -46,31 +46,111 @@ public class ReportServiceImpl implements ReportService {
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("addr-jibun-address").toString());
-        report.setJeonseRate((Integer)payload.get("jeonsePrice") / (Integer) payload.get("price"));
 
-        if(payload.get("contractName") != null) {
-            report.setAccordOwner(
-                    isAccordOwner(payload.get("contractName").toString(), cor.getOwnership())
-            );
+        // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
+        if (payload.get("jeonsePrice") != null) {
+            int jeonsePrice = Integer.parseInt(payload.get("jeonsePrice").toString());
+            if (jeonsePrice != 0) {
+                report.setJeonseRate(jeonsePrice / Integer.parseInt(payload.get("price").toString()));
+            }
+        } else {
+            report.setJeonseRate(null);
         }
 
-        report.setMaximumOfBond(cor.getMaximumOfBond());
-        report.setUseType(bml.getResContents());
-        report.setViolationStructure(bml.getResViolationStatus());
+        // contractName : null, "" 예외처리 - accordOwner을 null 값으로 두고 프론트에서 "판단 불가"로 표기
+        // payload.get("contractName")이 List가 아니면 제외
+        if(payload.get("contractName") != null && payload.get("contractName") instanceof List) {
+            // 공동 소유를 감안하여 리스트에 받음
+            List<String> contractNameList = (List<String>) payload.get("contractName");
+
+            String ownership = cor.getOwnership();
+
+            // 정규 표현식을 사용하여 이름 부분만 추출
+            Pattern pattern = Pattern.compile("(\\S+)(?= \\([^)]*\\))");
+            Matcher matcher = pattern.matcher(ownership);
+
+            // 결과를 저장할 List
+            List<String> ownershipList = new ArrayList<>();
+
+            // 매칭되는 이름을 찾기
+            while (matcher.find()) {
+                ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
+            }
+
+
+            report.setAccordOwner(
+                    isAccordOwner(contractNameList, ownershipList)
+            );
+        } else {
+            report.setAccordOwner(null);
+        }
+
+        // 채권최고액이 null이면 판단불가
+        if(cor.getMaximumOfBond() == null) {
+            report.setMaximumOfBond(null);
+        } else {
+            report.setMaximumOfBond(cor.getMaximumOfBond());
+        }
+
+        // 주용도가 null이면 판단불가
+        if(bml.getResContents() == null) {
+            report.setUseType(null);
+        } else {
+            report.setUseType(bml.getResContents());
+        }
+
+        // 위반건축물이 null이면 판단불가
+        if(bml.getResViolationStatus() == null) {
+            report.setViolationStructure(null);
+        } else {
+            report.setViolationStructure(bml.getResViolationStatus());
+        }
+
 //        report.setKindOfLandrights(cor.getKindOfLandrights());
-        report.setCommonOwner(cor.getCommonOwner());
-        report.setChangeOwnerCount(cor.getChangeOwnerCount());
-        report.setOwnerState(cor.getOwnerState());
+
+        // 공동소유/단독소유가 null이면 판단불가
+        if(cor.getCommonOwner() == null) {
+            report.setCommonOwner(null);
+        } else {
+            report.setCommonOwner(cor.getCommonOwner());
+        }
+
+        // 소유자 변동 횟수가 null이면 판단 불가
+        if(cor.getChangeOwnerCount() == null) {
+            report.setChangeOwnerCount(null);
+        } else {
+            report.setChangeOwnerCount(cor.getChangeOwnerCount());
+        }
+
+        // 전유부분이 null이면 판단불가
+        if(cor.getOwnerState() == null) {
+            report.setOwnerState(null);
+        } else {
+            report.setOwnerState(cor.getOwnerState());
+        }
 
         report.setTotalScore(
-            getTotalScore(report, (Integer) payload.get("price"))
+            getTotalScore(report, Integer.parseInt(payload.get("price").toString()))
         );
 
         return report;
     }
 
-    private boolean isAccordOwner(String contractName, String corName) {
-        return contractName.equals(corName);
+    public static boolean isAccordOwner(List<String> contractNameList, List<String> ownershipList) {
+        // 1. 두 리스트의 크기가 같지 않으면 일대일 매칭 불가
+        if (contractNameList.size() != ownershipList.size()) {
+            return false;
+        }
+
+        // 2. 각 인덱스의 원소가 같은지 확인
+        for (int i = 0; i < contractNameList.size(); i++) {
+            if (!contractNameList.get(i).equals(ownershipList.get(i))) {
+                return false;
+            }
+        }
+
+        // 모든 원소가 동일하면 true 반환
+        return true;
     }
 
     private int getTotalScore(ReportDTO report, int price) {
@@ -89,7 +169,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 계약자, 소유자 불일치 시 고위험
-        if(!report.isAccordOwner())
+        if(!report.getAccordOwner())
             return 0;
 
         // 근저당권(채권 최고액)에 따른 감점
@@ -111,7 +191,7 @@ public class ReportServiceImpl implements ReportService {
             return 0;
 
         // 위반 건축물이면 고위험
-        if(report.isViolationStructure())
+        if(report.getViolationStructure() == null || report.getViolationStructure())
             return 0;
 
 //        // 대지권 등기에 따른 감점 (대지권 등기에 따라 어떻게 값이 들어가는 지 확인 필요)

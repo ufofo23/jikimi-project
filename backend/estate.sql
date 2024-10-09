@@ -873,3 +873,85 @@ INSERT INTO zoom_levels (zoom_level, lat_range, lon_range) VALUES
                                                                (1, 0.00089, 0.00243);
 SELECT * FROM zoom_levels;
 
+
+# property 관련 테이블 설정!
+SET GLOBAL local_infile = 1;
+show global variables like 'local_infile';
+
+# property_tbl 삭제
+# ALTER TABLE like_property_tbl DROP FOREIGN KEY like_property_tbl_ibfk_2;
+# ALTER TABLE analysis_tbl DROP FOREIGN KEY analysis_tbl_ibfk_1;
+# property_tbl 관련 추가!
+DROP TABLE IF EXISTS property_tbl_all;
+
+CREATE TABLE property_tbl_all (
+                                  property_no int PRIMARY KEY AUTO_INCREMENT,
+                                  property_addr_sigungu_code int not null,
+                                  property_addr_sigungu varchar(200) not null,
+                                  property_addr_bubjung_code int not null,
+                                  property_addr_bubjung varchar(200) not null,
+                                  property_addr_bonbun int,
+                                  property_addr_bubun int,
+                                  property_addr_floor int,
+                                  property_addr_building_name varchar(50),
+                                  contract_date int,
+                                  trade_type varchar(50),
+                                  property_building_area float,
+                                  deposit int,
+                                  rent int,
+                                  price int,
+                                  property_land_area float,
+                                  contract_right_type varchar(50),
+                                  contract_type varchar(50),
+                                  contract_offce_name varchar(50),
+                                  building_year int,
+                                  property_type varchar(50),
+                                  contract_period varchar(50),
+                                  contract_renewed varchar(50),
+                                  contract_renew_used varchar(50),
+                                  deposit_previous int,
+                                  rent_previous int,
+                                  property_jibun_juso varchar(200),
+                                  location_no int,
+                                  formated_date date,
+                                  formated_price DECIMAL(10,2),
+                                  property_type_code int,
+                                  trade_type_code int
+);
+
+LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
+    INTO TABLE estate.property_tbl_all
+    FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
+    OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
+    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
+    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+
+SELECT * FROM property_tbl_all;
+
+
+# location 관련 tbl
+DROP TABLE IF EXISTS property_location;
+CREATE TABLE property_location (
+                                   location_no int AUTO_INCREMENT PRIMARY KEY,
+                                   property_jibun_juso VARCHAR(50) NOT NULL,
+                                   property_doro_juso VARCHAR(50),
+                                   zipcode int,
+                                   x_coordinate VARCHAR(255),
+                                   y_coordinate VARCHAR(255),
+                                   formated_price DECIMAL(10,2),
+                                   jibun_juso VARCHAR(50)
+
+);
+
+
+LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
+    INTO TABLE estate.property_location
+    FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
+    OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
+    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
+    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+
+SELECT * FROM property_location;
+SELECT count(*) from property_location;
+
+
