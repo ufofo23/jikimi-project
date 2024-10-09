@@ -1,173 +1,44 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">
-      <i class="fa-solid fa-paste"></i> 게시글 목록
-    </h1>
-
-    <!-- 로딩 상태 -->
-    <div v-if="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">로딩 중...</span>
-      </div>
-    </div>
-
-    <!-- 에러 메시지 -->
-    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
-      {{ errorMessage }}
-    </div>
-
-    <!-- 게시글 목록 테이블 -->
-    <div v-else>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th style="width: 80px">번호</th>
-            <th>제목</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="article in articles" :key="article.commonSenseNo">
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseNo }}
-            </td>
-            <td @click="detail(article.commonSenseNo)">
-              {{ article.commonSenseTitle }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- 페이지 네이션 -->
-      <div class="d-flex justify-center mt-4">
-        <nav
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-          aria-label="Pagination"
-        >
-          <!-- Previous 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page - 1)"
-            :class="{ 'opacity-50 cursor-not-allowed': pageRequest.page === 1 }"
-            :disabled="pageRequest.page === 1"
-          >
-            <span class="sr-only">Previous</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-
-          <!-- 페이지 번호 버튼들 -->
-          <a
-            v-for="pageNum in totalPages"
-            :key="pageNum"
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            :class="{
-              'bg-indigo-600 text-white z-10': pageRequest.page === pageNum,
-              'hover:bg-gray-50': pageRequest.page !== pageNum,
-            }"
-            @click.prevent="handlePageChange(pageNum)"
-          >
-            {{ pageNum }}
-          </a>
-
-          <!-- 점으로 표시된 부분 -->
-          <span
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-            v-if="totalPages > 5 && pageRequest.page + 2 < totalPages"
-          >
-            ...
-          </span>
-
-          <!-- Next 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page + 1)"
-            :class="{
-              'opacity-50 cursor-not-allowed': pageRequest.page === totalPages,
-            }"
-            :disabled="pageRequest.page === totalPages"
-          >
-            <span class="sr-only">Next</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </nav>
+  <div class="scroll-container" ref="scrollContainer">
+    <div class="scroll-wrapper">
+      <div
+        v-for="article in articles"
+        :key="article.commonSenseNo + Math.random()"
+        class="card"
+      >
+        <PieceSenseCard
+          :commonSenseTitle="article.commonSenseTitle"
+          :commonSenseNo="article.commonSenseNo"
+          :commonSenseContent="article.commonSenseContent"
+          :commonPieceSense="article.pieceSense"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import api from '@/api/senseApi'; // API 모듈
+import { ref, onMounted, computed, reactive } from 'vue';
+import api from '@/api/senseApi';
+import PieceSenseCard from '@/components/Cards/\bPieceSenseCard.vue';
 
-const article = ref({});
-const route = useRoute();
-const router = useRouter();
-
-// 게시글 상세 보기
-const detail = (no) => {
-  router.push({
-    name: 'senseDetailPage',
-    params: { no: no },
-    query: router.query,
-  });
-};
-
-// 상태 관리
 const page = reactive({
   list: [],
   totalCount: 0,
 });
 const isLoading = ref(true);
 const errorMessage = ref('');
-
-// 페이지 요청 상태
 const pageRequest = reactive({
-  page: parseInt(route.query.page) || 1,
-  amount: parseInt(route.query.amount) || 10,
+  page: 1,
+  amount: 37,
 });
 
-// 총 페이지 계산 속성
-const totalPages = computed(() => {
-  return Math.ceil(page.totalCount / pageRequest.amount);
-});
-
-// 게시글 목록 계산 속성
 const articles = computed(() => page.list);
 
-// 페이지 변경 핸들러
-const handlePageChange = async (pageNum) => {
-  if (pageNum < 1 || pageNum > totalPages.value) return;
-  router.push({
-    query: { page: pageNum, amount: pageRequest.amount },
-  });
-};
+// 자동 스크롤을 위한 ref
+const scrollContainer = ref(null);
 
-// 데이터 로드 함수
+// 데이터 로드
 const load = async () => {
   isLoading.value = true;
   errorMessage.value = '';
@@ -176,73 +47,81 @@ const load = async () => {
       page: pageRequest.page,
       amount: pageRequest.amount,
     });
+
+    console.log('게시글 목록:', response.list); // ✅ 리스트 출력
+    console.log('총 게시글 수:', response.totalCount); // ✅ 총 게시글 수 출력
+
     page.list = response.list;
     page.totalCount = response.totalCount;
   } catch (error) {
-    console.error('게시글 로드 실패:', error);
-    errorMessage.value =
-      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+    errorMessage.value = '게시글을 불러오는 데 실패했습니다.';
   } finally {
     isLoading.value = false;
   }
 };
 
-// query 파라미터 변경 감지
-watch(
-  () => route.query,
-  async (newQuery) => {
-    pageRequest.page = parseInt(newQuery.page) || 1;
-    pageRequest.amount = parseInt(newQuery.amount) || 10;
-    await load();
-  }
-);
+// 자동 스크롤 함수
+const startAutoScroll = () => {
+  setInterval(() => {
+    if (scrollContainer.value) {
+      // 부드럽게 스크롤하는 방식
+      scrollContainer.value.scrollBy({ left: 310, behavior: 'smooth' });
 
-// 컴포넌트가 마운트될 때 데이터 로드
+      // 끝까지 스크롤하면 처음으로 다시 돌아가기
+      if (
+        scrollContainer.value.scrollLeft >=
+        scrollContainer.value.scrollWidth - scrollContainer.value.clientWidth
+      ) {
+        scrollContainer.value.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    }
+  }, 2000); // 3초마다 자동 스크롤
+};
+
 onMounted(() => {
   load();
+  startAutoScroll(); // 자동 스크롤 시작
 });
 </script>
 
 <style scoped>
-/* 중앙 정렬 및 테이블 스타일 */
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 15px;
+/* 컨테이너 스타일 */
+.scroll-container {
+  display: flex;
+  height: 100vh; /* 화면 전체 높이를 사용하여 중앙 정렬 */
+  align-items: center; /* 세로 방향 중앙 정렬 */
+
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+  -ms-overflow-style: none; /* IE에서 스크롤바 숨기기 */
+  background: transparent; /* 배경색 제거 */
+  padding: 0; /* 패딩 제거 */
+  border: none; /* 경계선 제거 */
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f5f5f5;
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari에서 스크롤바 숨기기 */
 }
 
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
+.scroll-wrapper {
+  display: flex;
+  gap: 10;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  background: none; /* 배경색 없음 */
+  box-shadow: none; /* 그림자 없음 */
 }
 
-/* 페이지네이션 버튼 스타일 */
-nav a {
-  padding: 0.5rem 1rem;
-}
-nav a.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-/* 반응형 페이지네이션 */
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  .table th,
-  .table td {
-    font-size: 0.9rem;
-  }
-
-  nav a {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-  }
+.card {
+  flex: 0 0 380px; /* 카드의 고정된 크기 */
+  scroll-snap-align: start;
+  background-color: transparent; /* 카드 배경을 투명하게 */
+  border: none; /* 경계선 제거 */
+  padding: 0;
+  margin: 0;
+  box-shadow: none !important; /* 그림자 제거 */
 }
 </style>
