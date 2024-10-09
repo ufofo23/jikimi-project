@@ -220,7 +220,7 @@ const clients = ref([
     >
       <div class="relative z-10 inline-block pt-11 lg:pt-0 border-none">
         <img
-          src="@/assets/mapp.png"
+          src="@/assets/mappp.png"
           alt="hero"
           class="max-w-full lg:ml-auto border-none"
         />
