@@ -1,57 +1,3 @@
-<script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
-
-const open = ref(false);
-const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
-
-const toggleNavbar = () => {
-  open.value = !open.value;
-};
-
-const navLinkItems = ref([
-  { text: 'Home', href: 'javascript:void(0)' },
-  { text: 'Payment', href: 'javascript:void(0)' },
-  { text: 'About', href: 'javascript:void(0)' },
-  { text: 'Blog', href: 'javascript:void(0)' },
-]);
-
-// Custom composition function to handle click outside
-const handleClickOutside = (event: MouseEvent) => {
-  if (
-    dropdownButtonRef.value &&
-    !dropdownButtonRef.value.contains(event.target as Node)
-  ) {
-    open.value = false;
-  }
-};
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
-const clients = ref([
-  {
-    name: 'Ayroui',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/ayroui.svg',
-    link: 'javascript:void(0)',
-  },
-  {
-    name: 'GrayGrids',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/graygrids.svg',
-    link: 'javascript:void(0)',
-  },
-  {
-    name: 'UIdeck',
-    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/uideck.svg',
-    link: 'javascript:void(0)',
-  },
-]);
-</script>
-
 <template>
   <!-- ====== Navbar Section Start -->
   <header class="absolute top-0 left-0 z-50 w-full">
@@ -59,8 +5,10 @@ const clients = ref([
       <div class="relative -mx-4 flex items-center justify-between border-none">
         <div class="w-60 max-w-full px-4 border-none">
           <a href="/#" class="block w-full py-5 border-none">
-            <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
-
+            <!-- 로고 부분 유지 -->
+            <router-link :to="{ name: 'main' }">
+              <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
+            </router-link>
             <img
               src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo-white.svg"
               alt="logo"
@@ -68,60 +16,109 @@ const clients = ref([
             />
           </a>
         </div>
-        <div class="flex w-full items-center justify-between px-4 border-none">
-          <div>
-            <button
-              @click="toggleNavbar"
-              ref="dropdownButtonRef"
-              id="navbarToggler"
-              class="absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden border-none"
-            >
-              <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-body-color dark:bg-white"
-              ></span>
-              <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-body-color dark:bg-white"
-              ></span>
-              <span
-                class="relative my-[6px] block h-[2px] w-[30px] bg-body-color dark:bg-white"
-              ></span>
-            </button>
-            <nav
-              :class="{ hidden: !open }"
-              id="navbarCollapse"
-              class="absolute right-4 top-full w-full max-w-[250px] rounded-lg bg-white dark:bg-dark-2 transition-all lg:static lg:bg-transparent lg:block lg:w-full lg:max-w-full lg:shadow-none xl:ml-11 lg:dark:bg-transparent border-none"
-            >
-              <ul class="block lg:flex border-none">
-                <template v-for="(item, index) in navLinkItems" :key="index">
-                  <li class="border-none">
-                    <a
-                      v-if="item.href"
-                      :href="item.href"
-                      class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+
+        <!-- 네비게이션 메뉴 -->
+        <nav class="flex-grow">
+          <ul class="flex items-center space-x-6 lg:space-x-8">
+            <li class="border-none">
+              <router-link
+                :to="{ name: 'analyzing' }"
+                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+              >
+                Analyzing
+              </router-link>
+            </li>
+            <li class="border-none">
+              <router-link
+                :to="{ name: 'map' }"
+                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+              >
+                Map
+              </router-link>
+            </li>
+            <li class="border-none">
+              <div class="relative dropdown">
+                <router-link
+                  :to="{ name: 'study' }"
+                  class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+                >
+                  Study
+                </router-link>
+                <ul
+                  class="dropdown-menu absolute bg-white rounded-lg shadow-lg p-3 hidden"
+                >
+                  <li>
+                    <router-link
+                      :to="{ path: '/study/commonsense/list' }"
+                      class="block py-2 text-dark dark:text-white hover:text-primary"
                     >
-                      {{ item.text }}
-                    </a>
+                      부동산 토막 상식
+                    </router-link>
                   </li>
-                </template>
-              </ul>
-            </nav>
-          </div>
-          <div class="hidden justify-end pr-16 sm:flex lg:pr-0 border-none">
-            <a
-              href="/#"
-              class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
-              >Sign in</a
-            >
-            <a
-              href="/#"
-              class="py-3 text-base font-medium text-white rounded-md bg-primary px-7 hover:bg-blue-dark border-none"
-              >Sign Up</a
-            >
+                  <li>
+                    <router-link
+                      :to="{ path: '/study/dictionary/list' }"
+                      class="block py-2 text-dark dark:text-white hover:text-primary"
+                    >
+                      부동산 용어 사전
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="border-none">
+              <router-link
+                :to="{ name: 'faq' }"
+                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+              >
+                FAQ
+              </router-link>
+            </li>
+            <li class="border-none">
+              <router-link
+                :to="{ name: 'introduce' }"
+                class="flex py-2 text-base font-medium text-dark dark:text-white hover:text-primary lg:ml-10 lg:inline-flex border-none"
+              >
+                About us
+              </router-link>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- 로그인/로그아웃 관련 항목들 -->
+        <div class="hidden justify-end pr-16 sm:flex lg:pr-0 border-none">
+          <div
+            class="flex items-center space-x-4 sm:absolute sm:right-0 sm:top-0 sm:mt-3 sm:mr-4"
+          >
+            <div v-if="!isAuthenticated">
+              <router-link
+                :to="{ name: 'login' }"
+                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
+              >
+                Sign in
+              </router-link>
+            </div>
+            <div v-else>
+              <button
+                @click="logout"
+                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
+              >
+                Logout
+              </button>
+              <router-link
+                :to="{ name: 'mypage' }"
+                class="py-3 text-base font-medium px-7 text-dark dark:text-white hover:text-primary border-none"
+              >
+                MyPage
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </header>
+  <!-- ====== Navbar Section End -->
+
   <!-- ====== Hero Section Start -->
   <div class="relative min-h-screen flex bg-gray-100 dark:bg-dark border-none">
     <!-- 왼쪽 섹션 -->
@@ -216,6 +213,98 @@ const clients = ref([
   </div>
   <!-- ====== Hero Section End -->
 </template>
+
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref, computed } from 'vue'; // 한 번에 ref, onMounted 가져오기
+import { useRouter } from 'vue-router'; // Vue Router 사용
+import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
+
+const open = ref(false);
+const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
+const router = useRouter(); // 라우터 사용
+
+// 드롭다운 토글 기능
+const toggleNavbar = () => {
+  open.value = !open.value;
+};
+
+// 외부 클릭 감지
+const handleClickOutside = (event: MouseEvent) => {
+  if (
+    dropdownButtonRef.value &&
+    !dropdownButtonRef.value.contains(event.target as Node)
+  ) {
+    open.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+// 상태 관리: 인증 여부
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+// 로그아웃 기능
+const logout = () => {
+  authStore.logout();
+};
+
+// 클라이언트 로고 정보
+const clients = ref([
+  {
+    name: 'Ayroui',
+    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/ayroui.svg',
+    link: 'javascript:void(0)',
+  },
+  {
+    name: 'GrayGrids',
+    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/graygrids.svg',
+    link: 'javascript:void(0)',
+  },
+  {
+    name: 'UIdeck',
+    logo: 'https://cdn.tailgrids.com/2.0/image/assets/images/brands/uideck.svg',
+    link: 'javascript:void(0)',
+  },
+]);
+
+// senseApi를 통해 데이터를 로드할 함수 (API 정의 필요)
+const pieceSenseList = ref([]); // API에서 받은 데이터를 저장할 곳
+const isLoading = ref(true);
+const errorMessage = ref('');
+
+// API 호출 로직 (API 모듈 정의 필요)
+const load = async () => {
+  try {
+    isLoading.value = true;
+    // pieceSenseList.value = await senseApi.getSenseList(); // 실제 API 호출 부분
+    isLoading.value = false;
+  } catch (error) {
+    errorMessage.value = '데이터 로드 중 오류 발생';
+    isLoading.value = false;
+  }
+};
+
+// 상세 페이지로 이동하는 함수
+const detail = (no: number) => {
+  router.push({
+    name: 'senseDetailPage',
+    params: { no: no },
+  });
+};
+
+// 컴포넌트가 마운트될 때 데이터 로드
+onMounted(() => {
+  load();
+});
+</script>
+
 <style>
 /* 네비게이션 바의 선 제거 */
 .container,
