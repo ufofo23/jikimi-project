@@ -59,11 +59,8 @@ const clients = ref([
       <div class="relative -mx-4 flex items-center justify-between border-none">
         <div class="w-60 max-w-full px-4 border-none">
           <a href="/#" class="block w-full py-5 border-none">
-            <img
-              src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo-primary.svg"
-              alt="logo"
-              class="dark:hidden"
-            />
+            <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
+
             <img
               src="https://cdn.tailgrids.com/2.0/image/assets/images/logo/logo-white.svg"
               alt="logo"
@@ -138,11 +135,9 @@ const clients = ref([
           내 집은<br />
           안전할까? <br />
         </h1>
-        <p
-          class="mb-8 max-w-[480px] text-base text-body-color dark:text-dark-6 border-none"
-        >
-          등기부등본 분석을 통해 원하시는 집의 안전 점수를 확인해드릴게요! 이
-          서비스를 이용한 사람이 벌써 123231278 명!
+        <p class="mb-8 text-base text-body-color dark:text-dark-6 border-none">
+          계약 진행 단계에 따라 반드시 필요한 체크리스트를 준비했어요. <br />
+          지금 바로 확인해보세요!
         </p>
         <ul class="flex flex-wrap items-center border-none">
           <li class="border-none">
@@ -150,7 +145,7 @@ const clients = ref([
               href="javascript:void(0)"
               class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white rounded-md bg-primary hover:bg-blue-dark lg:px-7 border-none"
             >
-              바로 안전 진단 받기!
+              계약이 처음이라면?
             </a>
           </li>
           <li class="ml-4 border-none">
@@ -158,36 +153,8 @@ const clients = ref([
               href="javascript:void(0)"
               class="inline-flex items-center justify-center py-3 px-5 text-center text-base font-medium text-[#464646] dark:text-white hover:text-primary border-none"
             >
-              <span class="mr-2 border-none">
-                <svg
-                  width="24"
-                  height="25"
-                  viewBox="0 0 24 25"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="12" cy="12.6152" r="12" fill="#3758F9" />
-                  <rect
-                    x="7.99893"
-                    y="14.979"
-                    width="8.18182"
-                    height="1.63636"
-                    fill="white"
-                  />
-                  <rect
-                    x="11.2717"
-                    y="7.61523"
-                    width="1.63636"
-                    height="4.09091"
-                    fill="white"
-                  />
-                  <path
-                    d="M12.0898 14.1606L14.9241 11.0925H9.25557L12.0898 14.1606Z"
-                    fill="white"
-                  />
-                </svg>
-              </span>
-              Download App
+              <span class="mr-2 border-none"> </span>
+              계약 진행/완료 상태라면!
             </a>
           </li>
         </ul>
@@ -220,7 +187,7 @@ const clients = ref([
     >
       <div class="relative z-10 inline-block pt-11 lg:pt-0 border-none">
         <img
-          src="@/assets/mappp.png"
+          src="@/assets/map2.png"
           alt="hero"
           class="max-w-full lg:ml-auto border-none"
         />
@@ -230,7 +197,7 @@ const clients = ref([
               href="javascript:void(0)"
               class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white rounded-md bg-primary hover:bg-blue-dark lg:px-7 border-none"
             >
-              실거래가 확인하기!
+              안전 진단 받기
             </a>
           </li>
           <li class="ml-4 border-none">
@@ -238,35 +205,9 @@ const clients = ref([
               href="javascript:void(0)"
               class="inline-flex items-center justify-center py-3 px-5 text-center text-base font-medium text-[#464646] dark:text-white hover:text-primary border-none"
             >
-              <span class="mr-2 border-none">
-                <svg
-                  width="24"
-                  height="25"
-                  viewBox="0 0 24 25"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="12" cy="12.6152" r="12" fill="#3758F9" />
-                  <rect
-                    x="7.99893"
-                    y="14.979"
-                    width="8.18182"
-                    height="1.63636"
-                    fill="white"
-                  />
-                  <rect
-                    x="11.2717"
-                    y="7.61523"
-                    width="1.63636"
-                    height="4.09091"
-                    fill="white"
-                  />
-                  <path
-                    d="M12.0898 14.1606L14.9241 11.0925H9.25557L12.0898 14.1606Z"
-                    fill="white"
-                  />
-                </svg>
-              </span>
+              <span class="mr-2 border-none"> </span>
+              지도를 통해 원하시는 지역의 시세를 확인하고, 등기부 등본 분석을
+              통해 안전 진단 리포트를 제공해 드릴게요.
             </a>
           </li>
         </ul>
@@ -275,3 +216,50 @@ const clients = ref([
   </div>
   <!-- ====== Hero Section End -->
 </template>
+<style>
+/* 네비게이션 바의 선 제거 */
+.container,
+.flex,
+.header,
+nav,
+ul,
+li,
+div,
+a {
+  border: none !important;
+}
+
+/* 버튼 등의 추가적인 요소들에 대한 선 제거 */
+button,
+.block,
+.py-3,
+.px-7,
+.px-4,
+.rounded-md,
+.bg-primary {
+  border: none !important;
+}
+
+/* 기타 가능한 요소들에 대한 선 제거 */
+.hero-content,
+.clients,
+.bg-white,
+.bg-gray-100 {
+  border: none !important;
+}
+
+/* 텍스트와 이미지의 경계에도 선 제거 */
+.text-dark,
+.text-body-color,
+img {
+  border: none !important;
+}
+
+/* 불필요한 하단의 border 관련된 다른 클래스 제거 */
+
+.lg:px-12,
+.lg:pr-0,
+.rounded-md {
+  border: none !important;
+}
+</style>
