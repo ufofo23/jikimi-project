@@ -292,50 +292,38 @@ const submitForm = async () => {
 
   isLoading.value = true;
   try {
-    console.log('jibun before:', selectedAddress.value);
-    const lotNumberParts =
-      selectedAddress.value.jibunJuso.split(' ');
-    const lotNumber =
-      lotNumberParts[lotNumberParts.length - 1];
+    // 주소에서 시도, 동, 지번 번호 추출
+    const jibunAddressParts = selectedAddress.value.jibunJuso.split(' '); // 공백 기준으로 분리
+    const addr_sido = jibunAddressParts[0].match(/.*[시도]/)[0] || ''; // 시 또는 도 추출
+    const addr_dong = jibunAddressParts[1] || ''; // 동 정보 추출
+    const addr_lotNumber = jibunAddressParts[jibunAddressParts.length - 1] || ''; // 마지막 지번 번호 추출
 
-    // jibunAddress에서 시도, 동, 지번 번호 추출
-    const jibunAddressParts =
-      selectedAddress.value.jibunJuso.split(' '); // 공백 기준으로 분리
-    const addr_sido = jibunAddressParts[0] || ''; // 첫 번째 요소가 시도
-    const addr_dong = jibunAddressParts[1] || ''; // 두 번째 요소가 동
-    const addr_lotNumber =
-      jibunAddressParts.slice(2).join(' ') || ''; // 나머지 요소를 지번 번호로
-
+    // payload 객체 구성
     const payload = {
-      addr_sido: addr_sido || '',
-      addr_dong: addr_dong || '',
-      addr_lotNumber: addr_lotNumber,
-      buildingName:
-        selectedAddress.value.buildingName || '',
+      addr_sido: addr_sido, // 추출된 시/도 값
+      addr_dong: addr_dong, // 추출된 동 값
+      addr_lotNumber: addr_lotNumber, // 추출된 지번 값
+      buildingName: selectedAddress.value.buildingName || '',
       dong: residenceType.value === 'yes' ? dong.value : '',
       ho: residenceType.value === 'yes' ? ho.value : '',
-      realtyType: residenceType.value === 'yes' ? 1 : 0,
-      deposit:
-        progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
+      // realtyType: residenceType.value === 'yes' ? "1" : "0", // 타입 처리
+      deposit: progressType.value === 'yes' ? deposit.value : '', // 전세금 추가
       name: progressType.value === 'yes' ? name.value : '', // 계약자 성명 추가
       jibunAddress: selectedAddress.value.jibunJuso || '', // jibunAddress 추가
-      uniqueCode:
-        selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
+      uniqueCode: selectedAddress.value.commonUniqueNo || '', // UniqueCode 추가
     };
 
-    console.log(payload);
+    console.log(payload); // payload 확인용 로그
+        // dong과 ho는 집합 건물이 아닌 경우 빈 문자열로 보내기
+        
+        if (residenceType.value !== 'yes') {
+          payload.dong = '';
+          payload.ho = '';
+        }
 
-    // dong과 ho는 집합 건물이 아닌 경우 빈 문자열로 보내기
-    if (residenceType.value !== 'yes') {
-      payload.dong = '';
-      payload.ho = '';
-    }
-
+    // API 호출
     const response = await api.post('/address', payload);
-    if (
-      Array.isArray(response.data) &&
-      response.data.length > 0
-    ) {
+    if (Array.isArray(response.data) && response.data.length > 0) {
       addresses.value = response.data;
       showAddressForm.value = false;
       selectedAddress.value = null;
@@ -365,7 +353,7 @@ const sendUniqueCode = async (uniqueCode) => {
   try {
     const payload = {
       uniqueCode,
-      realtyType: residenceType.value === 'yes' ? 1 : 0,
+      // realtyType: residenceType.value === 'yes' ? "1" : "0", // 타입처리
     };
     console.log('realtyType:', payload.realtyType);
     await api.post('/cors', payload);
@@ -572,3 +560,5 @@ onMounted(() => {
   background-color: #f8f9fa;
 }
 </style>
+
+
