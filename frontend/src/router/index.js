@@ -25,14 +25,9 @@ import Report from '@/pages/app/Report.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/mypage', name: 'mypage', component: MyPage },
 
-    { path: '/mypage', 
-      name: 'mypage', 
-      component: MyPage },
-
-    { path: '/myreport',
-      name: 'myreport',
-      component: MyReport },
+    { path: '/myreport', name: 'myreport', component: MyReport },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -113,6 +108,11 @@ const router = createRouter({
       path: '/map/analyzing',
       name: 'mapAnalyzing',
       component: MapAnalyzing,
+    },
+    {
+      path: '/report',
+      name: 'report',
+      component: Report,
     },
   ],
 });

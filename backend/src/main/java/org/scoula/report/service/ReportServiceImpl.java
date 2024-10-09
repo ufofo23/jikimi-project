@@ -11,6 +11,7 @@ import org.scoula.safety_inspection.infra.cors.dto.CopyOfRegisterDto;
 import org.scoula.safety_inspection.infra.cors.mapper.CopyOfRegisterMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -46,9 +47,25 @@ public class ReportServiceImpl implements ReportService {
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("addr-jibun-address").toString());
-        report.setJeonseRate((Integer)payload.get("jeonsePrice") / (Integer) payload.get("price"));
 
-        if(payload.get("contractName") != null) {
+        // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
+        if (payload.get("jeonsePrice") != null) {
+            int jeonsePrice = Integer.parseInt(payload.get("jeonsePrice").toString());
+            if (jeonsePrice != 0) {
+                report.setJeonseRate(jeonsePrice / (Integer) payload.get("price"));
+            }
+        }
+
+        // contractName : null, "" 예외처리 - accordOwner을 null 값으로 두고 프론트에서 "판단 불가"로 표기
+        // payload.get("contractName")이 List<>가 아니면 제외
+        if(payload.get("contractName") != null && payload.get("contractName").getClass().getName().equals("java.util.List")) {
+            // 공동 소유를 감안하여 리스트에 받음
+            List<String> contractNameList = (List<String>) payload.get("contractName");
+
+            String ownership = cor.getOwnership();
+
+
+
             report.setAccordOwner(
                     isAccordOwner(payload.get("contractName").toString(), cor.getOwnership())
             );
