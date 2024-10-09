@@ -28,7 +28,7 @@ const props = defineProps({
   commonPieceSense: String,
 });
 
-const emits = defineEmits(['detail']);
+// const emits = defineEmits(['detail']);
 
 // 카드 클릭 시 상세 페이지로 이동하는 함수
 const detail = (no) => {
@@ -37,6 +37,40 @@ const detail = (no) => {
     params: { no: no },
   });
 };
+
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import senseApi from '@/api/senseApi'; // 백엔드 API를 가져오는 경로
+
+const router = useRouter();
+
+// 데이터 로드 관련 상태 변수
+const currentPieceSense = ref('');
+const currentCommonSenseNo = ref('');
+const errorMessage = ref('');
+
+// API로부터 데이터를 받아오는 함수
+const loadPieceSense = async () => {
+  try {
+    const response = await senseApi.getList();
+    if (response && Array.isArray(response.list) && response.list.length > 0) {
+      // 랜덤으로 하나의 데이터를 선택
+      const randomIndex = Math.floor(Math.random() * response.list.length);
+      currentPieceSense.value = response.list[randomIndex].pieceSense;
+      currentCommonSenseNo.value = response.list[randomIndex].commonSenseNo;
+    } else {
+      errorMessage.value = '유효한 데이터를 찾을 수 없습니다.';
+    }
+  } catch (error) {
+    errorMessage.value =
+      '데이터를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+  }
+};
+
+// 컴포넌트가 마운트될 때 API 호출
+onMounted(() => {
+  loadPieceSense();
+});
 </script>
 
 <style scoped>

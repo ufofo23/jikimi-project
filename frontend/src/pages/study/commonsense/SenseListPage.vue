@@ -75,7 +75,7 @@ const startAutoScroll = () => {
         scrollContainer.value.scrollTo({ left: 0, behavior: 'smooth' });
       }
     }
-  }, 3000); // 3초마다 자동 스크롤
+  }, 2000); // 3초마다 자동 스크롤
 };
 
 onMounted(() => {
