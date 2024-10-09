@@ -1293,7 +1293,7 @@ UPDATE property_tbl
 SET property_jibun_juso = concat(property_addr_sigungu, ' ', property_addr_bunji)
 WHERE property_addr_sigungu <> '';
 SELECT * FROM property_tbl;
-
+select * from bml_tbl;
 -- ------------------------------------------------------------------------------
 # property 관련 테이블 설정!
 SET GLOBAL local_infile = 1;
