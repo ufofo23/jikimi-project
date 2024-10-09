@@ -257,10 +257,11 @@ const openDaumPostcode = () => {
         roadAddress: data.roadAddress,
         buildingName: data.buildingName || '없음',
         apartment: data.apartment,
-        jibunAddress: data.autoJibunAddress,
+        jibunJuso: data.jibunAddress,
         bname: data.bname,
         sido: data.sido,
       };
+
       showAddressForm.value = true;
       addresses.value = []; // 주소 선택 시 이전 유니크 코드 목록 초기화
       resetForm(false);
