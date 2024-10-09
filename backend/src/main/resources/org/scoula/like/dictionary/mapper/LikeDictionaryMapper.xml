@@ -13,7 +13,7 @@
             select dictionary_no
             from like_dictionary_tbl
             where member_no = (
-                select member_no
+                select member_no, member_id
                 from member_tbl
                 where member_id = #{userId}))
         order by dictionary_title asc

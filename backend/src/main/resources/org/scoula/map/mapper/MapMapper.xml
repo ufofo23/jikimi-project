@@ -29,7 +29,9 @@
             pr.trade_type as contract_type,
             pr.property_addr_building_name as property_addr_apt_name,
             pr.property_type,
-            pl.zipcode
+            pl.zipcode,
+            pl.x_coordinate,
+            pl.y_coordinate
         from property_location as pl
         right outer join property_tbl_all as pr
         on pl.location_no = pr.location_no
@@ -38,11 +40,11 @@
 
 
     <select id="getAddressListMoveAll" resultType="org.scoula.map.domain.MapVO">
-        SELECT
+        SELECT DISTINCT
             pl.location_no,
             pl.x_coordinate,
             pl.y_coordinate,
-            pl.formated_price as price
+            round(pl.formated_price,1) as price
         FROM property_location pl
                  INNER JOIN property_tbl_all pr ON pl.location_no = pr.location_no
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
@@ -79,7 +81,7 @@
     </select>
 
     <select id="getAddressListMoveClusterAll" resultType="org.scoula.map.domain.MapClusterVO">
-        SELECT pl.location_no, pl.x_coordinate, pl.y_coordinate
+        SELECT DISTINCT pl.x_coordinate, pl.y_coordinate
         FROM property_location pl
                  INNER JOIN property_tbl_all pr ON pl.location_no = pr.location_no
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}

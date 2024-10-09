@@ -25,13 +25,12 @@ public class LikeReportController {
     }
 
 //    @GetMapping("")
-//    public ResponseEntity<List<ReportDTO>> getList(@RequestHeader("Authorizaition") String token) {
+//    public ResponseEntity<List<ReportDTO>> getList(@RequestHeader("Authorization") String token) {
 //        return ResponseEntity.ok(service.getList(token));
 //    }
 
     @GetMapping("")
     public ResponseEntity<Page> getList(@RequestHeader("Authorization") String token, PageRequest pageRequest) {
-        log.info("get list______________________________________________");
         return ResponseEntity.ok(service.getPage(token, pageRequest));
     }
 
