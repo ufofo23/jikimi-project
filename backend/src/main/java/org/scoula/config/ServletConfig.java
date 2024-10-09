@@ -20,7 +20,10 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.scoula.chat.controller",
         "org.scoula.oauth.controller",
         "org.scoula.like.dictionary.controller",
-        "org.scoula.prevention.controller"
+        "org.scoula.prevention.controller",
+        "org.scoula.report.controller",
+        "org.scoula.like.report.controller",
+        "org.scoula.like.property.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
 public class ServletConfig implements WebMvcConfigurer {
