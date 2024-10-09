@@ -60,7 +60,7 @@
             <td class="text-center">
               <input type="checkbox" v-model="selectedItems" :value="item" />
             </td>
-            <td class="text-center">{{ article.contractStartDate}}</td>
+            <td class="text-center">{{ formatDate(article.contractStartDate) }}</td>
             <td class="text-center">{{ article.address }}</td>
             <td class="text-center">{{ article.totalScore }}</td>
           </tr>
@@ -141,6 +141,16 @@ const isResultDropdownOpen = ref(false); // 진단 결과 드롭다운 상태
 const selectedResult = ref('전체'); // 선택된 단일 결과 옵션
 const selectedSortOrder = ref('latest'); // 선택된 정렬 기준
 const selectedItems = ref([]); // 선택된 항목을 저장할 배열
+
+// date 포맷
+const formatDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 1을 더해 월을 조정
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 // 페이지 요청 상태
 const pageRequest = reactive({
