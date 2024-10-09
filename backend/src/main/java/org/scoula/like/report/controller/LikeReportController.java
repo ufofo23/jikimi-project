@@ -20,7 +20,7 @@ public class LikeReportController {
     final LikeReportService service;
 
     @GetMapping("/{reportNo}")
-    public ResponseEntity<Integer> create(@RequestHeader("Authorizaion") String token, @PathVariable int reportNo) {
+    public ResponseEntity<Integer> create(@RequestHeader("Authorization") String token, @PathVariable int reportNo) {
         return ResponseEntity.ok(service.create(reportNo, token));
     }
 
@@ -30,7 +30,8 @@ public class LikeReportController {
 //    }
 
     @GetMapping("")
-    public ResponseEntity<Page> getList(@RequestHeader("Authorizaition") String token, PageRequest pageRequest) {
+    public ResponseEntity<Page> getList(@RequestHeader("Authorization") String token, PageRequest pageRequest) {
+        log.info("get list______________________________________________");
         return ResponseEntity.ok(service.getPage(token, pageRequest));
     }
 

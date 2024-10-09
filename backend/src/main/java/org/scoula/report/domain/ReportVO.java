@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +22,7 @@ public class ReportVO {
     private int maximumOfBond; // 채권최고액
     private String useType; // 주용도
     private boolean violationStructure; // 위반건축물 여부
+    private Date contractStartDate; // 계약 시작일
 //    private String kindOfLandrights; // 대지권등기
     private String commonOwner; // 공동소유 / 단독소유
     private String changeOwnerCount; // 소유권 변동 횟수
