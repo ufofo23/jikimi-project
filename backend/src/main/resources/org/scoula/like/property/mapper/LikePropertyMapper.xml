@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.like.property.mapper.LikePropertyMapper">
+    <insert id="create">
+        insert into like_property_tbl (member_no, property_no)
+        values((select member_no from member_tbl where member_id = #{userId}), #{proNo})
+    </insert>
+
+    <select id="getList" resultType="org.scoula.map.domain.MapDetailDTO">
+        select * from property_tbl pr
+        where pr.property_no in (
+            select property_no
+            from like_property_tbl
+            where member_no = (
+                select member_no
+                from member_tbl
+                where member_id = #{userId}))
+        order by like_property_no asc
+    </select>
+
+    <delete id="delete">
+        delete from like_property_tbl where property_no = #{proNo}
+    </delete>
+</mapper>
