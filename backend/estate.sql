@@ -959,4 +959,3 @@ WHERE CHAR_LENGTH(jibun_juso) < 5;
 SELECT * FROM property_location;
 SELECT count(*) from property_location;
 
-
