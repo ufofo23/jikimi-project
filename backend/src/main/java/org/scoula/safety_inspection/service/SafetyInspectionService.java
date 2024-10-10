@@ -31,11 +31,10 @@ public class SafetyInspectionService {
      * API 추출 및 DB 저장 트랜잭션 관리를 위한 서비스
      * @param payload
      */
-    public void processSafetyInspection(Map<String, Object> payload) {
-
-        String propertyNo = (String) payload.get("propertyNo");
-        Integer analysisNo = analysisService.processPropertyAnalysis(propertyNo, payload);
+    public String processSafetyInspection(Map<String, Object> payload) {
         try {
+            String propertyNo = (String) payload.get("propertyNo");
+            Integer analysisNo = analysisService.processPropertyAnalysis(propertyNo, payload);
             List<Map<String, String>> uniqueCodes = extractUnicodeService.getUniqueCode(payload);
             if (!uniqueCodes.isEmpty()) {
                 String realtyType = uniqueCodes.get(0).get("realtyType");
@@ -56,6 +55,8 @@ public class SafetyInspectionService {
             // 보고서 생성 및 저장
             ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
             reportService.create(reportDTO,analysisNo);
+
+            return String.valueOf(reportDTO.getReportNo());
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -65,6 +65,8 @@ CREATE TABLE property_tbl (
                                   trade_type_code int
 );
 
+select * from property_tbl where property_no = 46948;
+
 LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
     INTO TABLE estate.property_tbl
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
