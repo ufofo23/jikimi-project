@@ -58,13 +58,43 @@ public class ExtractUnicodeService {
             InvalidKeySpecException, BadPaddingException, InvalidKeyException {
 
         String password = encryptRSA(userPass, PUBLIC_KEY);
-        HashMap<String, Object> parameterMap = createParameterMap(payload,password);
+        HashMap<String, Object> parameterMap = createParameterMap(payload, password);
 
+        // 첫 번째 조회: realtyType을 "0"으로 설정
+        parameterMap.put("realtyType", "0");
         String productUrl = "/v1/kr/public/ck/real-estate-register/status";
         String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
         System.out.println("result = " + result);
 
-        return processResult(result);
+        // 결과 처리
+        List<Map<String, String>> extractedValues = processResult(result);
+        String responseCode = getResponseCode(result);
+
+        // 첫 번째 요청에서 실패 시 realtyType을 "1"로 변경하여 다시 요청
+        if (!responseCode.equals("CF-00000")) {
+            parameterMap.put("realtyType", "1");
+            result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
+            System.out.println("result = " + result);
+
+            // 결과 처리
+            extractedValues = processResult(result);
+            responseCode = getResponseCode(result);
+
+            // 두 번째 요청에서도 실패 시 오류 메시지 반환
+            if (!responseCode.equals("CF-00000")) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("resState", "조회 실패: 서버 응답 코드가 CF-00000이 아닙니다.");
+                extractedValues.add(errorMap);
+            }
+        }
+
+        return extractedValues;
+    }
+
+    // 응답 코드 추출 메서드
+    private String getResponseCode(String result) throws JsonProcessingException {
+        JsonNode jsonNode = objectMapper.readTree(result);
+        return jsonNode.get("result").get("code").asText();
     }
 
     private HashMap<String, Object> createParameterMap(Map<String, Object> payload, String password)
@@ -72,8 +102,7 @@ public class ExtractUnicodeService {
         HashMap<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("organization", ORGANIZATION_CODE); // 기관코드
         parameterMap.put("inquiryType", INQUIRY_TYPE); // 조회구분
-        parameterMap.put("realtyType", payload.get("realtyType")); // 부동산 구분
-        parameterMap.put("password",password);
+        parameterMap.put("password", password);
         parameterMap.put("phoneNo", DEFAULT_PHONE_NO); // 기본 전화번호
         parameterMap.put("addr_sido", payload.get("addr_sido")); // 시/도
         parameterMap.put("addr_dong", payload.get("addr_dong")); // 읍/면/동
@@ -96,17 +125,24 @@ public class ExtractUnicodeService {
 
     private List<Map<String, String>> processResult(String result) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(result);
-        JsonNode resAddrList = jsonNode.get("data").path("resAddrList");
+        String responseCode = jsonNode.get("result").get("code").asText();
         List<Map<String, String>> extractedValues = new ArrayList<>();
 
-        for (JsonNode addr : resAddrList) {
-            Map<String, String> addrMap = new HashMap<>();
-            addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
-            addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
-            addrMap.put("resState", addr.path("resState").asText());
-            extractedValues.add(addrMap);
-        }
+        if (responseCode.equals("CF-00000")) {
+            JsonNode resAddrList = jsonNode.get("data").path("resAddrList");
 
+            for (JsonNode addr : resAddrList) {
+                Map<String, String> addrMap = new HashMap<>();
+                addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
+                addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
+                addrMap.put("resState", addr.path("resState").asText());
+                extractedValues.add(addrMap);
+            }
+        } else {
+            Map<String, String> noResultsMap = new HashMap<>();
+            noResultsMap.put("resState", "검색 결과가 없습니다. 검색어에 잘못된 철자가 없는지, 정확한 주소인지 다시 한번 확인해 주세요.");
+            extractedValues.add(noResultsMap);
+        }
         return extractedValues;
     }
 }

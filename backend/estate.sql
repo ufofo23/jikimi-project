@@ -923,8 +923,9 @@ LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
     INTO TABLE estate.property_tbl_all
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
+    LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+
 
 SELECT * FROM property_tbl_all;
 
@@ -948,8 +949,12 @@ LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
     INTO TABLE estate.property_location
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
+    LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+
+UPDATE estate.property_location
+SET jibun_juso = LPAD(jibun_juso, CHAR_LENGTH(jibun_juso) + 1, '0')
+WHERE CHAR_LENGTH(jibun_juso) < 5;
 
 SELECT * FROM property_location;
 SELECT count(*) from property_location;
