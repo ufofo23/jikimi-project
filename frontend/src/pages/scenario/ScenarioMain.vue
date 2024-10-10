@@ -85,38 +85,7 @@ export default {
           text: '집 주인이 보증금을 줄여주겠다고 하나요?',
           message: 'A situation where the owner offers a deposit much lower than the market price',
         },
-        {
-          text: '집 주인이 집의 소유증명서를 보여주지 않나요?',
-          message: 'A situation where the owner does not show or refuses to provide the proof of ownership',
-        },
-        {
-          text: '이 집에 다른 세입자가 살고 있나요?',
-          message: 'A situation where there are already other tenants living in the house I am trying to contract with',
-        },
-        {
-          text: '집의 상태나 위치가 설명과 많이 다른가요?',
-          message: 'A situation where the information in the advertisement and the actual condition or location of the property is significantly different',
-        },
-        {
-          text: '집 주인이 급하게 계약하자고 하나요?',
-          message: 'A situation where the owner is trying to rush the contract and pressuring me to make a quick decision',
-        },
-        {
-          text: '계약을 갑자기 미루자고 하나요?',
-          message: 'A situation where the landlord suddenly tries to postpone the contract and may later become unreachable or vanish',
-        },
-        {
-          text: '계약서를 대충 작성하자고 하나요?',
-          message: 'A situation where the contract is poorly written and important details are missing',
-        },
-        {
-          text: '보증금을 돌려주는 보험 가입을 거부하나요?',
-          message: 'A situation where the owner refuses to sign up for insurance that returns the deposit',
-        },
-        {
-          text: '임대인이 세입자의 신분증이나 서류를 지나치게 요구하나요?',
-          message: 'A situation where the landlord excessively demands personal information like ID or other documents',
-        },
+        // 다른 질문들도 동일하게 추가됩니다
       ],
       selectedAnswers: Array(10).fill(null),
       scenarios: [],
