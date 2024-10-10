@@ -313,12 +313,14 @@ const analyzeProperty = () => {
     const buildingName =
       props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
+    const zipcode = props.selectedProperty[0].zipcode;
     router.push({
       name: 'mapAnalyzing',
       query: {
         jibunJuso: jibunJuso,
         buildingName: buildingName,
         propertyNo: propertyNo,
+        zipcode: zipcode
       },
     });
   }
