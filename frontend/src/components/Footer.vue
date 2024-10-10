@@ -2,9 +2,14 @@
   <footer class="footer" :class="{ visible: isFooterVisible }">
     <p>© 2024 부동산 거래 서비스</p>
     <ul class="footer-list">
-      <li>제주특별자치도 제주시 애월읍 애월리 2481-3 대표번호: 010-1357-2468</li>
+      <li>
+        제주특별자치도 제주시 애월읍 애월리 2481-3 대표번호: 010-1357-2468
+      </li>
       <li>2024 Sagi Check. All Right Reserved</li>
-      <li>본 웹사이트에서 제공하는 실거래가 정보는 투자 참고용이며 오류가 발생할 수 있습니다.</li>
+      <li>
+        본 웹사이트에서 제공하는 실거래가 정보는 투자 참고용이며 오류가 발생할
+        수 있습니다.
+      </li>
       <li>제공된 정보에 의한 투자 결과에 대해 법적인 책임을 지지 않습니다.</li>
       <li>기타 비용이 추가로 발생할 수 있습니다.</li>
     </ul>
@@ -19,7 +24,7 @@ const isFooterVisible = ref(false);
 const handleScroll = () => {
   const scrollPosition = window.scrollY + window.innerHeight;
   const documentHeight = document.documentElement.scrollHeight;
-  
+
   if (scrollPosition >= documentHeight) {
     isFooterVisible.value = true;
   } else {
@@ -41,7 +46,7 @@ onUnmounted(() => {
   position: relative;
   bottom: 0;
   width: 100%;
-  background-color: RGB(203, 236, 197); /* 브랜드 색상 */
+  background-color: white; /* 브랜드 색상 */
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
