@@ -11,4 +11,7 @@ public interface ReportMapper {
     // 레포트 저장
     public int create(ReportVO reportVO);
 
+    // 레포트 삭제
+    public int delete(int analysisNo);
+
 }

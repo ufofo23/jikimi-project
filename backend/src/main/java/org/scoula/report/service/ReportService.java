@@ -16,4 +16,6 @@ public interface ReportService {
     /* Algorithm */
     public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload);
 
+    public int delete(int analysisNo);
+
 }

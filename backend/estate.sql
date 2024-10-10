@@ -954,4 +954,3 @@ LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
 SELECT * FROM property_location;
 SELECT count(*) from property_location;
 
-
