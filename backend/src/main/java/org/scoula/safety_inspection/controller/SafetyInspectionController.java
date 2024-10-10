@@ -44,7 +44,6 @@ public class SafetyInspectionController {
     }
 
     // 등기부 등본 관련
-    @Transactional(rollbackFor = Exception.class)
     @PostMapping("/cors")
     public ResponseEntity<String> handleUniqueCode(@RequestBody Map<String, Object> payload) {
         try {

@@ -8,13 +8,13 @@ import lombok.Setter;
 public class CopyOfRegisterDto {
 
     private Integer analysisNo;
-    private final Double ownerState;
-    private final String ownership;
-    private final String commonOwner;
-    private final String changeOwnerCount;
-    private final Integer maximumOfBond;
+    private Double ownerState;
+    private String ownership;
+    private String commonOwner;
+    private Integer changeOwnerCount;
+    private Integer maximumOfBond;
 
-    public CopyOfRegisterDto(Integer analysisNo,Double ownerState, String ownership, String commonOwner, String changeOwnerCount, Integer maximumOfBond) {
+    public CopyOfRegisterDto(Integer analysisNo,Double ownerState, String ownership, String commonOwner, Integer changeOwnerCount, Integer maximumOfBond) {
         this.analysisNo = analysisNo;
         this.ownerState = ownerState;
         this.ownership = ownership;
