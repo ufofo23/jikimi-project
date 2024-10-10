@@ -67,7 +67,7 @@ public class ExtractUnicodeService {
         System.out.println("result = " + result);
 
         // 결과 처리
-        extractedValues = processResult(result,"0");
+        extractedValues = processResult(result, "0");
         String responseCode = getResponseCode(result);
 
         // 첫 번째 요청에서 실패 시 realtyType을 "1"로 변경하여 다시 요청
@@ -77,7 +77,7 @@ public class ExtractUnicodeService {
             System.out.println("result = " + result);
 
             // 결과 처리
-            extractedValues = processResult(result,"1");
+            extractedValues = processResult(result, "1");
             responseCode = getResponseCode(result);
 
             // 두 번째 요청에서도 실패 시 오류 메시지 반환
@@ -133,14 +133,19 @@ public class ExtractUnicodeService {
         if (responseCode.equals("CF-00000")) {
             JsonNode resAddrList = jsonNode.get("data").path("resAddrList");
 
-        for (JsonNode addr : resAddrList) {
-            Map<String, String> addrMap = new HashMap<>();
-            addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
-            addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
-            addrMap.put("resState", addr.path("resState").asText());
-            extractedValues.add(addrMap);
+            for (JsonNode addr : resAddrList) {
+                Map<String, String> addrMap = new HashMap<>();
+                addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
+                addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
+                addrMap.put("resState", addr.path("resState").asText());
+                extractedValues.add(addrMap);
+            }
         }
-
+        else {
+            Map<String, String> noResultsMap = new HashMap<>();
+            noResultsMap.put("resState", "검색 결과가 없습니다. 검색어에 잘못된 철자가 없는지, 정확한 주소인지 다시 한번 확인해 주세요.");
+            extractedValues.add(noResultsMap);
+        }
         return extractedValues;
     }
 }
