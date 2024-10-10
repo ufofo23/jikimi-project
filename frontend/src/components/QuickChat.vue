@@ -1,21 +1,25 @@
 <template>
   <div class="quick-chat">
-    <!-- 동그란 Chat Bot 버튼 -->
     <button @click="toggleChat" class="chat-bot-button">
-      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" />
-      Bugi Bot
+      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" /> Bugi Bot
     </button>
 
     <div v-if="chatVisible" class="chat-box">
-      <button @click="toggleChat" class="close-button">닫기</button>
+      <div class="header">
+        <button @click="toggleChat" class="close-button">닫기</button>
+      </div>
       <div class="chat-container">
         <div class="messages" ref="messagesContainer">
+          <div class="disclaimer">
+            챗봇 서비스 사용 시 입력한 개인정보는 수집될 수 있습니다. 또한 부동산 투자에 대한 피해에 대한 책임은 지지 않습니다.
+          </div>
           <div
             v-for="(message, index) in messages"
             :key="index"
-            class="message"
+            :class="['message', message.role === '부린이' ? 'user-message' : 'bot-message']"
           >
-            <strong>{{ message.role }}:</strong> {{ message.content }}
+            <strong>{{ message.role }}:</strong>
+            <span v-html="message.content"></span>
           </div>
         </div>
         <div class="input-area">
@@ -33,18 +37,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-const chatVisible = ref(false); // 챗봇 창의 표시 여부를 관리하는 반응형 변수
-const messages = ref([]); // 채팅 메시지를 저장할 배열
-const userInput = ref(''); // 사용자 입력 값을 저장할 변수
-const messagesContainer = ref(null); // 메시지 영역을 참조하는 ref
+const chatVisible = ref(false);
+const messages = ref([]);
+const userInput = ref('');
+const messagesContainer = ref(null);
 
 // API 호출 설정
 const api = axios.create({
   baseURL: 'http://localhost:8080',
-  withCredentials: true, // 모든 요청에 쿠키 포함
+  withCredentials: true,
 });
 
 // 챗봇 창을 토글하는 함수
@@ -52,46 +56,62 @@ const toggleChat = () => {
   chatVisible.value = !chatVisible.value;
 };
 
+// 메시지 로드 및 저장
+const loadMessages = () => {
+  const storedMessages = localStorage.getItem('chatMessages');
+  if (storedMessages) {
+    messages.value = JSON.parse(storedMessages);
+  }
+};
+
+const saveMessages = () => {
+  localStorage.setItem('chatMessages', JSON.stringify(messages.value));
+};
+
 // 메시지를 전송하는 함수
 const sendMessage = async () => {
-  if (userInput.value.trim() === '') return; // 빈 메시지 방지
+  if (userInput.value.trim() === '') return;
 
-  // 유저 메시지 추가
   messages.value.push({ role: '부린이', content: userInput.value });
+  saveMessages();  // 메시지 저장
 
   try {
-    const response = await api.post(
-      '/api/chat/chatbot',
-      { prompt: userInput.value },
-      {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      }
-    );
+    const response = await api.post('/api/chat/chatbot', {
+      prompt: userInput.value,
+    }, {
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    });
 
-    // 서버 응답 메시지 추가
     const content = response.data.content || '';
     messages.value.push({ role: '부기봇', content });
+    saveMessages();  // 메시지 저장
   } catch (error) {
     console.error('Error:', error);
     messages.value.push({
       role: '부기봇',
       content: '메시지 전송에 실패했습니다. 다시 시도해 주세요.',
     });
+    saveMessages();  // 메시지 저장
   }
 
-  userInput.value = ''; // 입력 필드 초기화
-  scrollToBottom(); // 스크롤을 하단으로 이동
+  userInput.value = '';
+  scrollToBottom();
 };
 
 // 메시지 창을 항상 하단에 고정시키는 함수
 const scrollToBottom = () => {
-  const container = messagesContainer.value; // messagesContainer 참조
+  const container = messagesContainer.value;
   if (container) {
-    container.scrollTop = container.scrollHeight; // 스크롤을 아래로 이동
+    container.scrollTop = container.scrollHeight;
   }
 };
+
+// 컴포넌트가 마운트될 때 메시지 로드
+onMounted(() => {
+  loadMessages();
+});
 </script>
 
 <style scoped>
@@ -131,8 +151,8 @@ const scrollToBottom = () => {
   position: absolute;
   bottom: 100px;
   right: 0;
-  width: 350px;
-  height: 500px;
+  width: 400px; /* 너비를 늘림 */
+  height: 600px; /* 높이를 늘림 */
   background: #ffffff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
@@ -140,10 +160,13 @@ const scrollToBottom = () => {
   animation: fadeIn 0.3s ease;
 }
 
+.header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
 .close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   background-color: #a1c49c; /* 브랜드 색상과 어울리도록 변경 */
   color: white;
   padding: 5px 10px;
@@ -161,7 +184,7 @@ const scrollToBottom = () => {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100% - 50px); /* header 높이를 고려하여 조정 */
 }
 
 .messages {
@@ -174,6 +197,20 @@ const scrollToBottom = () => {
   font-family: 'Arial', sans-serif; /* 글꼴 설정 */
   font-size: 14px; /* 글꼴 크기 설정 */
   line-height: 1.5; /* 줄 간격 설정 */
+}
+
+.message {
+  margin-bottom: 5px;
+}
+
+.user-message {
+  text-align: right; /* 사용자 메시지 오른쪽 정렬 */
+  align-self: flex-end; /* 사용자 메시지를 오른쪽으로 정렬 */
+}
+
+.bot-message {
+  text-align: left; /* 봇 메시지 왼쪽 정렬 */
+  align-self: flex-start; /* 봇 메시지를 왼쪽으로 정렬 */
 }
 
 .input-area {
@@ -203,8 +240,11 @@ const scrollToBottom = () => {
   background-color: #8cb284; /* 호버 색상 변경 */
 }
 
-.message {
-  margin-bottom: 5px;
+.disclaimer {
+  color: #b0b0b0; /* 연한 회색 */
+  font-size: 12px; /* 글자 크기 조정 */
+  text-align: center; /* 가운데 정렬 */
+  padding: 10px; /* 적절한 패딩 추가 */
 }
 
 /* 애니메이션 */

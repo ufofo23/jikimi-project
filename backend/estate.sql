@@ -65,6 +65,8 @@ CREATE TABLE property_tbl (
                                   trade_type_code int
 );
 
+select * from property_tbl where property_no = 46948;
+
 LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
     INTO TABLE estate.property_tbl
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
@@ -951,6 +953,7 @@ WHERE CHAR_LENGTH(jibun_juso) < 5;
 
 SELECT * FROM property_location;
 SELECT count(*) from property_location;
+
 
 # report_tbl 샘플 데이터
 # INSERT INTO report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)

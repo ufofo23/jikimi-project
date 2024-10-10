@@ -301,6 +301,8 @@ const analyzeProperty = () => {
     const buildingName = props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipcode = props.selectedProperty[0].zipcode;
+    const price = props.selectedProperty[0].price;
+    
     router.push({
       name: 'mapAnalyzing',
       query: {
@@ -308,6 +310,7 @@ const analyzeProperty = () => {
         buildingName: buildingName,
         propertyNo: propertyNo,
         zipcode: zipcode,
+        price: price
       },
     });
   }

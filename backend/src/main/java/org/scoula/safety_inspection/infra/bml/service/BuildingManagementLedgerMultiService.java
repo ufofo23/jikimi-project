@@ -58,7 +58,7 @@ public class BuildingManagementLedgerMultiService{
         parameterMap.put("userName", userName);
         parameterMap.put("birthDate", birthDate);
         parameterMap.put("identity", identity);
-        parameterMap.put("address", payload.get("addr-jibun-address"));
+        parameterMap.put("address", payload.get("jibunAddress"));
         parameterMap.put("zipCode", payload.get("zipCode"));
         parameterMap.put("timeout", TIMEOUT);
         parameterMap.put("originDataYN", ORIGIN_DATA_YN);
