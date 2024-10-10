@@ -10,4 +10,6 @@ public interface DictionaryMapper {
     public List<DictionaryVO> getList();
 
     public DictionaryVO get(int no);
+
+    public List<DictionaryVO> getNoTitle();
 }

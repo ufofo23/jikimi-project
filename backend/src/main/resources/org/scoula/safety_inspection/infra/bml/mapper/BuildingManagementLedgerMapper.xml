@@ -17,8 +17,10 @@
         )
     </insert>
 
+<!--&lt;!&ndash;    BMLDTO에맞게 변경- ->-->
+
     <select id="selectBuildingData" parameterType="int" resultType="org.scoula.safety_inspection.infra.bml.dto.BuildingManagementLedgerDto">
-            SELECT * FROM bml_tbl WHERE analysis_no = #{analysisNo}
+        SELECT analysis_no AS analysisNo, violation_structure AS resViolationStatus, use_type AS resContents FROM bml_tbl WHERE analysis_no = #{analysisNo}
     </select>
 
 </mapper>

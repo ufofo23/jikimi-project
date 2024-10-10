@@ -26,7 +26,7 @@ public class ReportVO {
     private Date contractStartDate; // 계약 시작일
     //    private String kindOfLandrights; // 대지권등기
     private String commonOwner; // 공동소유 / 단독소유
-    private String changeOwnerCount; // 소유권 변동 횟수
+    private Integer changeOwnerCount; // 소유권 변동 횟수
     private Double ownerState; // 전유부분
     private String contractName; // 계약자 성명
     private String ownership; // 소유자 성명

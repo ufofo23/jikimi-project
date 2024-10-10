@@ -14,17 +14,17 @@
             change_owner_count,
             maximum_of_bond
         ) VALUES (
-            #{analysisNo},
-            #{ownerState},
-            #{ownership},
-            #{commonOwner},
-            #{changeOwnerCount},
-            #{maximumOfBond}
-        )
+                     #{analysisNo},
+                     #{ownerState},
+                     #{ownership},
+                     #{commonOwner},
+                     #{changeOwnerCount},
+                     #{maximumOfBond}
+                 )
     </insert>
 
     <select id="selectCopyOfRegister" parameterType="integer" resultType="org.scoula.safety_inspection.infra.cors.dto.CopyOfRegisterDto">
-        SELECT * FROm cor_tbl where analysis_no = #{analysisNo}
+        SELECT analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond FROM cor_tbl  WHERE analysis_no = #{analysisNo}
     </select>
 
 </mapper>

@@ -6,6 +6,8 @@ import org.scoula.safety_inspection.infra.analysis.vo.AnalysisVO;
 import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterMultiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -21,6 +23,7 @@ public class AnalysisService {
         this.copyOfRegisterMultiService = copyOfRegisterMultiService;
     }
 
+    @Transactional(propagation = Propagation.MANDATORY)
     public Integer processPropertyAnalysis(String propertyNumber, Map<String, Object> payload) {
         // Analysis 생성
         Integer propertyNo = Integer.parseInt(propertyNumber);

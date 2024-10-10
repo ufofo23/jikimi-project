@@ -32,8 +32,9 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int create(ReportDTO report) {
+    public int create(ReportDTO report, Integer analysisNo) {
         ReportVO reportVO = report.toVO();
+        reportVO.setAnalysisNo(analysisNo);
         return mapper.create(reportVO);
     }
 
@@ -74,15 +75,39 @@ public class ReportServiceImpl implements ReportService {
 
             // 매칭되는 이름을 찾기
             while (matcher.find()) {
+                if(matcher.group(1).isEmpty()) report.setAccordOwner(null);
                 ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
             }
 
-
             report.setAccordOwner(
+                    isAccordOwner(contractNameList, ownershipList)
                     isAccordOwner(contractNameList, ownershipList)
             );
         } else {
             report.setAccordOwner(null);
+        } else {
+            report.setAccordOwner(null);
+        }
+
+        // 채권최고액이 null이면 판단불가
+        if(cor.getMaximumOfBond() == null) {
+            report.setMaximumOfBond(null);
+        } else {
+            report.setMaximumOfBond(cor.getMaximumOfBond());
+        }
+
+        // 주용도가 null이면 판단불가
+        if(bml.getResContents() == null) {
+            report.setUseType(null);
+        } else {
+            report.setUseType(bml.getResContents());
+        }
+
+        // 위반건축물이 null이면 판단불가
+        if(bml.getResViolationStatus() == null) {
+            report.setViolationStructure(null);
+        } else {
+            report.setViolationStructure(bml.getResViolationStatus());
         }
 
         // 채권최고액이 null이면 판단불가
@@ -129,8 +154,29 @@ public class ReportServiceImpl implements ReportService {
             report.setOwnerState(cor.getOwnerState());
         }
 
+        // 공동소유/단독소유가 null이면 판단불가
+        if(cor.getCommonOwner() == null) {
+            report.setCommonOwner(null);
+        } else {
+            report.setCommonOwner(cor.getCommonOwner());
+        }
+
+        // 소유자 변동 횟수가 null이면 판단 불가
+        if(cor.getChangeOwnerCount() == null) {
+            report.setChangeOwnerCount(null);
+        } else {
+            report.setChangeOwnerCount(cor.getChangeOwnerCount());
+        }
+
+        // 전유부분이 null이면 판단불가
+        if(cor.getOwnerState() == null) {
+            report.setOwnerState(null);
+        } else {
+            report.setOwnerState(cor.getOwnerState());
+        }
+
         report.setTotalScore(
-            getTotalScore(report, Integer.parseInt(payload.get("price").toString()))
+                getTotalScore(report, Integer.parseInt(payload.get("price").toString()))
         );
 
         return report;
@@ -169,7 +215,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 계약자, 소유자 불일치 시 고위험
-        if(!report.getAccordOwner())
+        if(report.getAccordOwner()!=null && !report.getAccordOwner())
             return 0;
 
         // 근저당권(채권 최고액)에 따른 감점
@@ -187,7 +233,8 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 주용도가 거주가 아니면 고위험 (거주일때 어떻게 값이 들어가는 지 확인 필요)
-        if(!report.getUseType().equals("거주용"))
+        String useType = report.getUseType();
+        if(!(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거")))
             return 0;
 
         // 위반 건축물이면 고위험

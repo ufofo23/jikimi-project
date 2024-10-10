@@ -19,6 +19,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 
 @Configuration
@@ -67,6 +68,11 @@ public class RootConfig {
         config.setUsername(username);
         config.setPassword(password);
 
+        config.setMaximumPoolSize(10); // 최대 풀 크기 설정
+        config.setConnectionTimeout(30000); // 연결 타임아웃 설정
+        config.setIdleTimeout(600000); // 유휴 타임아웃 설정
+        config.setMaxLifetime(1800000); // 최대 수명 설정
+
         return new HikariDataSource(config);
     }
 
@@ -100,4 +106,5 @@ public class RootConfig {
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
+
 }

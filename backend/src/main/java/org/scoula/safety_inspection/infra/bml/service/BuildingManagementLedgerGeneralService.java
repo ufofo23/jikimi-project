@@ -2,12 +2,15 @@ package org.scoula.safety_inspection.infra.bml.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.scoula.exception.CustomException;
 import org.scoula.safety_inspection.codef.EasyCodef;
 import org.scoula.safety_inspection.codef.EasyCodefServiceType;
 import org.scoula.safety_inspection.infra.bml.dto.BuildingManagementLedgerDto;
 import org.scoula.safety_inspection.infra.bml.mapper.BuildingManagementLedgerMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,7 +19,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class BuildingManagementLedgerGeneralService implements BuildingManagementLedgerService {
+public class BuildingManagementLedgerGeneralService{
 
     private final BuildingManagementLedgerMapper buildingManagementLedgerMapper;
     private final EasyCodef easyCodef;
@@ -37,14 +40,20 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
     private static final String TIMEOUT = "60";
     private static final String ORIGIN_DATA_YN = "0";
 
-    @Override
-    public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
-        HashMap<String, Object> parameterMap = createParameterMap(payload);
+    public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) {
 
-        String result = easyCodef.requestProduct(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap);
-        System.out.println("첫 번째 응답: " + result);
+        try{
 
-        processBMLResult(result, payload, analysisNo);
+            HashMap<String, Object> parameterMap = createParameterMap(payload);
+
+            String result = easyCodef.requestProduct(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap);
+            System.out.println("첫 번째 응답: " + result);
+
+            processBMLResult(result, payload, analysisNo);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     private HashMap<String, Object> createParameterMap(Map<String, Object> payload) {
@@ -76,14 +85,21 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
             Map<String, Object> dataMap = (Map<String, Object>) responseMap.get("data");
             Map<String, Object> resultMap = (Map<String, Object>) responseMap.get("result");
 
-            if ("CF-00000".equals(resultMap.get("code"))) {
+            String responseCode = (String) resultMap.get("code");
+
+            if ("CF-00000".equals(responseCode)) {
                 if (dataMap != null) {
                     extractAndSaveDataFromDataMap(dataMap, analysisNo);
                 }
             }
 
-            if ("CF-03002".equals(resultMap.get("code"))) {
+            if ("CF-03002".equals(responseCode)) {
                 handleTwoWayCertification(dataMap, payload, analysisNo);
+            }
+
+            else{
+//                BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, null, null);
+////                buildingManagementLedgerMapper.insertBuildingData(ledgerData);
             }
 
         } catch (Exception e) {
@@ -95,11 +111,23 @@ public class BuildingManagementLedgerGeneralService implements BuildingManagemen
         String jti = dataMap.get("jti").toString();
         long twoWayTimestamp = Long.parseLong(dataMap.get("twoWayTimestamp").toString());
         Map<String, Object> extraInfo = (Map<String, Object>) dataMap.get("extraInfo");
+
+        String commDongNum = "";
         List<Map<String, Object>> reqDongNumList = (List<Map<String, Object>>) extraInfo.get("reqDongNumList");
-        String commDongNum = reqDongNumList.get(0).get("commDongNum").toString();
+        if (reqDongNumList != null && !reqDongNumList.isEmpty()) {
+            commDongNum = reqDongNumList.get(0).get("commDongNum").toString();
+        }
+
+        String commHoNum = "";
+        List<Map<String,Object>> reqHoNumList = (List<Map<String,Object>>) extraInfo.get("reqHoNumList");
+        if (reqHoNumList != null && !reqHoNumList.isEmpty()) {
+            commHoNum = reqHoNumList.get(0).get("commHoNum").toString();
+        }
+
 
         HashMap<String, Object> parameterMap2 = createParameterMap(payload);
         parameterMap2.put("dongNum", commDongNum);
+        parameterMap2.put("hoNum",commHoNum);
         parameterMap2.put("signedData", "{\"certSeqNum\":12345678,\"signedVals\":[\"bhEd4...-lc07xew\"],\"rValue\":\"l9JqioQn-uQ\"}");
         parameterMap2.put("is2Way", true);
 

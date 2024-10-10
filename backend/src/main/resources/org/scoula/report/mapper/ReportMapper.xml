@@ -5,8 +5,8 @@
 
 <mapper namespace="org.scoula.report.mapper.ReportMapper">
     <insert id="create">
-        insert into report_tbl (property_no, address, total_score, jeonse_rate, accord_owner, maximum_of_bond, use_type, violation_structure, kind_of_landrights, common_owner, change_owner,count, owner_state)
-        values (#{propertyNo}, #{address}, #{totalScore}, #{jeonseRate}, #{accordOwner}, #{maximumOfBond}, #{useType}, #{violationStructure}, #{kindOfLandrights}, #{commonOwner}, #{changeOwnerCount}, #{ownerState})
+        insert into report_tbl (analysis_no,property_no, address, total_score, jeonse_rate, accord_owner, maximum_of_bond, use_type, violation_structure, common_owner, change_owner_count, owner_state)
+        values (#{analysisNo},#{propertyNo}, #{address}, #{totalScore}, #{jeonseRate}, #{accordOwner}, #{maximumOfBond}, #{useType}, #{violationStructure}, #{commonOwner}, #{changeOwnerCount}, #{ownerState})
 
         <selectKey resultType="int" keyProperty="reportNo" keyColumn="report_no" order="AFTER">
             SELECT LAST_INSERT_ID()

@@ -13,4 +13,8 @@
         select * from dictionary_tbl
         where dictionary_no = #{no}
     </select>
+
+    <select id="getNoTitle" resultType="org.scoula.dictionary.domain.DictionaryVO">
+        select dictionary_no, dictionary_title from dictionary_tbl
+    </select>
 </mapper>

@@ -26,7 +26,6 @@ import static org.scoula.safety_inspection.codef.EasyCodefClientInfo.PUBLIC_KEY;
 import static org.scoula.safety_inspection.codef.EasyCodefUtil.encryptRSA;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ExtractUnicodeService {
 
@@ -59,6 +58,7 @@ public class ExtractUnicodeService {
 
         String password = encryptRSA(userPass, PUBLIC_KEY);
         HashMap<String, Object> parameterMap = createParameterMap(payload, password);
+        List<Map<String, String>> extractedValues;
 
         // 첫 번째 조회: realtyType을 "0"으로 설정
         parameterMap.put("realtyType", "0");
@@ -67,7 +67,7 @@ public class ExtractUnicodeService {
         System.out.println("result = " + result);
 
         // 결과 처리
-        List<Map<String, String>> extractedValues = processResult(result);
+        extractedValues = processResult(result,"0");
         String responseCode = getResponseCode(result);
 
         // 첫 번째 요청에서 실패 시 realtyType을 "1"로 변경하여 다시 요청
@@ -77,13 +77,14 @@ public class ExtractUnicodeService {
             System.out.println("result = " + result);
 
             // 결과 처리
-            extractedValues = processResult(result);
+            extractedValues = processResult(result,"1");
             responseCode = getResponseCode(result);
 
             // 두 번째 요청에서도 실패 시 오류 메시지 반환
             if (!responseCode.equals("CF-00000")) {
                 Map<String, String> errorMap = new HashMap<>();
                 errorMap.put("resState", "조회 실패: 서버 응답 코드가 CF-00000이 아닙니다.");
+                errorMap.put("realtyType", "-1");
                 extractedValues.add(errorMap);
             }
         }
@@ -123,26 +124,23 @@ public class ExtractUnicodeService {
         return parameterMap;
     }
 
-    private List<Map<String, String>> processResult(String result) throws JsonProcessingException {
+    private List<Map<String, String>> processResult(String result, String realtyType) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(result);
         String responseCode = jsonNode.get("result").get("code").asText();
         List<Map<String, String>> extractedValues = new ArrayList<>();
 
+
         if (responseCode.equals("CF-00000")) {
             JsonNode resAddrList = jsonNode.get("data").path("resAddrList");
 
-            for (JsonNode addr : resAddrList) {
-                Map<String, String> addrMap = new HashMap<>();
-                addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
-                addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
-                addrMap.put("resState", addr.path("resState").asText());
-                extractedValues.add(addrMap);
-            }
-        } else {
-            Map<String, String> noResultsMap = new HashMap<>();
-            noResultsMap.put("resState", "검색 결과가 없습니다. 검색어에 잘못된 철자가 없는지, 정확한 주소인지 다시 한번 확인해 주세요.");
-            extractedValues.add(noResultsMap);
+        for (JsonNode addr : resAddrList) {
+            Map<String, String> addrMap = new HashMap<>();
+            addrMap.put("commonUniqueNo", addr.path("commUniqueNo").asText());
+            addrMap.put("commAddrLotNumber", addr.path("commAddrLotNumber").asText());
+            addrMap.put("resState", addr.path("resState").asText());
+            extractedValues.add(addrMap);
         }
+
         return extractedValues;
     }
 }
