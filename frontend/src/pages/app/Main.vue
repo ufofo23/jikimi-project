@@ -25,17 +25,22 @@
           </li>
         </ul>
 
-        <div class="clients">
-          <h6 class="clients-title">Some Of Our Clients</h6>
-          <div class="clients-logos">
-            <a
-              v-for="(client, index) in clients"
-              :key="index"
-              :href="client.link"
-              class="client-logo"
-            >
-              <img :src="client.logo" :alt="client.name" />
-            </a>
+        <div class="piece-sense-container">
+          <div class="scroll-container" ref="scrollContainer">
+            <div class="scroll-wrapper">
+              <div
+                v-for="article in articles"
+                :key="article.commonSenseNo"
+                class="card"
+              >
+                <PieceSenseCard
+                  :commonSenseTitle="article.commonSenseTitle"
+                  :commonSenseNo="article.commonSenseNo"
+                  :commonSenseContent="article.commonSenseContent"
+                  :commonPieceSense="article.pieceSense"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -58,9 +63,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed } from 'vue'; // 한 번에 ref, onMounted 가져오기
+import { onMounted, onUnmounted, ref, computed, reactive } from 'vue'; // 한 번에 ref, onMounted 가져오기
 import { useRouter } from 'vue-router'; // Vue Router 사용
 import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
+import api from '@/api/senseApi';
+import PieceSenseCard from '@/components/Cards/PieceSenseCard.vue';
 
 const open = ref(false);
 const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
@@ -99,20 +106,6 @@ const clients = ref([]);
 
 // senseApi를 통해 데이터를 로드할 함수 (API 정의 필요)
 const pieceSenseList = ref([]); // API에서 받은 데이터를 저장할 곳
-const isLoading = ref(true);
-const errorMessage = ref('');
-
-// API 호출 로직 (API 모듈 정의 필요)
-const load = async () => {
-  try {
-    isLoading.value = true;
-    // pieceSenseList.value = await senseApi.getSenseList(); // 실제 API 호출 부분
-    isLoading.value = false;
-  } catch (error) {
-    errorMessage.value = '데이터 로드 중 오류 발생';
-    isLoading.value = false;
-  }
-};
 
 // 상세 페이지로 이동하는 함수
 const detail = (no: number) => {
@@ -125,6 +118,82 @@ const detail = (no: number) => {
 // 컴포넌트가 마운트될 때 데이터 로드
 onMounted(() => {
   load();
+});
+
+//  <!-- ====== common Section  -->
+
+const scrollContainer = ref(null);
+let scrollInterval: number | null = null;
+
+const page = reactive({
+  list: [],
+  totalCount: 0,
+});
+const isLoading = ref(true);
+const errorMessage = ref('');
+const pageRequest = reactive({
+  page: 1,
+  amount: 100, // 표시할 카드 수 조정
+});
+
+const articles = computed(() => page.list);
+
+// 데이터 로드
+const load = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  try {
+    const response = await api.getList({
+      page: pageRequest.page,
+      amount: pageRequest.amount,
+    });
+
+    page.list = response.list;
+    page.totalCount = response.totalCount;
+  } catch (error) {
+    errorMessage.value = '게시글을 불러오는 데 실패했습니다.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 자동 스크롤 함수
+const startAutoScroll = () => {
+  if (scrollInterval) return;
+
+  scrollInterval = setInterval(() => {
+    if (scrollContainer.value) {
+      const container = scrollContainer.value;
+      const cardWidth = container.querySelector('.card')?.offsetWidth || 0;
+
+      if (
+        container.scrollLeft >=
+        container.scrollWidth - container.clientWidth
+      ) {
+        // 끝에 도달하면 처음으로 돌아감
+        container.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        // 다음 카드로 스크롤
+        container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      }
+    }
+  }, 3000); // 3초마다 스크롤
+};
+
+const stopAutoScroll = () => {
+  if (scrollInterval) {
+    clearInterval(scrollInterval);
+    scrollInterval = null;
+  }
+};
+
+onMounted(() => {
+  load();
+  startAutoScroll();
+});
+
+onUnmounted(() => {
+  stopAutoScroll();
 });
 </script>
 
@@ -204,11 +273,63 @@ body {
   height: 100%; /* 컨테이너의 높이를 100%로 설정 */
   text-align: center; /* 텍스트를 가운데 정렬 */
 }
+
+/* 토막 바 스타일 */
+
+.piece-sense-container {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.piece-sense-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.scroll-container {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible; /* 수직 방향으로 카드가 잘리지 않도록 설정 */
+
+  position: relative;
+}
+
+.scroll-wrapper {
+  display: flex;
+  animation: scroll 20s linear infinite; /* 20초 동안 부드럽게 스크롤, 반복 */
+}
+
+/* 애니메이션 정의 */
+@keyframes scroll {
+  0% {
+    transform: translateX(0); /* 시작 위치 */
+  }
+  100% {
+    transform: translateX(-100%); /* 끝 위치 */
+  }
+}
+
+.card {
+  flex: 0 0 380px; /* 카드의 고정된 크기 */
+  scroll-snap-align: start;
+  background-color: transparent; /* 카드 배경을 투명하게 */
+  border: none; /* 경계선 제거 */
+  padding: 0;
+  margin: 0;
+  box-shadow: none !important; /* 그림자 제거 */
+  min-height: 100%; /* 카드의 최소 높이를 설정해 부모 요소에 맞도록 설정 */
+
+  /* flex: 0 0 auto; /* 카드가 한 줄로 수평 정렬되도록 설정 */
+  /* max-width: 380px; 카드의 최대 너비 */
+}
+
 /* 네비게이션 바 스타일 */
 
 .logo {
   flex-grow: 1;
 }
+
 .space {
   flex-grow: 5;
 }
@@ -298,6 +419,8 @@ body {
 .left-section {
   background-color: #f5f7fb; /* 밝은 회색 배경 추가 */
   border-bottom-right-radius: 80px; /* 우측 하단 모서리 둥글게 */
+  width: 50%; /* 전체 화면의 50% */
+  overflow: hidden; /* 내부 요소가 섹션을 넘지 않도록 설정 */
 }
 
 .right-section {
@@ -371,6 +494,9 @@ body {
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
+  .card {
+    max-width: 100%; /* 모바일에서는 카드 너비를 100%로 */
+  }
   .menu-toggle {
     display: block;
   }
@@ -405,8 +531,11 @@ body {
   .left-section,
   .right-section {
     padding: 1rem;
+    width: 100%; /* 작은 화면에서는 각각 100% 차지 */
   }
-
+  .card {
+    max-width: 100%; /* 카드도 섹션을 넘어가지 않도록 설정 */
+  }
   .button-list {
     flex-direction: column;
   }
