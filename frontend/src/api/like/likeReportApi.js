@@ -5,7 +5,9 @@ const BASE_URL = '/api/like/report';
 export default {
   async getList(params) {
     try {
-      const { data } = await axiosInstance.get(BASE_URL, { params });
+      const { data } = await axiosInstance.get(BASE_URL, {
+        params,
+      });
       return data;
     } catch (error) {
       throw error;
@@ -14,7 +16,9 @@ export default {
 
   async create(reportNo) {
     try {
-      const { data } = await axiosInstance.get(`${BASE_URL}/${reportNo}`);
+      const { data } = await axiosInstance.get(
+        `${BASE_URL}/${reportNo}`
+      );
       return data;
     } catch (error) {
       throw error;
@@ -23,7 +27,9 @@ export default {
 
   async delete(memberReportNo) {
     try {
-      const { data } = await axiosInstance.delete(`${BASE_URL}/${memberReportNo}`);
+      const { data } = await axiosInstance.delete(
+        `${BASE_URL}/${memberReportNo}`
+      );
       return data;
     } catch (error) {
       throw error;
