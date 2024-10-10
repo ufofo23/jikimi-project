@@ -34,37 +34,33 @@ const props = defineProps({
 // chart data 설정 (여기서 props.score 사용)
 
 // 점수에 따른 색상 및 텍스트 설정
-const backgroundColor = computed(() => {
-  if (props.score < 50) {
-    return '#FF0000';
-  } else if (props.score < 70) {
-    return '#FFA500';
-  } else {
-    return '#4CAF50';
-  }
-});
-const text = computed(() => {
-  if (props.score < 50) {
-    return '위험';
-  } else if (props.score < 70) {
-    return '경고';
-  } else {
-    return '안전';
-  }
-});
-const textColor = computed(() => backgroundColor.value);
+let backgroundColor = '#4CAF50'; // 기본 색상 (안전)
+let text = '안전'; // 기본 텍스트
+let textColor = '#4CAF50'; // 기본 텍스트 색상
+
+if (props.score < 50) {
+  backgroundColor = '#FF0000'; // 50점 미만일 때 빨간색 (위험)
+  text = '위험';
+  textColor = '#FF0000';
+} else if (props.score < 70) {
+  backgroundColor = '#FFA500'; // 40 ~ 70점일 때 노란색 (경고)
+  text = '경고';
+  textColor = '#FFA500';
+} else {
+  backgroundColor = '#4CAF50'; // 70점 이상일 때 초록색 (안전)
+  text = '안전';
+  textColor = '#4CAF50';
+}
 
 // 차트 데이터 설정
 const chartData = computed(() => ({
   datasets: [
+    // labels: ['Achieved', 'Remaining'],
     {
-      data: [props.score, 100 - props.score],
-      backgroundColor: [backgroundColor.value, '#E0E0E0'],
-      hoverBackgroundColor: [
-        backgroundColor.value,
-        '#BDBDBD',
-      ],
-      borderWidth: 0,
+      data: [props.score, 100 - props.score], // 점수와 남은 부분 표시
+      backgroundColor: [backgroundColor, '#E0E0E0'], // 도넛 색상
+      hoverBackgroundColor: [backgroundColor, '#BDBDBD'], // 호버 시 색상
+      borderWidth: 0, // 경계선 제거
     },
   ],
 }));
@@ -81,18 +77,8 @@ const textCenterPlugin = {
 
     // 텍스트와 점수 중앙에 그리기
     ctx.save();
-
-    const score = chart.config.data.datasets[0].data[0];
-    const textToDisplay =
-      score < 50 ? '위험' : score < 70 ? '경고' : '안전';
-    const colorToUse =
-      score < 50
-        ? '#FF0000'
-        : score < 70
-        ? '#FFA500'
-        : '#4CAF50';
     // 위험일 때 텍스트 깜빡이는 효과
-    if (score < 50) {
+    if (props.score < 50) {
       ctx.fillStyle = '#FF0000';
       ctx.font = 'bold 35px sans-serif'; // 점수 크기 키우기
       ctx.fillText('⚠️', centerX - 25, centerY - 50); // 경고 아이콘 추가
@@ -100,11 +86,11 @@ const textCenterPlugin = {
       ctx.fillStyle = 'black';
     }
 
-    ctx.fillStyle = colorToUse; // 텍스트 색상 검정색으로 변경
+    ctx.fillStyle = textColor; // 텍스트 색상 검정색으로 변경
     ctx.font = 'bold 30px sans-serif'; // 점수 크기 키우기
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`${score}점`, centerX, centerY - 10); // 점수 표시
+    ctx.fillText(`${props.score}점`, centerX, centerY - 10); // 점수 표시
     ctx.font = '20px sans-serif'; // 문구 크기 키우기
     ctx.fillText(textToDisplay, centerX, centerY + 20); // 문구 표시
     ctx.restore();
@@ -118,7 +104,7 @@ const chartOptions = {
   cutout: '70%', // 도넛 차트 두께 설정
   plugins: {
     tooltip: { enabled: false }, // 툴팁 비활성화 (원하는 경우)
-    textCenterPlugin,
+
   },
   animation: {
     duration: 2000, // 애니메이션 지속 시간

@@ -125,6 +125,7 @@
               <input
                 type="checkbox"
                 v-model="selectedItems"
+                :value="item"
               />
             </td>
             <td class="text-center">
@@ -410,7 +411,7 @@ const deleteSelected = () => {
 // 특정 reportNo를 기반으로 보고서 상세 페이지로 이동
 const goToReportDetail = (no) => {
   router.push({
-    name: 'report', // 라우터에서 정의된 report 페이지의 name
+    name: 'Report', // 라우터에서 정의된 report 페이지의 name
     params: { no: no }, // reportNo를 params로 전달
     query: router.query,
   });
