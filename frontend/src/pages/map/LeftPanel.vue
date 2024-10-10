@@ -2,103 +2,41 @@
   <div class="left-panel">
     <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
-      <SearchBar
-        @address-selected="handleAddressSelected"
-      />
+      <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
     <!-- 매매전월세 건물유형 관련 -->
     <div class="filter-container">
       <!-- 거래유형 -->
       <div class="filter-buttons">
-        <button @click="toggleFilter('transactionType')">
-          매매/전월세
-        </button>
-        <button @click="toggleFilter('buildingType')">
-          건물유형
-        </button>
-      </div>
+        <div class="dropdown-group">
+          <label for="transactionType">거래</label>
+          <select
+            id="transactionType"
+            v-model="selectedTransaction"
+            @change="selectTransaction(selectedTransaction)"
+          >
+            <option value="전체">전체</option>
+            <option value="1">매매</option>
+            <option value="2">전세</option>
+            <option value="3">월세</option>
+          </select>
+        </div>
 
-      <!-- 매매/전월세 -->
-      <div
-        v-if="activeFilter === 'transactionType'"
-        class="dropdown"
-      >
-        <button
-          :class="{
-            active: selectedTransaction === '전체',
-          }"
-          @click="selectTransaction('전체')"
-        >
-          전체
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '1',
-          }"
-          @click="selectTransaction('1')"
-        >
-          매매
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '2',
-          }"
-          @click="selectTransaction('2')"
-        >
-          전세
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '3',
-          }"
-          @click="selectTransaction('3')"
-        >
-          월세
-        </button>
-      </div>
-      <div
-        v-if="activeFilter === 'buildingType'"
-        class="dropdown"
-      >
-        <button
-          :class="{
-            active: selectedBuilding === '전체',
-          }"
-          @click="selectBuilding('전체')"
-        >
-          전체
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '3',
-          }"
-          @click="selectBuilding('3')"
-        >
-          연립다세대
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '2',
-          }"
-          @click="selectBuilding('2')"
-        >
-          오피스텔
-        </button>
-        <button
-          :class="{ active: selectedBuilding === '1' }"
-          @click="selectBuilding('1')"
-        >
-          아파트
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '4',
-          }"
-          @click="selectBuilding('4')"
-        >
-          단독다가구
-        </button>
+        <div class="dropdown-group">
+          <label for="buildingType">건물유형</label>
+          <select
+            id="buildingType"
+            v-model="selectedBuilding"
+            @change="selectBuilding(selectedBuilding)"
+          >
+            <option value="전체">전체</option>
+            <option value="3">연립다세대</option>
+            <option value="2">오피스텔</option>
+            <option value="1">아파트</option>
+            <option value="4">단독다가구</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -115,9 +53,7 @@
             :key="index"
             @click="selectApartment(item)"
           >
-            <span @click="favoriteClick(item)">{{
-              item.apartmentName
-            }}</span>
+            <span @click="favoriteClick(item)">{{ item.apartmentName }}</span>
 
             <font-awesome-icon
               class="favorite-icon"
@@ -138,18 +74,12 @@
         <span>{{ detailsVisible ? '▲' : '▼' }}</span>
       </h2>
       <div v-if="detailsVisible">
-        <div
-          v-if="selectedProperty && selectedProperty.length"
-        >
+        <div v-if="selectedProperty && selectedProperty.length">
           <h2 class="apart-name">
             {{ selectedProperty[0].propertyAddrAptName }}
             <font-awesome-icon
               class="favorite-icon"
-              :icon="
-                isFavorite
-                  ? ['fas', 'star']
-                  : ['far', 'star']
-              "
+              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
               :style="{
                 color: isFavorite ? '#FFD43B' : 'black',
               }"
@@ -173,12 +103,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(
-                  property, index
-                ) in selectedProperty"
-                :key="index"
-              >
+              <tr v-for="(property, index) in selectedProperty" :key="index">
                 <td>{{ property.date }}</td>
                 <td>{{ property.contractType }}</td>
                 <td>{{ property.price }}억 원</td>
@@ -188,9 +113,7 @@
             </tbody>
           </table>
           <div class="analyze-button-container">
-            <button @click="analyzeProperty">
-              매물 분석하기
-            </button>
+            <button @click="analyzeProperty">매물 분석하기</button>
           </div>
         </div>
         <p v-else>매물을 골라주세요.</p>
@@ -281,8 +204,7 @@ const removeFromWishlist = (itemName) => {
   toggleWishlistItem(itemName);
   //} 아이콘 상태 업데이트
   if (
-    props.selectedProperty[0]?.propertyAddrAptName ===
-    itemName.apartmentName
+    props.selectedProperty[0]?.propertyAddrAptName === itemName.apartmentName
   ) {
     isFavorite.value = false; // 상세보기에서 해당 아이콘 상태 변경
   }
@@ -299,14 +221,9 @@ const toggleDetails = () => {
 
 // 즐겨찾기 상태 토글
 const toggleFavorite = () => {
-  if (
-    !props.selectedProperty ||
-    props.selectedProperty.length === 0
-  )
-    return;
+  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
 
-  const apartmentName =
-    props.selectedProperty[0].propertyAddrAptName;
+  const apartmentName = props.selectedProperty[0].propertyAddrAptName;
   const locationNo = props.selectedProperty[0].locationNo;
   const doroJuso = props.selectedProperty[0].doroJuso;
   toggleWishlistItem({
@@ -343,14 +260,10 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-  if (
-    props.selectedProperty.length > 0 &&
-    props.selectedProperty[0].doroJuso
-  ) {
+  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName =
-      props.selectedProperty[0].propertyAddrAptName;
+    const buildingName = props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipcode = props.selectedProperty[0].zipcode;
     router.push({
@@ -359,7 +272,7 @@ const analyzeProperty = () => {
         jibunJuso: jibunJuso,
         buildingName: buildingName,
         propertyNo: propertyNo,
-        zipcode: zipcode
+        zipcode: zipcode,
       },
     });
   }
@@ -371,8 +284,7 @@ const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트�
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 
 const toggleFilter = (filterType) => {
-  activeFilter.value =
-    activeFilter.value === filterType ? null : filterType;
+  activeFilter.value = activeFilter.value === filterType ? null : filterType;
 };
 
 const selectTransaction = (type) => {
@@ -397,6 +309,9 @@ const selectBuilding = (type) => {
   align-content: baseline;
 }
 
+.p {
+  border: none !important;
+}
 .search {
   border-bottom-width: 0px;
 }
@@ -473,45 +388,42 @@ table th {
 .analyze-button-container button:hover {
   background-color: #45a049;
 }
-
-/* 매매전월세 건물유형 관련 CSS */
 .filter-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.filter-buttons button {
   padding: 10px;
-  background-color: #f7f7f7;
+  background-color: #f9f9f9;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  width: 100%; /* Make sure the container takes full width */
+  max-width: 1200px; /* Optional: Limit the max width for large screens */
+  margin: 0 auto; /* Center the container */
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.dropdown {
+.filter-inline {
   display: flex;
-  gap: 8px;
-  padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  flex-direction: column; /* Default for small screens (stacked vertically) */
+  gap: 20px;
+  align-items: center;
+  width: 100%; /* Take full width */
 }
 
-.dropdown button {
-  padding: 4px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .filter-inline {
+    flex-direction: row; /* On larger screens, arrange items horizontally */
+    justify-content: space-between; /* Spread the dropdowns horizontally */
+    align-items: center;
+  }
 
-.dropdown button.active {
-  background-color: mediumaquamarine;
-  color: white;
-  border: 1px solid mediumaquamarine;
+  .dropdown-group {
+    flex: 1; /* Ensure each dropdown takes equal space */
+    margin: 0 10px; /* Optional: Add some margin between dropdowns */
+  }
+
+  select {
+    width: 100%; /* Ensure the select dropdowns fill their container */
+    max-width: none; /* Remove any width limitation */
+  }
 }
 </style>

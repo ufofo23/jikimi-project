@@ -401,7 +401,7 @@ body {
   display: flex;
   min-height: 100vh;
 
-  padding-top: 170px; /* 헤더 높이 + 여백 */
+  padding-top: 0; /* 헤더 높이 + 여백 */
   padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
 }
 .hero-compo {
