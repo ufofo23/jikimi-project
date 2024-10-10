@@ -271,8 +271,9 @@ body {
   left: 0;
   width: 100%; /* 화면 너비 전체 */
   background-color: white;
-  z-index: 1000;
-  height: 100px;
+  z-index: 10000;
+  height: 180px;
+  border-bottom: 1px solid #ccc; /* 아래쪽 보더라인 추가 */
 }
 
 .navbar-content {
@@ -284,7 +285,7 @@ body {
 }
 
 .logo img {
-  height: 40px;
+  height: full;
 }
 
 .menu-toggle {
@@ -306,6 +307,7 @@ body {
   margin: 0 1rem;
   color: #333;
   text-decoration: none;
+  font-size: 30px;
 }
 
 .button-border {

@@ -21,18 +21,12 @@ let cancelPagination = false;
 // Property Type 별 필터링
 const handleBuildingTypeUpdate = (newBuildingType) => {
   selectedBuildingType.value = newBuildingType;
-  console.log(
-    'Updated Building Type: ',
-    selectedBuildingType.value
-  );
+  console.log('Updated Building Type: ', selectedBuildingType.value);
 };
 // Trade Type 별 필터링
 const handleTransactionTypeUpdate = (newTradeType) => {
   selectedTradeType.value = newTradeType;
-  console.log(
-    'Updated Trade Type: ',
-    selectedTradeType.value
-  );
+  console.log('Updated Trade Type: ', selectedTradeType.value);
 };
 
 const selectedProperty = ref(null); // 클릭된 매물 데이터를 저장할 변수
@@ -45,13 +39,7 @@ const toggleButtonText = computed(() => {
 });
 
 // 데이터를 서버에서 페이징 처리해서 가져오는 함수
-const fetchAddressData = async (
-  lat,
-  lon,
-  zoomLevel,
-  page = 1,
-  limit = 200
-) => {
+const fetchAddressData = async (lat, lon, zoomLevel, page = 1, limit = 200) => {
   if (cancelPagination) {
     console.log('Pagination cancelled.');
     return;
@@ -59,12 +47,11 @@ const fetchAddressData = async (
   if (zoomLevel < 5) {
     try {
       isFetching = true;
-      const response =
-        await addressApi.getAddressListMoveAll(
-          lat,
-          lon,
-          zoomLevel
-        ); // API 호출
+      const response = await addressApi.getAddressListMoveAll(
+        lat,
+        lon,
+        zoomLevel
+      ); // API 호출
       const newCoordinates = response.map((item) => ({
         id: item.locationNo,
         x: parseFloat(item.xcoordinate),
@@ -84,14 +71,13 @@ const fetchAddressData = async (
   } else {
     try {
       isFetching = true;
-      const response =
-        await addressApi.getAddressListMoveClusterAll(
-          lat,
-          lon,
-          zoomLevel,
-          page,
-          limit
-        );
+      const response = await addressApi.getAddressListMoveClusterAll(
+        lat,
+        lon,
+        zoomLevel,
+        page,
+        limit
+      );
       overlays.forEach((overlay) => overlay.setMap(null));
 
       const newCoordinates = response.map((item) => ({
@@ -106,17 +92,8 @@ const fetchAddressData = async (
         updateMarkersCluster(newCoordinates);
 
         // If the data length equals the limit, fetch the next page recursively
-        if (
-          newCoordinates.length === limit &&
-          !cancelPagination
-        ) {
-          await fetchAddressData(
-            lat,
-            lon,
-            zoomLevel,
-            page + 1,
-            limit
-          );
+        if (newCoordinates.length === limit && !cancelPagination) {
+          await fetchAddressData(lat, lon, zoomLevel, page + 1, limit);
         } else {
           console.log('All data has been loaded.');
         }
@@ -135,10 +112,7 @@ const fetchAddressData = async (
 const initializeMap = () => {
   let mapContainer = document.getElementById('map'), // 지도를 표시할 div
     mapOption = {
-      center: new kakao.maps.LatLng(
-        37.5538265102548,
-        126.968466927468
-      ), // 기본 좌표 : 서울역
+      center: new kakao.maps.LatLng(37.5538265102548, 126.968466927468), // 기본 좌표 : 서울역
       level: 2, // 지도 확대 레벨
     };
 
@@ -223,14 +197,8 @@ const initializeMap = () => {
   );
   // 컨트롤러 관련!!!!!!!!
   // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
-  map.addControl(
-    mapTypeControl,
-    kakao.maps.ControlPosition.TOPRIGHT
-  );
-  map.addControl(
-    zoomControl,
-    kakao.maps.ControlPosition.RIGHT
-  );
+  map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+  map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
   // 초기 데이터 로드할 때 해당 좌표로 설정
   // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
@@ -239,10 +207,7 @@ const initializeMap = () => {
       (position) => {
         const currentLat = position.coords.latitude;
         const currentLon = position.coords.longitude;
-        const currentPosition = new kakao.maps.LatLng(
-          currentLat,
-          currentLon
-        );
+        const currentPosition = new kakao.maps.LatLng(currentLat, currentLon);
         map.setCenter(currentPosition);
         map.setLevel(5);
       },
@@ -255,16 +220,10 @@ const initializeMap = () => {
 // 즐겨찾기 선택시 이동하는 함수
 const moveToLikedProperty = async (wishlist) => {
   try {
-    const data = await addressApi.getAddressDetails(
-      wishlist.locationNo
-    );
+    const data = await addressApi.getAddressDetails(wishlist.locationNo);
     selectedProperty.value = data; // 매물 정보 저장
     // 좌표가 올바른지 확인하고 setMapCoordinates에 전달
-    if (
-      data &&
-      data[0].xcoordinate &&
-      data[0].ycoordinate
-    ) {
+    if (data && data[0].xcoordinate && data[0].ycoordinate) {
       setMapCoordinates({
         x: data[0].xcoordinate, // x 좌표
         y: data[0].ycoordinate, // y 좌표
@@ -275,27 +234,17 @@ const moveToLikedProperty = async (wishlist) => {
       console.error('Invalid coordinates:', data);
     }
   } catch (error) {
-    console.error(
-      'Failed to fetch address details:',
-      error
-    );
+    console.error('Failed to fetch address details:', error);
   }
 };
 
 // 검색을 통해 지도를 특정 좌표로 이동시키는 함수
 let infoWindows = []; // InfoWindow 객체를 저장할 배열
-const setMapCoordinates = ({
-  x,
-  y,
-  buildingName,
-  doroJuso,
-}) => {
+const setMapCoordinates = ({ x, y, buildingName, doroJuso }) => {
   setTimeout(() => {
     if (map) {
       // markers.forEach((marker) => marker.setMap(null));
-      infoWindows.forEach((infoWindow) =>
-        infoWindow.close()
-      );
+      infoWindows.forEach((infoWindow) => infoWindow.close());
       const coords = new kakao.maps.LatLng(y, x); // 좌표로 LatLng 객체 생성
       map.panTo(coords);
       // map.setCenter(coords); // 지도 중심을 변경
@@ -343,10 +292,7 @@ const updateMarkers = (newCoords) => {
     new kakao.maps.Size(75, 75)
   );
   const newMarkers = newCoords.map((coord) => {
-    const markerPosition = new kakao.maps.LatLng(
-      coord.y,
-      coord.x
-    );
+    const markerPosition = new kakao.maps.LatLng(coord.y, coord.x);
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       image: markerImage,
@@ -386,23 +332,14 @@ const updateMarkers = (newCoords) => {
     // 마커 클릭 이벤트에서 매물 세부 정보를 표시하도록 함
     const handleClick = async () => {
       try {
-        const data = await addressApi.getAddressDetails(
-          coord.id
-        );
+        const data = await addressApi.getAddressDetails(coord.id);
         selectedProperty.value = data; // 매물 정보 저장
       } catch (error) {
-        console.error(
-          'Failed to fetch address details:',
-          error
-        );
+        console.error('Failed to fetch address details:', error);
       }
     };
     // 마커에 클릭 이벤트 등록
-    kakao.maps.event.addListener(
-      marker,
-      'click',
-      handleClick
-    );
+    kakao.maps.event.addListener(marker, 'click', handleClick);
     kakao.maps.event.addListener(map, 'click', () => {
       if (!isPanelOpen.value) {
         togglePanel();
@@ -414,13 +351,9 @@ const updateMarkers = (newCoords) => {
   markers.push(...newMarkers); // 마커 배열에 추가
   clusterer.addMarkers(newMarkers); // 클러스터에 마커 추가
 
-  kakao.maps.event.addListener(
-    clusterer,
-    'clustered',
-    function (clusters) {
-      overlays.forEach((overlay) => overlay.setMap(null));
-    }
-  );
+  kakao.maps.event.addListener(clusterer, 'clustered', function (clusters) {
+    overlays.forEach((overlay) => overlay.setMap(null));
+  });
 };
 
 // 클러스터 마커 업데이트 함수
@@ -438,10 +371,7 @@ const updateMarkersCluster = (newCoords) => {
     const batchMarkers = newCoords
       .slice(currentIndex, currentIndex + batchSize)
       .map((coord) => {
-        const markerPosition = new kakao.maps.LatLng(
-          coord.y,
-          coord.x
-        );
+        const markerPosition = new kakao.maps.LatLng(coord.y, coord.x);
         const marker = new kakao.maps.Marker({
           position: markerPosition,
           image: markerImageSVG,
@@ -491,9 +421,7 @@ let mapTypes = {
 // 체크 박스를 선택하면 호출되는 함수입니다
 // 전역 스코프에서 함수 선언
 window.setOverlayMapTypeId = function () {
-  var chkUseDistrict = document.getElementById(
-      'chkUseDistrict'
-    ),
+  var chkUseDistrict = document.getElementById('chkUseDistrict'),
     chkTerrain = document.getElementById('chkTerrain'),
     chkTraffic = document.getElementById('chkTraffic');
 
@@ -525,10 +453,7 @@ window.moveToCurrentLocation = function () {
       (position) => {
         const currentLat = position.coords.latitude;
         const currentLon = position.coords.longitude;
-        const currentPosition = new kakao.maps.LatLng(
-          currentLat,
-          currentLon
-        );
+        const currentPosition = new kakao.maps.LatLng(currentLat, currentLon);
 
         // var marker = new kakao.maps.Marker({
         //   map: map,
@@ -611,10 +536,7 @@ onMounted(() => {
         />교통정보
       </div>
       <!-- 현재 위치로 이동하는 버튼 추가 -->
-      <button
-        class="location-btn"
-        onclick="moveToCurrentLocation()"
-      >
+      <button class="location-btn" onclick="moveToCurrentLocation()">
         <i class="fa-solid fa-location-crosshairs"></i>
       </button>
     </div>
@@ -679,7 +601,7 @@ onMounted(() => {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 1000;
+  z-index: 100;
 }
 
 /* 지도 아래쪽에 지적편집도, 지형정보, 교통정보 버튼 컨트롤 */

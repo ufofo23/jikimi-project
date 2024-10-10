@@ -24,21 +24,22 @@
             >
           </li>
         </ul>
-
-        <div class="piece-sense-container">
-          <div class="scroll-container" ref="scrollContainer">
-            <div class="scroll-wrapper">
-              <div
-                v-for="article in articles"
-                :key="article.commonSenseNo"
-                class="card"
-              >
-                <PieceSenseCard
-                  :commonSenseTitle="article.commonSenseTitle"
-                  :commonSenseNo="article.commonSenseNo"
-                  :commonSenseContent="article.commonSenseContent"
-                  :commonPieceSense="article.pieceSense"
-                />
+        <div class="swiper">
+          <div class="piece-sense-container">
+            <div class="scroll-container" ref="scrollContainer">
+              <div class="scroll-wrapper">
+                <div
+                  v-for="article in articles"
+                  :key="article.commonSenseNo"
+                  class="card"
+                >
+                  <PieceSenseCard
+                    :commonSenseTitle="article.commonSenseTitle"
+                    :commonSenseNo="article.commonSenseNo"
+                    :commonSenseContent="article.commonSenseContent"
+                    :commonPieceSense="article.pieceSense"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -276,11 +277,6 @@ body {
 
 /* 토막 바 스타일 */
 
-.piece-sense-container {
-  margin-top: 2rem;
-  width: 100%;
-}
-
 .piece-sense-title {
   font-size: 1.2rem;
   font-weight: bold;
@@ -406,6 +402,14 @@ body {
 }
 .hero-compo {
   margin-left: 6rem;
+}
+.piece-sense-container {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.swiper {
+  margin-left: 0;
 }
 .left-section,
 .right-section {
