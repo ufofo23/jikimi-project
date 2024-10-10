@@ -8,12 +8,12 @@
     />
 
     <!-- Display the extracted address data -->
-    <div v-if="addressDetails">
+    <div v-if="addressDetails" class="search-output">
       <p>
-        <strong>도로명 주소:</strong>
+        <strong>검색 결과:</strong>
         {{ addressDetails.roadAddress }}
       </p>
-
+      <!-- 
       <p>
         <strong>건물명:</strong>
         {{ addressDetails.buildingName }}
@@ -24,7 +24,7 @@
         {{
           addressDetails.apartment === 'Y' ? '예' : '아니오'
         }}
-      </p>
+      </p> -->
     </div>
   </div>
 </template>
@@ -102,6 +102,7 @@ const openDaumPostcode = () => {
           x: x.value,
           y: y.value,
           buildingName: data.buildingName,
+          doroJuso: data.roadAddress,
         });
       }
 
@@ -124,5 +125,9 @@ const openDaumPostcode = () => {
 .search-input:focus {
   border-color: rgb(0, 181, 0); /* 포커스 시 색상 변경 */
   outline: none; /* 기본 아웃라인 제거 */
+}
+
+.search-output {
+  text-align: center;
 }
 </style>

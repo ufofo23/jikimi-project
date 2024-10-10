@@ -1,5 +1,8 @@
 package org.scoula.safety_inspection.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.scoula.report.domain.ReportDTO;
+import org.scoula.report.service.ReportService;
 import org.scoula.safety_inspection.infra.analysis.service.AnalysisService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerMultiService;
@@ -20,23 +23,26 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/safety-inspection")
+@RequiredArgsConstructor
 public class SafetyInspectionController {
-    private ExtractUnicodeService extractUnicodeService;
-    private AnalysisService analysisService;
-    private CopyOfRegisterMultiService copyOfRegisterMultiService;
-    private CopyOfRegisterGeneralService copyOfRegisterGeneralService;
-    private BuildingManagementLedgerMultiService buildingManagementLedgerMultiService;
-    private BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService;
+    final private ExtractUnicodeService extractUnicodeService;
+    final private AnalysisService analysisService;
+    final private CopyOfRegisterMultiService copyOfRegisterMultiService;
+    final private CopyOfRegisterGeneralService copyOfRegisterGeneralService;
+    final private BuildingManagementLedgerMultiService buildingManagementLedgerMultiService;
+    final private BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService;
+    final private ReportService reportService;
 
-    @Autowired
-    public SafetyInspectionController(ExtractUnicodeService extractUnicodeService, AnalysisService analysisService, CopyOfRegisterMultiService copyOfRegisterMultiService, CopyOfRegisterGeneralService copyOfRegisterGeneralService, BuildingManagementLedgerMultiService buildingManagementLedgerMultiService, BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService) {
-        this.extractUnicodeService = extractUnicodeService;
-        this.analysisService = analysisService;
-        this.copyOfRegisterMultiService = copyOfRegisterMultiService;
-        this.copyOfRegisterGeneralService = copyOfRegisterGeneralService;
-        this.buildingManagementLedgerMultiService = buildingManagementLedgerMultiService;
-        this.buildingManagementLedgerGeneralService = buildingManagementLedgerGeneralService;
-    }
+//    @Autowired
+//    public SafetyInspectionController(ExtractUnicodeService extractUnicodeService, AnalysisService analysisService, CopyOfRegisterMultiService copyOfRegisterMultiService, CopyOfRegisterGeneralService copyOfRegisterGeneralService, BuildingManagementLedgerMultiService buildingManagementLedgerMultiService, BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService, ReportService reportService) {
+//        this.extractUnicodeService = extractUnicodeService;
+//        this.analysisService = analysisService;
+//        this.copyOfRegisterMultiService = copyOfRegisterMultiService;
+//        this.copyOfRegisterGeneralService = copyOfRegisterGeneralService;
+//        this.buildingManagementLedgerMultiService = buildingManagementLedgerMultiService;
+//        this.buildingManagementLedgerGeneralService = buildingManagementLedgerGeneralService;
+//        this.reportService = reportService;
+//    }
 
     // 유니크 코드 관련
     @PostMapping("/address")
@@ -82,6 +88,12 @@ public class SafetyInspectionController {
                 copyOfRegisterGeneralService.getCopyOfRegister(payload, analysisNo);
                 buildingManagementLedgerGeneralService.getBuildingLedger(payload,analysisNo);
             }
+
+            // reportDTO 생성
+            ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
+
+            // report_tbl에 저장
+            reportService.create(reportDTO);
 
         } catch (Exception e) {
             e.printStackTrace();
