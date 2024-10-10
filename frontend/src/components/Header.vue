@@ -96,6 +96,7 @@ const isDropdownOpen = ref(false); // 드롭다운 열림 상태
 const toggleNavbar = () => {
   isNavbarOpen.value = !isNavbarOpen.value;
 };
+
 // 외부 클릭 감지
 const handleClickOutside = (event: MouseEvent) => {
   if (
@@ -208,6 +209,42 @@ body {
   cursor: pointer;
   background: none;
   border: none;
+}
+
+/* 드롭다운이 포함된 li에 position: relative 추가 */
+.dropdown {
+  position: relative;
+}
+
+/* 드롭다운 메뉴 기본 상태는 숨김 */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%; /* 부모 요소 바로 아래에 배치 */
+  left: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+}
+
+/* 드롭다운 메뉴 아이템 */
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* 호버 시 드롭다운 메뉴 보이도록 설정 */
+.dropdown:hover .dropdown-menu {
+  display: block;
 }
 
 /* 기본 스타일 */
