@@ -125,7 +125,6 @@
               <input
                 type="checkbox"
                 v-model="selectedItems"
-                :value="item"
               />
             </td>
             <td class="text-center">
@@ -285,7 +284,26 @@ const page = reactive({
 // 게시글 목록 계산 속성
 const articles = computed(() => page.list);
 
-// 데이터 로드 함수
+// // 데이터 로드 함수
+// const loadReports = async () => {
+//   isLoading.value = true;
+//   errorMessage.value = '';
+//   try {
+//     const response = await likeReportApi.getList({
+//       page: pageRequest.page,
+//       amount: pageRequest.amount,
+//     }); // API에서 데이터 가져오기
+//     page.list = response.list;
+//     page.totalCount = response.totalCount;
+//   } catch (error) {
+//     console.error('보고서 로드 실패:', error);
+//     errorMessage.value =
+//       '보고서를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+//   } finally {
+//     isLoading.value = false;
+//   }
+// };
+
 const loadReports = async () => {
   isLoading.value = true;
   errorMessage.value = '';
@@ -294,8 +312,10 @@ const loadReports = async () => {
       page: pageRequest.page,
       amount: pageRequest.amount,
     }); // API에서 데이터 가져오기
+    console.log('Response:', response);
     page.list = response.list;
     page.totalCount = response.totalCount;
+    console.log('Page List:', page.list);
   } catch (error) {
     console.error('보고서 로드 실패:', error);
     errorMessage.value =
@@ -390,7 +410,7 @@ const deleteSelected = () => {
 // 특정 reportNo를 기반으로 보고서 상세 페이지로 이동
 const goToReportDetail = (no) => {
   router.push({
-    name: 'Report', // 라우터에서 정의된 report 페이지의 name
+    name: 'report', // 라우터에서 정의된 report 페이지의 name
     params: { no: no }, // reportNo를 params로 전달
     query: router.query,
   });
