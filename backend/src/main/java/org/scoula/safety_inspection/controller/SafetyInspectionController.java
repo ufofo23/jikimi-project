@@ -33,17 +33,7 @@ public class SafetyInspectionController {
     @PostMapping("/address")
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
-
-            for (Map.Entry<String, Object> entry : payload.entrySet()) {
-                String key = entry.getKey(); // 키
-                Object value = entry.getValue(); // 값
-                System.out.println("key = " + key);
-                System.out.println("value = " + value);
-                System.out.println("type= " + getType(value));
-            }
-
             List<Map<String,String>> response = extractUnicodeService.getUniqueCode(payload);
-            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +41,6 @@ public class SafetyInspectionController {
         }
 
     }
-
 
     // 등기부 등본 관련
     @PostMapping("/cors")
@@ -64,12 +53,5 @@ public class SafetyInspectionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("실패: " + e.getMessage());
         }
-    }
-
-    public static String getType(Object obj) {
-        if (obj == null) {
-            return "null";
-        }
-        return obj.getClass().getSimpleName(); // 클래스 이름 반환
     }
 }

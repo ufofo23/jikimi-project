@@ -55,7 +55,6 @@ public class SafetyInspectionService {
             // 보고서 생성 및 저장
             ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
             reportService.create(reportDTO,analysisNo);
-
             return String.valueOf(reportDTO.getReportNo());
 
         } catch (Exception e) {
