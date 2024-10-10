@@ -14,6 +14,12 @@
     </insert>
 
     <select id="get" resultType="org.scoula.report.domain.ReportVO">
-        select * from report_tbl where analysis_no = #{analysisNo}
+        SELECT * FROM member_report_tbl mrt
+        JOIN report_tbl rt ON mrt.report_no = rt.report_no
+            where mrt.member_report_no = #{member_report_no}
     </select>
+
+    <delete id="delete">
+        DELETE FROM member_report_tbl WHERE member_report_no = #{member_report_no};
+    </delete>
 </mapper>

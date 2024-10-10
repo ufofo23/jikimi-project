@@ -39,6 +39,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public int delete(int analysisNo) {
+        return mapper.delete(analysisNo);
+    }
+
+    @Override
     public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload) {
         ReportDTO report = new ReportDTO();
 

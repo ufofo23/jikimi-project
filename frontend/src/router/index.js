@@ -27,7 +27,11 @@ const router = createRouter({
   routes: [
     { path: '/mypage', name: 'mypage', component: MyPage },
 
-    { path: '/myreport', name: 'myreport', component: MyReport },
+    {
+      path: '/myreport',
+      name: 'myreport',
+      component: MyReport,
+    },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -110,7 +114,7 @@ const router = createRouter({
       component: MapAnalyzing,
     },
     {
-      path: '/report',
+      path: '/report/:no',
       name: 'report',
       component: Report,
     },
@@ -119,7 +123,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const requiresAuth = to.matched.some(
+    (record) => record.meta.requiresAuth
+  );
 
   authStore.checkAuth(); // 인증 체크
 
