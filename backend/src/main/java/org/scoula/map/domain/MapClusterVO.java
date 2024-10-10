@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MapClusterVO {
-    private int locationNo; // pl pk
     private String xCoordinate;
     private String yCoordinate;
-    private int price;
 }

@@ -1,144 +1,125 @@
 <template>
-  <div class="container-fluid custom-container">
-    <div class="custom-grid">
-      <!-- 왼쪽 큰 카드 -->
-      <div
-        class="card large-card real-estate-info text-center"
-        @click="detail(currentCommonSenseNo)"
-      >
-        <div class="card-body">
-          <h3 class="card-title">오늘의 토막 상식 🏡</h3>
+  <!-- ====== Hero Section Start -->
+  <div class="hero-section">
+    <!-- 왼쪽 섹션 -->
+    <div class="left-section">
+      <div class="hero-compo">
+        <div class="hero-content">
+          <h1 class="hero-title">내 집은<br />안전할까?</h1>
+        </div>
 
-          <!-- piecesense를 별도의 공간에 표시 -->
-          <div class="sense-display my-4">
-            <div v-if="currentPieceSense">
-              <p>{{ currentPieceSense }}</p>
-            </div>
-            <p v-else>로딩 중...</p>
-          </div>
+        <p class="hero-description">
+          계약 진행 단계에 따라 반드시 필요한 <br />체크리스트와 발생 가능
+          시나리오를 준비했어요. <br />지금 바로 확인해보세요!
+        </p>
+        <ul class="button-list">
+          <li>
+            <router-link :to="{ name: 'preventionList' }" class="button-primary"
+              >계약이 처음이라면?</router-link
+            >
+          </li>
+          <li>
+            <router-link :to="{ name: 'ScenarioMain' }" class="button-secondary"
+              >계약 진행/완료 상태라면!</router-link
+            >
+          </li>
+        </ul>
 
-          <div class="detail">
-            접속 할 때마다 바뀌는 토막상식으로 부동산 지식 UP!
+        <div class="clients">
+          <h6 class="clients-title">Some Of Our Clients</h6>
+          <div class="clients-logos">
+            <a
+              v-for="(client, index) in clients"
+              :key="index"
+              :href="client.link"
+              class="client-logo"
+            >
+              <img :src="client.logo" :alt="client.name" />
+            </a>
           </div>
-          <!-- 이미지 우측 아래로 이동 -->
-          <img src="@/assets/card1.png" alt="card1" class="card-image" />
         </div>
       </div>
-
-      <!-- 중간 카드 -->
-      <router-link
-        :to="{ name: 'map' }"
-        class="card small-card price-check text-center"
-      >
-        <div class="card-body">
-          <h2 class="card-title">주변 시세 확인📍</h2>
-          <p>(안용's 마스터피스)</p>
-          <div class="detail">궁금한 지역의 시세를 지금 바로 확인!</div>
-          <img src="@/assets/card2.png" alt="card2" class="card-image" />
-        </div>
-      </router-link>
-
-      <!-- 오른쪽 카드 -->
-      <router-link
-        :to="{ name: 'ScenarioMain' }"
-        class="card small-card safety-check text-center"
-      >
-        <div class="card-body">
-          <h2 class="card-title">이 집은 안전한가?🕵🏻‍♂️</h2>
-          <p>바로 안전진단 받기!</p>
-          <div class="detail">원하는 집의 안전 분석 리포트 제공!</div>
-          <img src="@/assets/card3.png" alt="card3" class="card-image" />
-        </div>
-      </router-link>
     </div>
-  </div>
 
-  <div class="split-container">
-    <div class="split-grid">
-      <router-link :to="{ name: 'preventionList' }">
-        <!-- 첫 번째 컴포넌트 -->
-        <div class="split-card left-card">
-          <h3>부동산 계약이 처음이라면?</h3>
-          <p>계약 전 필수 체크리스트 →</p>
-        </div>
-      </router-link>
-
-      <!-- 두 번째 컴포넌트 -->
-      <div class="split-card right-card">
-        <h3>부동산 계약을 진행/완료했다면?</h3>
-        <p>유형별 사기 시나리오 확인 →</p>
+    <div class="right-section">
+      <div class="map-container">
+        <img src="@/assets/map.png" alt="hero" class="map-image" />
+        <router-link :to="{ name: 'map' }" class="button-primary right-button"
+          >안전 진단 받기</router-link
+        >
+        <p class="map-description">
+          지도를 통해 원하시는 지역의 시세를 확인하고,<br />
+          등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
+        </p>
       </div>
     </div>
   </div>
+  <!-- ====== Hero Section End -->
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Vue Router 훅을 가져옴
-import senseApi from '@/api/senseApi'; // API 모듈
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref, computed } from 'vue'; // 한 번에 ref, onMounted 가져오기
+import { useRouter } from 'vue-router'; // Vue Router 사용
+import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
 
-const router = useRouter(); // useRouter를 통해 router 객체 생성
+const open = ref(false);
+const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
+const router = useRouter(); // 라우터 사용
+const isNavbarOpen = ref(false); // 햄버거 메뉴 열림 상태
+const isDropdownOpen = ref(false); // 드롭다운 열림 상태
 
-// 상태 관리
-const pieceSenseList = ref([]); // 여러 개의 pieceSense를 저장할 배열
+const toggleNavbar = () => {
+  isNavbarOpen.value = !isNavbarOpen.value;
+};
+// 외부 클릭 감지
+const handleClickOutside = (event: MouseEvent) => {
+  if (
+    dropdownButtonRef.value &&
+    !dropdownButtonRef.value.contains(event.target as Node)
+  ) {
+    open.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+// 상태 관리: 인증 여부
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+
+// 로그아웃 기능
+const logout = () => {
+  authStore.logout();
+};
+
+// 클라이언트 로고 정보
+const clients = ref([]);
+
+// senseApi를 통해 데이터를 로드할 함수 (API 정의 필요)
+const pieceSenseList = ref([]); // API에서 받은 데이터를 저장할 곳
 const isLoading = ref(true);
 const errorMessage = ref('');
 
-// 현재 표시할 pieceSense와 관련된 상태 변수
-const currentPieceSense = ref('');
-const currentCommonSenseNo = ref('');
-const currentCommonSenseTitle = ref('');
-const currentCommonSenseContent = ref('');
-
-// 무작위로 pieceSense를 선택하는 함수
-const getRandomSense = () => {
-  if (pieceSenseList.value.length > 0) {
-    const randomIndex = Math.floor(Math.random() * pieceSenseList.value.length);
-    currentPieceSense.value = pieceSenseList.value[randomIndex].pieceSense;
-    currentCommonSenseNo.value =
-      pieceSenseList.value[randomIndex].commonSenseNo;
-    currentCommonSenseTitle.value =
-      pieceSenseList.value[randomIndex].commonSenseTitle;
-    currentCommonSenseContent.value =
-      pieceSenseList.value[randomIndex].commonSenseContent;
+// API 호출 로직 (API 모듈 정의 필요)
+const load = async () => {
+  try {
+    isLoading.value = true;
+    // pieceSenseList.value = await senseApi.getSenseList(); // 실제 API 호출 부분
+    isLoading.value = false;
+  } catch (error) {
+    errorMessage.value = '데이터 로드 중 오류 발생';
+    isLoading.value = false;
   }
 };
 
 // 상세 페이지로 이동하는 함수
-const detail = (no) => {
+const detail = (no: number) => {
   router.push({
-    name: 'senseDetailPage', // 라우트 이름이 'senseDetailPage'여야 합니다
+    name: 'senseDetailPage',
     params: { no: no },
   });
-};
-
-// 데이터 로드 함수
-const load = async () => {
-  isLoading.value = true;
-  errorMessage.value = '';
-  try {
-    const response = await senseApi.getList(); // API 호출
-    console.log('API 응답:', response);
-
-    // 받아온 데이터를 pieceSenseList에 할당
-    if (response && Array.isArray(response.list) && response.list.length > 0) {
-      pieceSenseList.value = response.list.map((item) => ({
-        pieceSense: item.pieceSense, // pieceSense 필드 추출
-        commonSenseTitle: item.commonSenseTitle, // commonSenseTitle 필드 추출
-        commonSenseContent: item.commonSenseContent, // commonSenseContent 필드 추출
-        commonSenseNo: item.commonSenseNo, // 상세 페이지로 이동할 때 사용할 ID
-      }));
-      getRandomSense(); // 무작위로 하나의 sense 선택
-    } else {
-      errorMessage.value = '유효하지 않은 데이터 형식입니다.';
-    }
-  } catch (error) {
-    console.error('데이터 로드 실패:', error);
-    errorMessage.value =
-      '데이터를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
-  } finally {
-    isLoading.value = false;
-  }
 };
 
 // 컴포넌트가 마운트될 때 데이터 로드
@@ -148,165 +129,292 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.detail {
-  margin-top: 100px; /* 아래쪽으로 밀림 */
-  font-size: 0.9rem; /* 글씨 크기를 작게 설정 */
-  color: rgba(0, 0, 0, 0.6); /* 연한 색상으로 설정 */
-  text-align: center; /* 가운데 정렬 */
-  font-style: italic; /* 글씨체를 이탤릭체로 표시 (선택 사항) */
+/* 네비게이션 바의 선 제거 */
+.container,
+.flex,
+.header,
+nav,
+ul,
+li,
+div,
+a {
+  border: none !important;
 }
 
-.custom-container {
-  min-height: 70vh; /* 화면 전체 높이 */
-  display: flex;
-  align-items: center; /* 카드들이 화면 중앙에 위치하도록 설정 */
-  justify-content: center;
-  padding: 60px 20px 100px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
+/* 버튼 등의 추가적인 요소들에 대한 선 제거 */
+button,
+.block,
+.py-3,
+.px-7,
+.px-4,
+.rounded-md,
+.bg-primary {
+  border: none !important;
 }
 
-.custom-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr; /* 왼쪽 카드가 더 넓도록 설정 */
-  gap: 30px; /* 카드 간의 간격을 좀 더 크게 조정 */
-  width: 100%;
-  max-width: 1200px; /* 그리드 최대 너비 설정 */
+/* 기타 가능한 요소들에 대한 선 제거 */
+.hero-content,
+.clients,
+.bg-white,
+.bg-gray-100 {
+  border: none !important;
 }
 
-.split-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 왼쪽 카드가 더 넓도록 설정 */
-  gap: 30px; /* 카드 간의 간격을 좀 더 크게 조정 */
-  width: 100%;
-  max-width: 1200px; /* 그리드 최대 너비 설정 */
+/* 텍스트와 이미지의 경계에도 선 제거 */
+.text-dark,
+.text-body-color,
+img {
+  border: none !important;
 }
 
-.card {
-  padding: 40px; /* 카드 내부 패딩 증가 */
-  border-radius: 15px; /* 모서리 둥글기 증가 */
-  height: 100%; /* 카드가 부모 요소의 전체 높이를 차지 */
-  min-height: 500px; /* 카드의 최소 높이를 설정 */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* 제목과 본문, 이미지가 균형 있게 배치 */
-  align-items: center;
-  text-align: center;
-  position: relative; /* 이미지 절대 위치 적용을 위한 설정 */
+/* 불필요한 하단의 border 관련된 다른 클래스 제거 */
+.lg:px-12,
+.lg:pr-0,
+.rounded-md {
+  border: none !important;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/* 메뉴 토글 버튼 (모바일용) */
+.menu-toggle {
+  display: none;
+  font-size: 24px;
   cursor: pointer;
+  background: none;
+  border: none;
 }
 
-/* 각 카드의 기본 색상 설정 */
-.real-estate-info {
-  background-color: #e0f7fa; /* 색상 변경 */
-  color: #00695c;
+/* 기본 스타일 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.price-check {
-  background-color: #fce4ec; /* 색상 변경 */
-  color: #880e4f;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.safety-check {
-  background-color: #f3e5f5; /* 색상 변경 */
-  color: #6a1b9a;
+.map-container {
+  display: flex; /* Flexbox 사용 */
+  flex-direction: column; /* 수직 방향 정렬 */
+  align-items: center; /* 수평 중앙 정렬 */
+  justify-content: center; /* 수직 중앙 정렬 */
+  height: 100%; /* 컨테이너의 높이를 100%로 설정 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+}
+/* 네비게이션 바 스타일 */
+
+.logo {
+  flex-grow: 1;
+}
+.space {
+  flex-grow: 5;
+}
+.container {
+  width: 100%;
+}
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; /* 화면 너비 전체 */
+  background-color: white;
+  z-index: 1000;
 }
 
-/* hover 상태에서 그라데이션 효과 */
-.real-estate-info:hover {
-  background: linear-gradient(135deg, #a5d6a7, #66bb6a);
-}
-
-.price-check:hover {
-  background: linear-gradient(135deg, #ffab91, #ff7043);
-}
-
-.safety-check:hover {
-  background: linear-gradient(135deg, #ce93d8, #ab47bc);
-}
-
-.card:hover {
-  transform: scale(1.08); /* 호버 시 카드 확대 */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 호버 시 그림자 강도 증가 */
-}
-
-.split-card:hover {
-  transform: scale(1.08); /* 호버 시 카드 확대 */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* 호버 시 그림자 강도 증가 */
-}
-/* 카드 제목 텍스트 크기 조정 */
-.card-title {
-  margin-top: 50px;
-  font-size: 1.2rem; /* 제목 크기 키움 */
-  font-weight: bold;
-}
-
-.card-body p {
-  font-size: 1.3rem; /* 본문 텍스트 크기 조정 */
-  line-height: 1.6; /* 텍스트 간격 추가 */
-  margin-top: auto;
-}
-
-.split-container {
+.navbar-content {
   display: flex;
-  align-items: center; /* 카드들이 화면 중앙에 위치하도록 설정 */
-  justify-content: center;
-  padding: 0px 20px; /* 헤더와의 간격 및 좌우 패딩 추가 */
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  width: 1600px;
 }
 
-.split-card {
-  padding: 40px; /* 카드 내부 패딩 증가 */
-  border-radius: 15px; /* 모서리 둥글기 증가 */
-  height: 100%; /* 카드가 부모 요소의 전체 높이를 차지 */
-  min-height: 300px; /* 카드의 최소 높이를 설정 */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+.logo img {
+  height: 40px;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  flex-grow: 10;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+}
+
+.nav-item {
+  margin: 0 1rem;
+  color: #333;
+  text-decoration: none;
+}
+
+.auth-menu {
+  justify-content: flex-end; /* 우측 정렬 */
+
+  display: flex;
+  align-items: center;
+  text-align: right;
+  margin-left: auto; /* 우측으로 밀기 */
+  flex-grow: 1;
+}
+
+.auth-item {
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+  justify-content: space-between;
+}
+
+/* Hero 섹션 스타일 */
+.hero-section {
+  display: flex;
+  min-height: 100vh;
+
+  padding-top: 170px; /* 헤더 높이 + 여백 */
+  padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
+}
+.hero-compo {
+  margin-left: 6rem;
+}
+.left-section,
+.right-section {
+  flex: 1;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  box-sizing: border-box;
 }
 
-.left-card {
-  background-color: #34a853; /* 초록색 */
+.left-section {
+  background-color: #f5f7fb; /* 밝은 회색 배경 추가 */
+  border-bottom-right-radius: 80px; /* 우측 하단 모서리 둥글게 */
+}
+
+.right-section {
+  background-color: transparent;
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  flex-direction: column; /* 요소들을 세로로 쌓음 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-description {
+  margin-bottom: 2rem;
+}
+
+.button-list {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+.button-primary,
+.button-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 2rem; /* 버튼 아래에 여백 추가 */
+  margin-top: 2rem; /* 버튼 아래에 여백 추가 */
+}
+
+.button-secondary {
+  border: 2px solid #0066cc; /* 테두리 두께와 색상 설정 */
+  color: #0066cc; /* 글자 색상 설정 */
+  background-color: white; /* 배경색을 투명하게 설정 */
+  padding: 0.75rem 1.5rem; /* 패딩 추가 */
+  border-radius: 0.375rem; /* 모서리를 둥글게 설정 */
+  text-decoration: none; /* 링크의 기본 밑줄 제거 */
+  display: inline-block; /* 버튼처럼 보이도록 블록 설정 */
+  transition: background-color 0.3s ease, color 0.3s ease; /* 배경과 텍스트 색상 전환 효과 */
+}
+
+.button-secondary:hover {
+  background-color: #0066cc; /* 마우스를 올렸을 때 배경색 변경 */
+  color: white; /* 마우스를 올렸을 때 텍스트 색상 변경 */
+}
+
+.button-primary {
+  background-color: #0066cc;
   color: white;
 }
 
-.right-card {
-  background-color: #9b51e0; /* 보라색 */
-  color: white;
+.right-button {
+  justify-content: center;
 }
 
-.split-card h3 {
-  font-size: 1.6rem;
-  margin-bottom: 20px;
+.button-secondary {
+  border: 1px solid #0066cc;
+  color: #0066cc;
 }
 
-.split-card p {
-  font-size: 1.3rem;
+.map-image {
+  max-width: 80%;
+  margin-bottom: 1rem;
 }
 
-/* 카드 이미지 우측 하단 배치 */
-.card-image {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 120px;
-  height: auto;
-  opacity: 0.9;
-}
-
-/* 반응형 디자인: 화면이 작은 경우 그리드 변경 */
+/* 반응형 스타일 */
 @media (max-width: 768px) {
-  .custom-grid {
-    grid-template-columns: 1fr; /* 작은 화면에서는 세로로 쌓임 */
-    gap: 20px; /* 카드 간의 간격 조정 */
+  .menu-toggle {
+    display: block;
   }
 
-  .card {
-    padding: 30px; /* 작은 화면에서는 카드 내부 패딩 감소 */
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+  }
+
+  .nav-menu.nav-open {
+    display: flex;
+  }
+
+  .nav-list {
+    flex-direction: column;
+  }
+
+  .nav-item {
+    margin: 0.5rem 0;
+  }
+
+  .hero-section {
+    flex-direction: column;
+  }
+
+  .left-section,
+  .right-section {
+    padding: 1rem;
+  }
+
+  .button-list {
+    flex-direction: column;
+  }
+
+  .button-primary,
+  .button-secondary {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

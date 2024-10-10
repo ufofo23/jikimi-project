@@ -34,6 +34,11 @@ public class SafetyInspectionController {
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
             System.out.println("SafetyInspectionController.handleAccess");
+            for (Map.Entry<String, Object> entry : payload.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                System.out.println("address: " + key + ", address: " + value);
+            }
             List<Map<String,String>> response = extractUnicodeService.getUniqueCode(payload);
             System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);

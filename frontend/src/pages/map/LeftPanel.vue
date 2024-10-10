@@ -34,7 +34,7 @@
         </button>
         <button
           :class="{
-            active: selectedTransaction === '매매',
+            active: selectedTransaction === '1',
           }"
           @click="selectTransaction('1')"
         >
@@ -42,7 +42,7 @@
         </button>
         <button
           :class="{
-            active: selectedTransaction === '전세',
+            active: selectedTransaction === '2',
           }"
           @click="selectTransaction('2')"
         >
@@ -50,7 +50,7 @@
         </button>
         <button
           :class="{
-            active: selectedTransaction === '월세',
+            active: selectedTransaction === '3',
           }"
           @click="selectTransaction('3')"
         >
@@ -71,7 +71,7 @@
         </button>
         <button
           :class="{
-            active: selectedBuilding === '연립다세대',
+            active: selectedBuilding === '3',
           }"
           @click="selectBuilding('3')"
         >
@@ -79,21 +79,21 @@
         </button>
         <button
           :class="{
-            active: selectedBuilding === '오피스텔',
+            active: selectedBuilding === '2',
           }"
           @click="selectBuilding('2')"
         >
           오피스텔
         </button>
         <button
-          :class="{ active: selectedBuilding === '아파트' }"
+          :class="{ active: selectedBuilding === '1' }"
           @click="selectBuilding('1')"
         >
           아파트
         </button>
         <button
           :class="{
-            active: selectedBuilding === '단독다가구',
+            active: selectedBuilding === '4',
           }"
           @click="selectBuilding('4')"
         >
@@ -115,7 +115,10 @@
             :key="index"
             @click="selectApartment(item)"
           >
-            {{ item }}
+            <span @click="favoriteClick(item)">{{
+              item.apartmentName
+            }}</span>
+
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
@@ -209,8 +212,9 @@ const props = defineProps({
 const emit = defineEmits([
   'update:selectedProperty',
   'move-map-to-coordinates', // 상위 컴포넌트로 좌표 전달을 위한 이벤트 추가
-  'updateTransactionType', // 여기에 오타 수정
+  'updateTransactionType',
   'updateBuildingType',
+  'favoriteItem',
 ]);
 
 // 즐겨찾기와 상세보기 토글 상태 관리
@@ -230,6 +234,7 @@ watch(
     if (newValue && newValue.length > 0) {
       isFavorite.value = wishlist.value.includes(
         newValue[0].propertyAddrAptName
+        // newValue[0].locationNo
       );
     } else {
       isFavorite.value = false; // 선택된 아파트가 없으면 기본값 false
@@ -238,24 +243,46 @@ watch(
   { immediate: true }
 );
 
+// 즐겨찾기에서 상세보기
+const favoriteClick = (wishlist) => {
+  emit('favoriteItem', wishlist);
+  console.log(wishlist);
+};
+
 // 즐겨찾기 아이템 토글 함수
-const toggleWishlistItem = (itemName) => {
-  if (wishlist.value.includes(itemName)) {
-    wishlist.value = wishlist.value.filter(
-      (item) => item !== itemName
-    );
+const toggleWishlistItem = (item) => {
+  // 아파트 이름과 locationNo가 모두 포함된 객체를 찾아서 비교
+  if (item.apartmentName.startsWith('(')) {
+    item.apartmentName = item.doroJuso;
+  }
+  console.log(item);
+  const existingItemIndex = wishlist.value.findIndex(
+    (wishlistItem) =>
+      wishlistItem.doroJuso === item.doroJuso &&
+      wishlistItem.apartmentName === item.apartmentName &&
+      wishlistItem.locationNo === item.locationNo
+  );
+
+  if (existingItemIndex !== -1) {
+    // 이미 있는 경우 삭제
+    wishlist.value.splice(existingItemIndex, 1);
   } else {
-    wishlist.value.push(itemName);
+    // 없는 경우 추가
+    wishlist.value.push({
+      apartmentName: item.apartmentName,
+      doroJuso: item.doroJuso,
+      locationNo: item.locationNo,
+    });
   }
 };
 
 // 즐겨찾기에서 아이템 삭제 함수
 const removeFromWishlist = (itemName) => {
   toggleWishlistItem(itemName);
-  // 아이콘 상태 업데이트
+  //} 아이콘 상태 업데이트
   if (
     props.selectedProperty[0]?.propertyAddrAptName ===
-    itemName
+    itemName.apartmentName
   ) {
     isFavorite.value = false; // 상세보기에서 해당 아이콘 상태 변경
   }
@@ -280,8 +307,20 @@ const toggleFavorite = () => {
 
   const apartmentName =
     props.selectedProperty[0].propertyAddrAptName;
-  toggleWishlistItem(apartmentName);
-  isFavorite.value = wishlist.value.includes(apartmentName);
+  const locationNo = props.selectedProperty[0].locationNo;
+  const doroJuso = props.selectedProperty[0].doroJuso;
+  toggleWishlistItem({
+    apartmentName,
+    locationNo,
+    doroJuso,
+  });
+  // 즐겨찾기 여부 상태 업데이트
+  isFavorite.value = wishlist.value.some(
+    (item) =>
+      item.apartmentName === apartmentName &&
+      item.doroJuso === doroJuso &&
+      item.locationNo === locationNo
+  );
 };
 
 // 아파트 선택 함수
@@ -313,12 +352,14 @@ const analyzeProperty = () => {
     const buildingName =
       props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
+    const zipcode = props.selectedProperty[0].zipcode;
     router.push({
       name: 'mapAnalyzing',
       query: {
         jibunJuso: jibunJuso,
         buildingName: buildingName,
         propertyNo: propertyNo,
+        zipcode: zipcode
       },
     });
   }
@@ -352,6 +393,8 @@ const selectBuilding = (type) => {
   height: 100%;
   padding: 20px;
   position: relative;
+  overflow-y: auto;
+  align-content: baseline;
 }
 
 .search {

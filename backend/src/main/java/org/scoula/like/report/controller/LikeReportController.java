@@ -20,17 +20,17 @@ public class LikeReportController {
     final LikeReportService service;
 
     @GetMapping("/{reportNo}")
-    public ResponseEntity<Integer> create(@RequestHeader("Authorizaion") String token, @PathVariable int reportNo) {
+    public ResponseEntity<Integer> create(@RequestHeader("Authorization") String token, @PathVariable int reportNo) {
         return ResponseEntity.ok(service.create(reportNo, token));
     }
 
 //    @GetMapping("")
-//    public ResponseEntity<List<ReportDTO>> getList(@RequestHeader("Authorizaition") String token) {
+//    public ResponseEntity<List<ReportDTO>> getList(@RequestHeader("Authorization") String token) {
 //        return ResponseEntity.ok(service.getList(token));
 //    }
 
     @GetMapping("")
-    public ResponseEntity<Page> getList(@RequestHeader("Authorizaition") String token, PageRequest pageRequest) {
+    public ResponseEntity<Page> getList(@RequestHeader("Authorization") String token, PageRequest pageRequest) {
         return ResponseEntity.ok(service.getPage(token, pageRequest));
     }
 

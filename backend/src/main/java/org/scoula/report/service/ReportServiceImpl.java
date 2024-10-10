@@ -81,7 +81,10 @@ public class ReportServiceImpl implements ReportService {
 
             report.setAccordOwner(
                     isAccordOwner(contractNameList, ownershipList)
+                    isAccordOwner(contractNameList, ownershipList)
             );
+        } else {
+            report.setAccordOwner(null);
         } else {
             report.setAccordOwner(null);
         }
@@ -107,7 +110,49 @@ public class ReportServiceImpl implements ReportService {
             report.setViolationStructure(bml.getResViolationStatus());
         }
 
+        // 채권최고액이 null이면 판단불가
+        if(cor.getMaximumOfBond() == null) {
+            report.setMaximumOfBond(null);
+        } else {
+            report.setMaximumOfBond(cor.getMaximumOfBond());
+        }
+
+        // 주용도가 null이면 판단불가
+        if(bml.getResContents() == null) {
+            report.setUseType(null);
+        } else {
+            report.setUseType(bml.getResContents());
+        }
+
+        // 위반건축물이 null이면 판단불가
+        if(bml.getResViolationStatus() == null) {
+            report.setViolationStructure(null);
+        } else {
+            report.setViolationStructure(bml.getResViolationStatus());
+        }
+
 //        report.setKindOfLandrights(cor.getKindOfLandrights());
+
+        // 공동소유/단독소유가 null이면 판단불가
+        if(cor.getCommonOwner() == null) {
+            report.setCommonOwner(null);
+        } else {
+            report.setCommonOwner(cor.getCommonOwner());
+        }
+
+        // 소유자 변동 횟수가 null이면 판단 불가
+        if(cor.getChangeOwnerCount() == null) {
+            report.setChangeOwnerCount(null);
+        } else {
+            report.setChangeOwnerCount(cor.getChangeOwnerCount());
+        }
+
+        // 전유부분이 null이면 판단불가
+        if(cor.getOwnerState() == null) {
+            report.setOwnerState(null);
+        } else {
+            report.setOwnerState(cor.getOwnerState());
+        }
 
         // 공동소유/단독소유가 null이면 판단불가
         if(cor.getCommonOwner() == null) {

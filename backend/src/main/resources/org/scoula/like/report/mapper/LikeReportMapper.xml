@@ -6,16 +6,17 @@
         select count(*) from member_report_tbl
     </select>
 
-    <select id="getPage" resultType="org.scoula.like.report.domain.LikeReportVO">
-        select * from member_report_tbl
-        where mr.report_no in (
-            select report_no
-            from member_report_tbl
-            where member_no = (
-                select member_no
-                from member_tbl
-                where member_id = #{userId}))
-        order by member_report_no
+    <select id="getPage" resultType="org.scoula.report.domain.ReportVO">
+        select * from report_tbl rt
+        where report_no in (
+            select report_no from member_report_tbl mr
+            where mr.report_no in (
+                select report_no
+                from member_report_tbl
+                where member_no = (
+                    select member_no
+                    from member_tbl
+                    where member_id = #{userId})))
         limit #{pageRequest.offset}, #{pageRequest.amount}
     </select>
 
