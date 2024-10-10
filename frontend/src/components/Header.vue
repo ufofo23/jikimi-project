@@ -231,7 +231,7 @@ body {
   width: 100%;
 }
 .navbar {
-  position: absolute;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%; /* 화면 너비 전체 */
