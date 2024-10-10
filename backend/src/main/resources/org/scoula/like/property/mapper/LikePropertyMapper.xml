@@ -8,15 +8,17 @@
     </insert>
 
     <select id="getList" resultType="org.scoula.map.domain.MapDetailDTO">
-        select * from property_tbl pr
-        where pr.property_no in (
-            select property_no
-            from like_property_tbl
-            where member_no = (
-                select member_no
-                from member_tbl
-                where member_id = #{userId}))
-        order by like_property_no asc
+            select *, property_doro_juso as doro_juso from property_tbl pr
+            inner join property_location pl
+            on pl.location_no = pr.location_no
+            where pr.property_no in (
+                select property_no
+                from like_property_tbl
+                where member_no = (
+                    select member_no
+                    from member_tbl
+                    where member_id = #{userId}))
+
     </select>
 
     <delete id="delete">

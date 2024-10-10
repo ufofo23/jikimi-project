@@ -67,7 +67,7 @@ public class ExtractUnicodeService {
         System.out.println("result = " + result);
 
         // 결과 처리
-        extractedValues = processResult(result,"0");
+        extractedValues = processResult(result, "0");
         String responseCode = getResponseCode(result);
 
         // 첫 번째 요청에서 실패 시 realtyType을 "1"로 변경하여 다시 요청
@@ -77,7 +77,7 @@ public class ExtractUnicodeService {
             System.out.println("result = " + result);
 
             // 결과 처리
-            extractedValues = processResult(result,"1");
+            extractedValues = processResult(result, "1");
             responseCode = getResponseCode(result);
 
             // 두 번째 요청에서도 실패 시 오류 메시지 반환

@@ -2,28 +2,19 @@
   <div class="left-panel">
     <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
-      <SearchBar
-        @address-selected="handleAddressSelected"
-      />
+      <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
     <!-- 매매전월세 건물유형 관련 -->
     <div class="filter-container">
       <!-- 거래유형 -->
       <div class="filter-buttons">
-        <button @click="toggleFilter('transactionType')">
-          매매/전월세
-        </button>
-        <button @click="toggleFilter('buildingType')">
-          건물유형
-        </button>
+        <button @click="toggleFilter('transactionType')">매매/전월세</button>
+        <button @click="toggleFilter('buildingType')">건물유형</button>
       </div>
 
       <!-- 매매/전월세 -->
-      <div
-        v-if="activeFilter === 'transactionType'"
-        class="dropdown"
-      >
+      <div v-if="activeFilter === 'transactionType'" class="dropdown">
         <button
           :class="{
             active: selectedTransaction === '전체',
@@ -57,10 +48,7 @@
           월세
         </button>
       </div>
-      <div
-        v-if="activeFilter === 'buildingType'"
-        class="dropdown"
-      >
+      <div v-if="activeFilter === 'buildingType'" class="dropdown">
         <button
           :class="{
             active: selectedBuilding === '전체',
@@ -111,18 +99,16 @@
       <div v-if="wishlistVisible">
         <ul v-if="wishlist.length">
           <li
-            v-for="(item, index) in wishlist"
-            :key="index"
-            @click="selectApartment(item)"
+            v-for="wish in wishlist"
+            :key="wish.propertyNo"
+            @click="selectApartment(wish.propertyAddrAptName)"
           >
-            <span @click="favoriteClick(item)">{{
-              item.apartmentName
-            }}</span>
+            <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
 
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
-              @click.stop="removeFromWishlist(item)"
+              @click.stop="removeFromWishlist(wish.propertyNo)"
               style="color: #ffd43b"
             />
           </li>
@@ -138,18 +124,12 @@
         <span>{{ detailsVisible ? '▲' : '▼' }}</span>
       </h2>
       <div v-if="detailsVisible">
-        <div
-          v-if="selectedProperty && selectedProperty.length"
-        >
+        <div v-if="selectedProperty && selectedProperty.length">
           <h2 class="apart-name">
             {{ selectedProperty[0].propertyAddrAptName }}
             <font-awesome-icon
               class="favorite-icon"
-              :icon="
-                isFavorite
-                  ? ['fas', 'star']
-                  : ['far', 'star']
-              "
+              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
               :style="{
                 color: isFavorite ? '#FFD43B' : 'black',
               }"
@@ -173,12 +153,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(
-                  property, index
-                ) in selectedProperty"
-                :key="index"
-              >
+              <tr v-for="(property, index) in selectedProperty" :key="index">
                 <td>{{ property.date }}</td>
                 <td>{{ property.contractType }}</td>
                 <td>{{ property.price }}억 원</td>
@@ -188,9 +163,7 @@
             </tbody>
           </table>
           <div class="analyze-button-container">
-            <button @click="analyzeProperty">
-              매물 분석하기
-            </button>
+            <button @click="analyzeProperty">매물 분석하기</button>
           </div>
         </div>
         <p v-else>매물을 골라주세요.</p>
@@ -200,10 +173,11 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import SearchBar from './SearchBar.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useRouter } from 'vue-router';
+import api from '@/api/like/likePropertyApi';
 
 const props = defineProps({
   selectedProperty: Array,
@@ -222,7 +196,16 @@ const wishlistVisible = ref(true);
 const detailsVisible = ref(true);
 
 // 즐겨찾기 데이터
-const wishlist = ref([]); // 초기값을 비어있는 배열로 설정
+const wishlist = ref([]);
+
+const reloadWishlist = async () => {
+  try {
+    const response = await api.getList();
+    wishlist.value = response;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 // 즐겨찾기 상태 관리
 const isFavorite = ref(false);
@@ -232,10 +215,13 @@ watch(
   () => props.selectedProperty,
   (newValue) => {
     if (newValue && newValue.length > 0) {
-      isFavorite.value = wishlist.value.includes(
-        newValue[0].propertyAddrAptName
-        // newValue[0].locationNo
-      );
+      for (let wish of wishlist.value) {
+        if (wish.locationNo === newValue[0].locationNo) {
+          isFavorite.value = true;
+        } else {
+          isFavorite.value = false;
+        }
+      }
     } else {
       isFavorite.value = false; // 선택된 아파트가 없으면 기본값 false
     }
@@ -244,46 +230,22 @@ watch(
 );
 
 // 즐겨찾기에서 상세보기
-const favoriteClick = (wishlist) => {
-  emit('favoriteItem', wishlist);
-  console.log(wishlist);
-};
-
-// 즐겨찾기 아이템 토글 함수
-const toggleWishlistItem = (item) => {
-  // 아파트 이름과 locationNo가 모두 포함된 객체를 찾아서 비교
-  if (item.apartmentName.startsWith('(')) {
-    item.apartmentName = item.doroJuso;
-  }
-  console.log(item);
-  const existingItemIndex = wishlist.value.findIndex(
-    (wishlistItem) =>
-      wishlistItem.doroJuso === item.doroJuso &&
-      wishlistItem.apartmentName === item.apartmentName &&
-      wishlistItem.locationNo === item.locationNo
-  );
-
-  if (existingItemIndex !== -1) {
-    // 이미 있는 경우 삭제
-    wishlist.value.splice(existingItemIndex, 1);
-  } else {
-    // 없는 경우 추가
-    wishlist.value.push({
-      apartmentName: item.apartmentName,
-      doroJuso: item.doroJuso,
-      locationNo: item.locationNo,
-    });
-  }
+const favoriteClick = (wish) => {
+  emit('favoriteItem', wish);
+  console.log(wish);
 };
 
 // 즐겨찾기에서 아이템 삭제 함수
-const removeFromWishlist = (itemName) => {
-  toggleWishlistItem(itemName);
-  //} 아이콘 상태 업데이트
-  if (
-    props.selectedProperty[0]?.propertyAddrAptName ===
-    itemName.apartmentName
-  ) {
+const removeFromWishlist = async (proNo) => {
+  for (let wish of wishlist.value) {
+    if (wish.propertyNo === proNo) {
+      await api.delete(proNo);
+      reloadWishlist();
+    }
+  }
+
+  // 아이콘 상태 업데이트
+  if (props.selectedProperty[0]?.propertyNo === proNo) {
     isFavorite.value = false; // 상세보기에서 해당 아이콘 상태 변경
   }
 };
@@ -298,35 +260,25 @@ const toggleDetails = () => {
 };
 
 // 즐겨찾기 상태 토글
-const toggleFavorite = () => {
-  if (
-    !props.selectedProperty ||
-    props.selectedProperty.length === 0
-  )
-    return;
+const toggleFavorite = async () => {
+  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
 
-  const apartmentName =
-    props.selectedProperty[0].propertyAddrAptName;
-  const locationNo = props.selectedProperty[0].locationNo;
-  const doroJuso = props.selectedProperty[0].doroJuso;
-  toggleWishlistItem({
-    apartmentName,
-    locationNo,
-    doroJuso,
-  });
-  // 즐겨찾기 여부 상태 업데이트
-  isFavorite.value = wishlist.value.some(
-    (item) =>
-      item.apartmentName === apartmentName &&
-      item.doroJuso === doroJuso &&
-      item.locationNo === locationNo
-  );
+  if (isFavorite.value) {
+    // 즐겨찾기 O -> X
+    await api.delete(props.selectedProperty[0].propertyNo);
+    reloadWishlist();
+  } else {
+    // 즐겨찾기 X -> O
+    await api.create(props.selectedProperty[0].propertyNo);
+    reloadWishlist();
+  }
+  isFavorite.value = !isFavorite.value;
 };
 
 // 아파트 선택 함수
-const selectApartment = (apartmentName) => {
+const selectApartment = (propertyAddrAptName) => {
   const selected = props.selectedProperty.find(
-    (prop) => prop.propertyAddrAptName === apartmentName
+    (prop) => prop.propertyAddrAptName === propertyAddrAptName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);
@@ -343,14 +295,10 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-  if (
-    props.selectedProperty.length > 0 &&
-    props.selectedProperty[0].doroJuso
-  ) {
+  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName =
-      props.selectedProperty[0].propertyAddrAptName;
+    const buildingName = props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipcode = props.selectedProperty[0].zipcode;
     const price = props.selectedProperty[0].price;
@@ -374,8 +322,7 @@ const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트�
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 
 const toggleFilter = (filterType) => {
-  activeFilter.value =
-    activeFilter.value === filterType ? null : filterType;
+  activeFilter.value = activeFilter.value === filterType ? null : filterType;
 };
 
 const selectTransaction = (type) => {
@@ -388,6 +335,10 @@ const selectBuilding = (type) => {
   // activeFilter.value = null; // 선택이후 닫기
   emit('updateBuildingType', selectedBuilding.value);
 };
+
+onMounted(() => {
+  reloadWishlist();
+});
 </script>
 
 <style scoped>
