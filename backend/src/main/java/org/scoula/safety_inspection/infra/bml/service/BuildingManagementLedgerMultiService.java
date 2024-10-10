@@ -43,8 +43,7 @@ public class BuildingManagementLedgerMultiService{
     public void getBuildingLedger(Map<String, Object> payload, Integer analysisNo) throws Exception {
         HashMap<String, Object> parameterMap = createParameterMap(payload);
 
-//        String result = easyCodef.requestProduct(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap);
-        String result = "{\"result\":{\"code\":\"CF-00000\",\"extraMessage\":\"\",\"message\":\"성공\",\"transactionId\":\"67038695ec82eab8491ac1e7\"},\"data\":{\"resOriGinalData\":\"\",\"resDocNo\":\"1728-2843-1909-6691\",\"commUniqeNo\":\"5113011700-3-20490008\",\"resReceiptNo\":\"2024092748501084\",\"resAddrDong\":\"원주혁신도시1단지사랑으로부영아파트105동\",\"resAddrHo\":\"101\",\"resUserAddr\":\"강원특별자치도원주시반곡동\",\"commAddrLotNumber\":\"2049-8\",\"commAddrRoadName\":\"강원특별자치도원주시배울로49(반곡동)\",\"resOwnedList\":[{\"resType\":\"0\",\"resType1\":\"주\",\"resFloor\":\"1층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"아파트\",\"resArea\":\"84.9933\"},{\"resType\":\"1\",\"resType1\":\"부\",\"resFloor\":\"지1\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"지하주차장\",\"resArea\":\"31.366\"},{\"resType\":\"1\",\"resType1\":\"주\",\"resFloor\":\"지1\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"지하주차장연결통로\",\"resArea\":\"6.0588\"},{\"resType\":\"1\",\"resType1\":\"부\",\"resFloor\":\"지1\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"기계실,전기실,발전기실\",\"resArea\":\"0.6613\"},{\"resType\":\"1\",\"resType1\":\"부\",\"resFloor\":\"1-3층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"경로당,관리사무소,방재실,MDF실,작은도서관,헬스장,탁구장,입주자회의소\",\"resArea\":\"1.1173\"},{\"resType\":\"1\",\"resType1\":\"주\",\"resFloor\":\"각층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"계단실,승강기,홀\",\"resArea\":\"23.8508\"},{\"resType\":\"1\",\"resType1\":\"주\",\"resFloor\":\"1층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"벽체\",\"resArea\":\"5.8993\"},{\"resType\":\"1\",\"resType1\":\"부\",\"resFloor\":\"1층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"어린이집\",\"resArea\":\"0.2988\"},{\"resType\":\"1\",\"resType1\":\"부\",\"resFloor\":\"1층\",\"resStructure\":\"철근콘크리트구조\",\"resUseType\":\"경비실\",\"resArea\":\"0.0711\"}],\"resOwnerList\":[{\"resOwner\":\"주식회사부영주택\",\"resUserAddr\":\"서울특별시중구세종대로9길42,(서소문동)\",\"resOwnershipStake\":\"1/1\",\"resChangeDate\":\"20151223\",\"resChangeReason\":\"소유권보존\",\"resIdentityNo\":\"1101114******\"}],\"resPriceList\":[{\"resReferenceDate\":\"20240101\",\"resBasePrice\":\"154000000\"},{\"resReferenceDate\":\"20230101\",\"resBasePrice\":\"154000000\"},{\"resReferenceDate\":\"20220101\",\"resBasePrice\":\"187000000\"},{\"resReferenceDate\":\"20210101\",\"resBasePrice\":\"149000000\"},{\"resReferenceDate\":\"20200101\",\"resBasePrice\":\"145000000\"},{\"resReferenceDate\":\"20190101\",\"resBasePrice\":\"156000000\"},{\"resReferenceDate\":\"20180101\",\"resBasePrice\":\"164000000\"},{\"resReferenceDate\":\"20170101\",\"resBasePrice\":\"160000000\"},{\"resReferenceDate\":\"20160101\",\"resBasePrice\":\"147000000\"}],\"resChangeList\":[{\"resChangeDate\":\"20151222\",\"resChangeReason\":\"신규작성(신축)\"},{\"resChangeDate\":\"20230611\",\"resChangeReason\":\"법률제18994호(2023.6.11.)강원특별자치도설치\"}],\"resViolationStatus\":\"\",\"resNote\":\"\",\"resIssueDate\":\"20241007\",\"resIssueOgzNm\":\"원주시장\"}}";
+        String result = easyCodef.requestProduct(PRODUCT_URL, EasyCodefServiceType.DEMO, parameterMap);
         System.out.println("첫 번째 응답: " + result);
 
 
@@ -96,8 +95,8 @@ public class BuildingManagementLedgerMultiService{
             }
 
             else{
-                BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, null, null);
-                buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+//                BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, null, null);
+//                buildingManagementLedgerMapper.insertBuildingData(ledgerData);
             }
 
         } catch (Exception e) {
@@ -109,11 +108,22 @@ public class BuildingManagementLedgerMultiService{
         String jti = dataMap.get("jti").toString();
         long twoWayTimestamp = Long.parseLong(dataMap.get("twoWayTimestamp").toString());
         Map<String, Object> extraInfo = (Map<String, Object>) dataMap.get("extraInfo");
+
+        String commDongNum = "";
         List<Map<String, Object>> reqDongNumList = (List<Map<String, Object>>) extraInfo.get("reqDongNumList");
-        String commDongNum = reqDongNumList.get(0).get("commDongNum").toString();
+        if (reqDongNumList != null && !reqDongNumList.isEmpty()) {
+            commDongNum = reqDongNumList.get(0).get("commDongNum").toString();
+        }
+
+        String commHoNum = "";
+        List<Map<String,Object>> reqHoNumList = (List<Map<String,Object>>) extraInfo.get("reqHoNumList");
+        if (reqHoNumList != null && !reqHoNumList.isEmpty()) {
+            commHoNum = reqHoNumList.get(0).get("commHoNum").toString();
+        }
 
         HashMap<String, Object> parameterMap2 = createParameterMap(payload);
         parameterMap2.put("dongNum", commDongNum);
+        parameterMap2.put("hoNum",commHoNum);
         parameterMap2.put("signedData", "{\"certSeqNum\":12345678,\"signedVals\":[\"bhEd4...-lc07xew\"],\"rValue\":\"l9JqioQn-uQ\"}");
         parameterMap2.put("is2Way", true);
 
@@ -152,7 +162,7 @@ public class BuildingManagementLedgerMultiService{
         boolean resViolationStatus = extractResViolationStatus(resViolationStatusStr);
 
         BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, resViolationStatus, mainUse);
-//        buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+        buildingManagementLedgerMapper.insertBuildingData(ledgerData);
 
     }
 

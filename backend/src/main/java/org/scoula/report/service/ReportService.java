@@ -11,7 +11,7 @@ public interface ReportService {
     public ReportDTO get(int analysisNo);
 
     /* CREATE */
-    public int create(ReportDTO report);
+    public int create(ReportDTO report, Integer analysisNo);
 
     /* Algorithm */
     public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload);

@@ -65,16 +65,13 @@ DROP TABLE IF EXISTS like_property_tbl;
 CREATE TABLE like_property_tbl (
                                    like_property_no int PRIMARY KEY AUTO_INCREMENT,
                                    member_no int NOT NULL,
-                                   property_no int NOT NULL,
-                                   FOREIGN KEY (member_no) REFERENCES member_tbl(member_no) ON DELETE CASCADE,
-                                   FOREIGN KEY (property_no) REFERENCES property_tbl(property_no) ON DELETE CASCADE
+                                   property_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS analysis_tbl;
 CREATE TABLE analysis_tbl (
                               analysis_no int PRIMARY KEY AUTO_INCREMENT,
-                              property_no int NOT NULL,
-                              FOREIGN KEY (property_no) REFERENCES property_tbl(property_no) ON DELETE CASCADE
+                              property_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS cor_tbl;
@@ -85,8 +82,7 @@ CREATE TABLE cor_tbl (
                          type_of_ownership VARCHAR(255),
                          common_owner VARCHAR(255),
                          change_owner_count INT,
-                         maximum_of_bond INT,
-                         FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no)
+                         maximum_of_bond INT
 );
 
 DROP TABLE IF EXISTS bml_tbl;
@@ -94,8 +90,7 @@ CREATE TABLE bml_tbl (
                          bml_no INT PRIMARY KEY AUTO_INCREMENT,
                          analysis_no INT,
                          violation_structure BOOLEAN,
-                         use_type VARCHAR(255),
-                         FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no)
+                         use_type VARCHAR(255)
 );
 DROP TABLE IF EXISTS report_tbl;
 CREATE TABLE report_tbl (
@@ -103,7 +98,6 @@ CREATE TABLE report_tbl (
                             property_no int NOT NULL,
                             analysis_no int NOT NULL,
                             address varchar(50) NOT NULL,
-                            mortgage tinyint NOT NULL,
                             violation_structure tinyint NOT NULL,
                             total_score int,
                             deposit int,
@@ -112,22 +106,18 @@ CREATE TABLE report_tbl (
                             jeonse_rate int,
                             maximum_of_bond int,
                             ownership varchar(20),
-                            contract_start_date date NOT NULL,
                             change_owner_count int NOT NULL,
                             accord_owner tinyint NOT NULL,
                             common_owner varchar(50),
                             owner_state double,
-                            use_type varchar(50) NOT NULL,
-                            FOREIGN KEY (analysis_no) REFERENCES analysis_tbl(analysis_no) ON DELETE CASCADE
+                            use_type varchar(50) NOT NULL
 );
 
 DROP TABLE IF EXISTS member_report_tbl;
 CREATE TABLE member_report_tbl (
                                    member_report_no int PRIMARY KEY AUTO_INCREMENT,
                                    member_no int NOT NULL,
-                                   report_no int NOT NULL,
-                                   FOREIGN KEY (member_no) REFERENCES member_tbl(member_no) ON DELETE CASCADE,
-                                   FOREIGN KEY (report_no) REFERENCES report_tbl(report_no) ON DELETE CASCADE
+                                   report_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS common_sense_tbl;
@@ -142,9 +132,7 @@ DROP TABLE IF EXISTS like_common_sense_tbl;
 CREATE TABLE like_common_sense_tbl (
                                        like_common_sense_no int PRIMARY KEY AUTO_INCREMENT,
                                        member_no int NOT NULL,
-                                       common_sense_no int NOT NULL,
-                                       FOREIGN KEY (member_no) REFERENCES member_tbl(member_no) ON DELETE CASCADE,
-                                       FOREIGN KEY (common_sense_no) REFERENCES common_sense_tbl(common_sense_no) ON DELETE CASCADE
+                                       common_sense_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS scenario_tbl;
@@ -159,9 +147,7 @@ DROP TABLE IF EXISTS like_scenario_tbl;
 CREATE TABLE like_scenario_tbl (
                                    like_scenario_no int PRIMARY KEY AUTO_INCREMENT,
                                    member_no int NOT NULL,
-                                   scenario_no int NOT NULL,
-                                   FOREIGN KEY (member_no) REFERENCES member_tbl(member_no) ON DELETE CASCADE,
-                                   FOREIGN KEY (scenario_no) REFERENCES scenario_tbl(scenario_no) ON DELETE CASCADE
+                                   scenario_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS dictionary_tbl;
@@ -175,9 +161,7 @@ DROP TABLE IF EXISTS like_dictionary_tbl;
 CREATE TABLE like_dictionary_tbl (
                                      like_dictionary_no int PRIMARY KEY AUTO_INCREMENT,
                                      member_no int NOT NULL,
-                                     dictionary_no int NOT NULL,
-                                     FOREIGN KEY (member_no) REFERENCES member_tbl(member_no) ON DELETE CASCADE,
-                                     FOREIGN KEY (dictionary_no) REFERENCES dictionary_tbl(dictionary_no) ON DELETE CASCADE
+                                     dictionary_no int NOT NULL
 );
 
 DROP TABLE IF EXISTS faq_tbl;
@@ -1230,10 +1214,12 @@ INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinat
 INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinate, y_coordinate) VALUES ('붓내3길 29', '12,000', 2024099, '127.124668209179', '35.8693470871875');
 INSERT INTO property_location (road_name, recent_price, recent_date, x_coordinate, y_coordinate) VALUES ('진재로 67', '17,400', 2024099, '127.428051432426', '36.6377558640148');
 
+
+desc property_tbl;
 #  성능 향상을 위해서!!
 UPDATE property_tbl
 SET property_tbl.formated_date =  STR_TO_DATE(CONCAT(contract_year_month, property_tbl.contract_date), '%Y%m%d')
-WHERE contract_year_month <> '';
+WHERE contract_year_month = null;
 
 UPDATE property_tbl
 SET formated_price = FORMAT(CAST(REPLACE(price, ',', '') AS UNSIGNED) / 10000, 2)
@@ -1342,7 +1328,7 @@ LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
     INTO TABLE estate.property_tbl_all
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
+    LINES TERMINATED BY '\r\n' -- 행 구분자를 줄바꿈으로 설정
     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
 
 SELECT * FROM property_tbl_all;

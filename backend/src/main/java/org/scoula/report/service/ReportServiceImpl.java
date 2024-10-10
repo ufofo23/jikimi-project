@@ -32,8 +32,9 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int create(ReportDTO report) {
+    public int create(ReportDTO report, Integer analysisNo) {
         ReportVO reportVO = report.toVO();
+        reportVO.setAnalysisNo(analysisNo);
         return mapper.create(reportVO);
     }
 
@@ -74,9 +75,9 @@ public class ReportServiceImpl implements ReportService {
 
             // 매칭되는 이름을 찾기
             while (matcher.find()) {
+                if(matcher.group(1).isEmpty()) report.setAccordOwner(null);
                 ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
             }
-
 
             report.setAccordOwner(
                     isAccordOwner(contractNameList, ownershipList)
@@ -169,7 +170,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 계약자, 소유자 불일치 시 고위험
-        if(!report.getAccordOwner())
+        if(report.getAccordOwner()!=null && !report.getAccordOwner())
             return 0;
 
         // 근저당권(채권 최고액)에 따른 감점
@@ -187,7 +188,8 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 주용도가 거주가 아니면 고위험 (거주일때 어떻게 값이 들어가는 지 확인 필요)
-        if(!report.getUseType().equals("거주용"))
+        String useType = report.getUseType();
+        if(!(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거")))
             return 0;
 
         // 위반 건축물이면 고위험
