@@ -81,10 +81,7 @@ public class ReportServiceImpl implements ReportService {
 
             report.setAccordOwner(
                     isAccordOwner(contractNameList, ownershipList)
-                    isAccordOwner(contractNameList, ownershipList)
             );
-        } else {
-            report.setAccordOwner(null);
         } else {
             report.setAccordOwner(null);
         }
