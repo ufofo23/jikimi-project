@@ -185,8 +185,9 @@
 import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
-
+import { useRouter } from 'vue-router';
 const route = useRoute();
+const router = useRouter();
 
 // 상태 관리
 const addresses = ref([]);
@@ -241,7 +242,7 @@ const removeName = (index) => {
 // API 설정
 const api = axios.create({
   baseURL: 'http://localhost:8080/api/safety-inspection',
-  timeout: 30000,
+  timeout: 500000,
 });
 
 // 에러 처리 함수
@@ -346,16 +347,14 @@ const submitForm = async () => {
 // 유니크 코드 전송
 const sendUniqueCode = async (uniqueCode) => {
   if (isLoading.value) return;
-
   isLoading.value = true;
   try {
     const payload = generatePayload(uniqueCode);
     console.log('Sending Unique Code with:', payload);
-
     const response = await api.post('/cors', payload);
     const reportNo = response.data;
-
-    route.push({ path: '/report', query: { reportNo } });
+    console.log(reportNo);
+    router.push(`/report/${reportNo}`);
   } catch (error) {
     handleError(error, '유니크 코드 전송에 실패했습니다.');
   } finally {

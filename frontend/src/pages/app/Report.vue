@@ -246,10 +246,12 @@
                 >
                   {{
                     sampleReportData.maximumOfBond !== null
-                      ? sampleReportData.maximumOfBond >= 10000
+                      ? sampleReportData.maximumOfBond >= 100000000
                         ? `${Math.floor(
-                            sampleReportData.maximumOfBond / 10000
-                          )}억 ${sampleReportData.maximumOfBond % 10000}만원`
+                            sampleReportData.maximumOfBond / 100000000
+                          )}억 ${
+                            (sampleReportData.maximumOfBond % 100000000) / 10000
+                          }만원`
                         : `안전`
                       : '해당없음'
                   }}
