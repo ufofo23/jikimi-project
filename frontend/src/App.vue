@@ -1,7 +1,7 @@
 <template>
   <Header />
   <RouterView />
-  <Footer />
+
   <QuickChat />
 </template>
 

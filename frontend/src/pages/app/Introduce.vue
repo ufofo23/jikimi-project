@@ -61,10 +61,11 @@
       <button class="cta-button">Watch Now</button>
     </section>
   </div>
+  <Footer></Footer>
 </template>
 
 <script setup>
-// You can add logic here if needed for form submissions or interactions.
+import Footer from '@/components/Footer.vue';
 </script>
 
 <style scoped>

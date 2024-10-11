@@ -60,7 +60,7 @@
       </div>
     </div>
   </div>
-  <!-- ====== Hero Section End -->
+  <Footer></Footer>
 </template>
 
 <script setup lang="ts">
@@ -69,6 +69,7 @@ import { useRouter } from 'vue-router'; // Vue Router 사용
 import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
 import api from '@/api/senseApi';
 import PieceSenseCard from '@/components/Cards/PieceSenseCard.vue';
+import Footer from '@/components/Footer.vue';
 
 const open = ref(false);
 const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
