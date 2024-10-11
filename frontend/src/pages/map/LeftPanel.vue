@@ -5,47 +5,16 @@
       <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
-    <!-- 매매전월세 건물유형 관련 -->
-    <div class="filter-container">
-      <!-- 거래유형 -->
-      <div class="filter-buttons">
-        <div class="dropdown-group">
-          <label for="transactionType">거래</label>
-          <select
-            id="transactionType"
-            v-model="selectedTransaction"
-            @change="selectTransaction(selectedTransaction)"
-          >
-            <option value="전체">전체</option>
-            <option value="1">매매</option>
-            <option value="2">전세</option>
-            <option value="3">월세</option>
-          </select>
-        </div>
-
-        <div class="dropdown-group">
-          <label for="buildingType">건물유형</label>
-          <select
-            id="buildingType"
-            v-model="selectedBuilding"
-            @change="selectBuilding(selectedBuilding)"
-          >
-            <option value="전체">전체</option>
-            <option value="3">연립다세대</option>
-            <option value="2">오피스텔</option>
-            <option value="1">아파트</option>
-            <option value="4">단독다가구</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
     <!-- 즐겨찾기 토글 -->
     <div class="wishlist-toggle">
-      <h2 @click="toggleWishlist">
+      <div @click="toggleWishlist">
         즐겨찾기
-        <span>{{ wishlistVisible ? '▲' : '▼' }}</span>
-      </h2>
+        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
       <div v-if="wishlistVisible">
         <ul v-if="wishlist.length">
           <li
@@ -54,7 +23,6 @@
             @click="selectApartment(item)"
           >
             <span @click="favoriteClick(item)">{{ item.apartmentName }}</span>
-
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
@@ -69,10 +37,14 @@
 
     <!-- 상세보기 토글 -->
     <div class="detail-toggle">
-      <h2 @click="toggleDetails">
+      <div @click="toggleDetails">
         상세보기
-        <span>{{ detailsVisible ? '▲' : '▼' }}</span>
-      </h2>
+        <span class="hamburger-menu" :class="{ active: detailsVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
       <div v-if="detailsVisible">
         <div v-if="selectedProperty && selectedProperty.length">
           <h2 class="apart-name">
@@ -300,6 +272,35 @@ const selectBuilding = (type) => {
 </script>
 
 <style scoped>
+.hamburger-menu {
+  width: 30px;
+  height: 25px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: black;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active .bar:nth-child(1) {
+  transform: translateY(11px) rotate(45deg);
+}
+
+.hamburger-menu.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+  transform: translateY(-11px) rotate(-45deg);
+}
+
 .left-panel {
   width: 30%;
   height: 100%;
@@ -322,9 +323,10 @@ const selectBuilding = (type) => {
 
 .wishlist-toggle,
 .detail-toggle {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   cursor: pointer;
   border-bottom-width: 0px;
+  margin-top: 50px;
 }
 
 .detail-toggle div {
@@ -406,6 +408,24 @@ table th {
   gap: 20px;
   align-items: center;
   width: 100%; /* Take full width */
+}
+
+/* From Uiverse.io by alexroumi */
+button {
+  padding: 15px 25px;
+  border: unset;
+  border-radius: 15px;
+  color: #212121;
+  z-index: 1;
+  background: #e8e8e8;
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+  overflow: hidden;
+  width: 200px;
 }
 
 /* Media query for larger screens */
