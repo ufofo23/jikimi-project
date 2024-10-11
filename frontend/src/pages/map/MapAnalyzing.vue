@@ -2,22 +2,13 @@
   <div class="address-search-container">
     <!-- 주소 검색과 폼 화면 -->
     <div v-if="showAddressForm">
-      <input
-        type="button"
-        @click="openDaumPostcode"
-        value="단지, 지역, 지하철, 학교 검색"
-        class="search-input"
-        :disabled="isLoading"
-      />
-
       <div v-if="isLoading" class="loading-spinner">검색 중...</div>
 
       <!-- 주소 입력 폼 -->
       <div v-if="selectedAddress" class="selected-address-form">
-        <div class="texxt">조회된 주소 정보</div>
-        <!-- 라벨과 입력칸 가로 배열 -->
-        <div class="form-group row">
-          <label class="form-label">주소</label>
+        <h3>주소 입력</h3>
+        <div class="form-group">
+          <label>주소:</label>
           <input
             type="text"
             :value="selectedAddress.jibunJuso"
@@ -26,8 +17,8 @@
           />
         </div>
 
-        <div class="form-group row">
-          <label class="form-label">건물명</label>
+        <div class="form-group">
+          <label>건물명:</label>
           <input
             type="text"
             :value="selectedAddress.buildingName"
@@ -37,11 +28,10 @@
         </div>
 
         <!-- 동/호수 입력 폼 -->
-        <div class="detail-form row">
-          <h5 class="texxt">필요시 동/호수 기입</h5>
+        <div class="detail-form">
           <form @submit.prevent="submitForm">
-            <div class="form-group row">
-              <label class="form-label">동</label>
+            <div class="form-group">
+              <label>동 (선택사항):</label>
               <input
                 type="text"
                 v-model="dong"
@@ -50,8 +40,8 @@
                 title="1-4자리 숫자만 입력 가능합니다"
               />
             </div>
-            <div class="form-group row">
-              <label class="form-label">호수</label>
+            <div class="form-group">
+              <label>호수 (선택사항):</label>
               <input
                 type="text"
                 v-model="ho"
@@ -65,7 +55,7 @@
 
         <!-- 거래 진행 여부 선택 처리 -->
         <div class="contract-in-progress">
-          <p class="texxt">지금 부동산 계약이 진행 중인가요?</p>
+          <p>지금 부동산 계약을 하는 중인가요?</p>
           <div class="button-group">
             <button
               @click="handleProgressType('yes')"
@@ -91,31 +81,32 @@
         <!-- 계약 중인 경우 전세금, 계약자 성명 입력 폼 -->
         <div v-if="progressType === 'yes'" class="detail-form">
           <form @submit.prevent="submitForm">
-            <div class="form-group row">
-              <label class="form-label">전세금 </label>
+            <div class="form-group">
+              <label
+                >전세금:<span v-if="Number(deposit) >= 10000"
+                  >&nbsp;{{ formattedDeposit }}</span
+                >
+              </label>
               <input
                 type="text"
-                v-model="jeonsePrice"
+                v-model="deposit"
                 required
                 class="form-control"
-                placeholder="(단위 : 원)"
               />
             </div>
-
-            <!-- 집주인 성명 입력 -->
-            <div class="form-group flex">
-              <label class="form-label juin">집주인 성명</label>
-
+            <div class="form-group">
+              <label>집주인 성명:</label>
               <div
                 v-for="(name, index) in names"
                 :key="index"
-                class="name-input"
+                class="name-input-container"
               >
                 <input
                   type="text"
                   v-model="names[index]"
                   required
                   class="form-control"
+                  placeholder="집주인 성명"
                 />
                 <div class="button-group">
                   <button
@@ -148,13 +139,44 @@
               isLoading ||
               !progressType ||
               (progressType === 'yes' &&
-                (!jeonsePrice || names.some((name) => !name)))
+                (!deposit || names.some((name) => !name)))
             "
           >
             제출
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- 유니크 코드 목록 화면 -->
+    <div v-if="!showAddressForm && addresses.length > 0" class="address-list">
+      <h3>현재 거주중인 주소를 선택해주세요</h3>
+      <div
+        v-for="address in addresses"
+        :key="address.commonUniqueNo"
+        class="address-item"
+      >
+        <div class="address-details">
+          <p class="unique-code">유니크 코드: {{ address.commonUniqueNo }}</p>
+          <p class="address">주소: {{ address.commAddrLotNumber }}</p>
+          <p class="status">상태: {{ address.resState }}</p>
+        </div>
+        <button
+          @click="sendUniqueCode(address.commonUniqueNo)"
+          class="select-button"
+          :disabled="isLoading"
+        >
+          선택
+        </button>
+      </div>
+
+      <!-- 뒤로가기 버튼 -->
+      <button @click="goBack" class="back-button">뒤로가기</button>
+    </div>
+
+    <div v-if="errorMessage" class="error-message" role="alert">
+      {{ errorMessage }}
+      <button @click="errorMessage = ''" class="close-error">✕</button>
     </div>
   </div>
 </template>
@@ -163,10 +185,8 @@
 import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
 
 const route = useRoute();
-const router = useRouter();
 
 // 상태 관리
 const addresses = ref([]);
@@ -177,7 +197,7 @@ const errorMessage = ref('');
 const isLoading = ref(false);
 const progressType = ref(null);
 const showAddressForm = ref(false);
-const jeonsePrice = ref('');
+const deposit = ref('');
 const names = ref(['']);
 const formattedDeposit = ref('');
 
@@ -202,7 +222,7 @@ const formatDeposit = (value) => {
 };
 
 // deposit이 변경될 때마다 formattedDeposit 업데이트
-watch(jeonsePrice, (newValue) => {
+watch(deposit, (newValue) => {
   formattedDeposit.value = formatDeposit(newValue);
 });
 
@@ -221,7 +241,7 @@ const removeName = (index) => {
 // API 설정
 const api = axios.create({
   baseURL: 'http://localhost:8080/api/safety-inspection',
-  timeout: 100000,
+  timeout: 30000,
 });
 
 // 에러 처리 함수
@@ -257,7 +277,7 @@ const openDaumPostcode = () => {
 const handleProgressType = (type) => {
   progressType.value = type;
   if (type === 'no') {
-    jeonsePrice.value = '';
+    deposit.value = '';
     names.value = [''];
   }
 };
@@ -275,7 +295,7 @@ const generatePayload = (uniqueCode) => {
   const price = selectedAddress.value.price * 100000000;
 
   let zipCode = '';
-  if (selectedAddress.value.zipCode < 10000) {
+  if (selectedAddress.value.zipcode < 10000) {
     zipCode = '0' + selectedAddress.value.zipCode;
   } else {
     zipCode = '' + selectedAddress.value.zipCode;
@@ -289,7 +309,7 @@ const generatePayload = (uniqueCode) => {
     dong: dong.value || '',
     ho: ho.value || '',
     zipCode,
-    jeonsePrice: progressType.value === 'yes' ? jeonsePrice.value : '',
+    deposit: progressType.value === 'yes' ? deposit.value : '',
     contractName: names.value,
     jibunAddress,
     uniqueCode,
@@ -334,9 +354,8 @@ const sendUniqueCode = async (uniqueCode) => {
 
     const response = await api.post('/cors', payload);
     const reportNo = response.data;
-    console.log(reportNo);
 
-    router.push(`/report/${reportNo}`);
+    route.push({ path: '/report', query: { reportNo } });
   } catch (error) {
     handleError(error, '유니크 코드 전송에 실패했습니다.');
   } finally {
@@ -353,7 +372,7 @@ const resetForm = (fullReset = true) => {
   }
   dong.value = '';
   ho.value = '';
-  jeonsePrice.value = '';
+  deposit.value = '';
   names.value = [''];
   errorMessage.value = '';
   progressType.value = null;
@@ -366,7 +385,7 @@ onMounted(() => {
       jibunJuso: route.query.jibunJuso,
       buildingName: route.query.buildingName,
       propertyNo: route.query.propertyNo,
-      zipCode: route.query.zipCode,
+      zipCode: route.query.zipcode,
       price: route.query.price,
     };
   }
@@ -374,163 +393,279 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.detail-form h5 {
-  font-size: 20px; /* 글씨 크기 줄임 */
-  margin-bottom: 10px;
-  color: blue;
-}
-
-.form-label {
-  font-size: 25px; /* 글씨 크기 키움 */
-  text-align: center; /* 가운데 정렬 */
-}
-
-.name-input-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.texxt {
-  font-size: 30px;
-  text-align: center;
-  margin: 50px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
 .address-search-container {
-  background-color: #f8ffe9;
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Centers the content vertically */
-  align-items: center; /* Centers the content horizontally */
-  height: 100vh; /* Full viewport height for vertical centering */
+  padding: 40px 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  justify-content: center; /* Centers row contents */
-}
-.form-label {
-  width: 30%; /* 라벨 너비 */
-  font-weight: bold;
+.form-section {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.form-control {
-  width: 70%; /* 입력칸 너비 */
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-/* 기본 검색 입력 필드 */
-.search-input {
+.search-button {
   width: 100%;
   height: 60px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  padding: 0 15px;
-  font-size: 16px;
+  border-radius: 30px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 50px;
-  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.search-input:hover:not(:disabled) {
-  border-color: rgb(24, 86, 210);
+.search-button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.search-button:disabled {
+  background-color: #b0d4ff;
+  cursor: not-allowed;
+}
+
+.search-button i {
+  margin-right: 10px;
 }
 
 .loading-spinner {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 20px 0;
-  color: #666;
+  color: #007bff;
 }
 
-/* 버튼 그룹 스타일 */
+.spinner {
+  border: 4px solid rgba(0, 123, 255, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.form-title,
+.list-title {
+  color: #007bff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
 .button-group {
   display: flex;
   gap: 10px;
   margin: 10px 0;
-  justify-content: center;
 }
 
-.submit-button {
-  margin-top: 30px;
-}
-
-.submit-button,
-.search-input {
-  background-color: #4a61f3; /* Use the same blue color from the image */
-  color: white;
-  border: none;
-  border-radius: 25px; /* Rounded corners */
-  font-size: 16px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-  width: 100%; /* Full-width for your use case */
-  height: 50px;
-}
-
-.submit-button:hover:not(:disabled),
-.search-input:hover:not(:disabled) {
-  background-color: #3a51e3; /* Slightly darker on hover */
-}
-
-.submit-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.submit-section,
-.address-search-container {
-  display: flex;
-  justify-content: center; /* Centers the button horizontally */
-  align-items: center; /* Centers the button vertically if necessary */
-}
-/* 계약 진행 여부 선택 버튼 */
 .progress-option-button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #007bff;
   border-radius: 4px;
   background-color: white;
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .progress-option-button.active {
-  background-color: rgb(24, 86, 210);
+  background-color: #007bff;
   color: white;
-  border-color: rgb(24, 86, 210);
 }
 
-/* 계약자 성명 추가/제거 버튼 */
+.name-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .add-button,
 .remove-button {
-  background-color: #0d6efd;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
   width: 40px;
   height: 40px;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.add-button {
+  background-color: #28a745;
 }
 
 .add-button:hover {
-  background-color: #0d6efd;
+  background-color: #218838;
+}
+
+.remove-button {
+  background-color: #dc3545;
 }
 
 .remove-button:hover {
   background-color: #c82333;
+}
+
+.submit-button,
+.select-button,
+.back-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button {
+  background-color: #007bff;
+  margin-top: 20px;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submit-button:disabled {
+  background-color: #b0d4ff;
+  cursor: not-allowed;
+}
+
+.address-list {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.address-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  margin: 15px 0;
+  padding: 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.address-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.address-details p {
+  margin: 5px 0;
+  color: #495057;
+}
+
+.unique-code {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.select-button {
+  background-color: #28a745;
+  padding: 8px 16px;
+}
+
+.select-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.select-button:disabled {
+  background-color: #8fc7a1;
+  cursor: not-allowed;
+}
+
+.back-button {
+  background-color: #6c757d;
+  margin-top: 20px;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-error {
+  background: none;
+  border: none;
+  color: #721c24;
+  font-size: 18px;
+  cursor: pointer;
 }
 </style>

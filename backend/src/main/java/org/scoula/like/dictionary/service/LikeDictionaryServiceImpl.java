@@ -30,6 +30,8 @@ public class LikeDictionaryServiceImpl implements LikeDictionaryService {
         token = token.substring(7);
         String userId = jwtUtil.getUserIdFromToken(token);
 
+        log.info("DDDDDDDDDDDDDDDDDDICT");
+
         return mapper.getList(userId).stream()
                 .map(DictionaryDTO::of)
                 .toList();

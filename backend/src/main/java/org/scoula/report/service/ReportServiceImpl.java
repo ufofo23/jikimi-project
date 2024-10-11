@@ -58,7 +58,7 @@ public class ReportServiceImpl implements ReportService {
         report.setAddress(payload.get("jibunAddress").toString());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
-        if (payload.get("jeonsePrice") != null || payload.get("jeonsePrice").equals("")) {
+        if (payload.get("jeonsePrice") != null && payload.get("jeonsePrice") != "") {
             Long jeonsePrice = Long.parseLong(payload.get("jeonsePrice").toString());
 
             if (jeonsePrice != 0) {

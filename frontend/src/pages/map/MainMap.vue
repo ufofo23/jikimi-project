@@ -321,7 +321,7 @@ const updateMarkers = (newCoords) => {
       position: markerPosition, // 마커와 동일한 위치에 오버레이 표시
       content: overlayContent, // 커스텀 오버레이 내용
       clickable: false, // 오버레이 클릭을 비활성화
-      yAnchor: 1,
+      yAnchor: 3,
       zIndex: 3,
     });
 

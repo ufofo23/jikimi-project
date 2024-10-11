@@ -840,6 +840,10 @@ VALUES
     (
         '부동산 안전진단을 받을 때 주요 점검 항목은 무엇인가요?',
         '주요 점검 항목에는 건물의 소유권 및 저당권, 주용도, 위반건축물 여부, 대지권등기 등이 있습니다.'
+    ),
+    (
+        '우리 서비스에서 제공하는 주요 기능은 무엇인가요?',
+        '우리 서비스는 부동산 안전진단, 실거래가 조회, 부동산 스터디, 내 집 분석 기능을 제공합니다. 이를 통해 사용자는 부동산 거래 및 투자의 위험을 사전에 확인하고, 부동산 시세와 관련 정보를 신속하게 파악할 수 있습니다.'
     );
 
 
@@ -996,4 +1000,7 @@ select * from bml_tbl;
 select * from cor_tbl;
 select * from report_tbl;
 select * from analysis_tbl;
-select * from estate.property_location;
+select * from property_location;
+select * from dictionary_tbl;
+
+select * from report_tbl;
