@@ -90,7 +90,8 @@ public class CopyOfRegisterMultiService {
         ResRegisterEntriesList firstEntry = obj.getData().getResRegisterEntriesList()[0];
 
         String ownerStateStr = getOwnerState(firstEntry);
-        Double ownerState = Double.parseDouble(ownerStateStr);
+        String cleanedInput = ownerStateStr.replace("&", "");
+        Double ownerState = Double.parseDouble(cleanedInput);
         List<String> ownershipList = getOwnership(firstEntry);
         String ownership = String.join("", ownershipList);
         String commonOwner = getCommonOwner(firstEntry);

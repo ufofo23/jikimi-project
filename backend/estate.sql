@@ -1008,7 +1008,7 @@ desc report_tbl;
 select * from report_tbl;
 select * from member_report_tbl;
 update member_report_tbl set report_no = 2 where member_report_no = 3;
-delete from member_report_tbl where report_no = 0;
+delete from member_report_tbl where member_report_no = 2;
 insert into member_report_tbl (member_no, report_no) values (1, 1);
 select * from member_tbl;
 

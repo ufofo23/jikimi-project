@@ -44,7 +44,6 @@ public class ReportServiceImpl implements ReportService {
         ReportVO reportVO = report.toVO();
         reportVO.setAnalysisNo(analysisNo);
 
-
         return mapper.create(reportVO);
     }
 
@@ -88,32 +87,43 @@ public class ReportServiceImpl implements ReportService {
             report.setJeonseRate(null);
         }
 
+        report.setPrice(Integer.parseInt(payload.get("price").toString()));
+
         // contractName : null, "" 예외처리 - accordOwner을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         // payload.get("contractName")이 List가 아니면 제외
-        if(payload.get("contractName") != null && payload.get("contractName") instanceof List) {
+        if(payload.get("contractName") != null && payload.get("contractName") instanceof List<?>) {
             // 공동 소유를 감안하여 리스트에 받음
             List<String> contractNameList = (List<String>) payload.get("contractName");
 
-            String ownership = cor.getOwnership();
+            if(contractNameList.isEmpty()) {
+                log.info("계약자가 비어있음");
+                report.setAccordOwner(null);
+            } else {
+                String ownership = cor.getOwnership();
 
-            report.setOwnership(ownership);
-            // 정규 표현식을 사용하여 이름 부분만 추출
-            Pattern pattern = Pattern.compile("(\\S+)(?= \\([^)]*\\))");
-            Matcher matcher = pattern.matcher(ownership);
+                report.setOwnership(ownership);
+                // 정규 표현식을 사용하여 이름 부분만 추출
+                Pattern pattern = Pattern.compile("(\\S+)(?= \\([^)]*\\))");
+                Matcher matcher = pattern.matcher(ownership);
 
-            // 결과를 저장할 List
-            List<String> ownershipList = new ArrayList<>();
+                // 결과를 저장할 List
+                List<String> ownershipList = new ArrayList<>();
 
-            // 매칭되는 이름을 찾기
-            while (matcher.find()) {
-                if(matcher.group(1).isEmpty()) report.setAccordOwner(null);
-                ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
+                // 매칭되는 이름을 찾기
+                while (matcher.find()) {
+                    if(matcher.group(1).isEmpty()) {
+                        log.info("문자열이 비어있는 \"\"");
+                        report.setAccordOwner(null);
+                    }
+                    ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
+                }
+
+                report.setAccordOwner(
+                        isAccordOwner(contractNameList, ownershipList)
+                );
             }
-
-            report.setAccordOwner(
-                    isAccordOwner(contractNameList, ownershipList)
-            );
         } else {
+            log.info("계약자 값 X");
             report.setAccordOwner(null);
         }
 
@@ -125,7 +135,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         // 주용도가 null이면 판단불가
-        if(bml.getResContents() == null) {
+        if(bml.getResContents() == null || bml.getResContents().equals("결과값이 없습니다.")) {
             report.setUseType(null);
         } else {
             report.setUseType(bml.getResContents());
@@ -260,7 +270,7 @@ public class ReportServiceImpl implements ReportService {
 
         // 계약자, 소유자 불일치 시 고위험
         if(report.getAccordOwner()!=null && !report.getAccordOwner()) {
-            log.info("계약자 - 소유자가 불일치하여 총점 0점");
+            log.info("계약자 - 소유자가 불일치하여 총점 0점 : " + report.getAccordOwner().toString());
             return 0;
         }
 

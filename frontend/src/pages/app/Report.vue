@@ -209,8 +209,8 @@
                 sampleReportData.accordOwner !== null
                   ? sampleReportData.accordOwner != null &&
                     !sampleReportData.accordOwner
-                    ? `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치하지 않습니다.`
-                    : `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치합니다.`
+                    ? `소유자와 계약자가 일치하지 않습니다.`
+                    : `소유자와 계약자가 일치합니다.`
                   : '해당 물건에 대한 데이터 부족합니다.'
               }}
             </p>
@@ -244,21 +244,25 @@
                   :style="{
                     color:
                       sampleReportData.maximumOfBond !== null
-                        ? sampleReportData.maximumOfBond > 0
-                          ? 'red'
+                        ? (sampleReportData.maximumOfBond * 100) /
+                            sampleReportData.price <
+                          50
+                          ? (sampleReportData.maximumOfBond * 100) /
+                              sampleReportData.price <=
+                            30
+                            ? 'red'
+                            : 'yellow'
                           : 'green'
                         : 'black',
                   }"
                 >
                   {{
                     sampleReportData.maximumOfBond !== null
-                      ? sampleReportData.maximumOfBond >= 100000000
-                        ? `${Math.floor(
-                            sampleReportData.maximumOfBond / 100000000
-                          )}억 ${
-                            (sampleReportData.maximumOfBond % 100000000) / 10000
-                          }만원`
-                        : `안전`
+                      ? `${Math.floor(
+                          sampleReportData.maximumOfBond / 100000000
+                        )}억 ${
+                          (sampleReportData.maximumOfBond % 100000000) / 10000
+                        }만원`
                       : '분석불가'
                   }}
                 </span>
@@ -269,10 +273,16 @@
             <p>
               {{
                 sampleReportData.maximumOfBond !== null
-                  ? sampleReportData.maximumOfBond > 0
-                    ? `근저당권 채권 최고액이 ${sampleReportData.maximumOfBond}원으로 위험 수준입니다.`
-                    : `근저당권으로 잡힌 채권이 없어 안전합니다.`
-                  : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
+                  ? (sampleReportData.maximumOfBond * 100) /
+                      sampleReportData.price <=
+                    30
+                    ? `근저당권으로 잡힌 채권이 없어 안전합니다.`
+                    : (sampleReportData.maximumOfBond * 100) /
+                        sampleReportData.price <
+                      50
+                    ? `근저당권 채권 최고액이 주의 수준입니다.`
+                    : `근저당권 채권 최고액이 위험 수준입니다.`
+                  : `해당 물건에 대한 데이터를 불러올 수 없습니다.`
               }}
             </p>
           </div>
@@ -316,11 +326,12 @@
                   }"
                 >
                   {{
-                    sampleReportData.useType !== null
-                      ? sampleReportData.useType.indexOf('아파트') >= 0 ||
-                        sampleReportData.useType.indexOf('주택') >= 0 ||
-                        sampleReportData.useType.indexOf('주거') >= 0 ||
-                        sampleReportData.useType.indexOf('오피스텔') >= 0
+                    sampleReportData.useType !== null || undefined
+                      ? sampleReportData.useType &&
+                        (sampleReportData.useType.indexOf('주택') >= 0 ||
+                          sampleReportData.useType.indexOf('아파트') >= 0 ||
+                          sampleReportData.useType.indexOf('주거') >= 0 ||
+                          sampleReportData.useType.indexOf('오피스텔') >= 0)
                         ? '안전'
                         : '위험'
                       : '분석불가'
@@ -426,7 +437,7 @@
                   :style="{
                     color:
                       sampleReportData.commonOwner !== null
-                        ? sampleReportData.commonOwner.length == 1
+                        ? sampleReportData.commonOwner == '단독소유'
                           ? 'green'
                           : 'orange'
                         : 'black',
@@ -434,7 +445,7 @@
                 >
                   {{
                     sampleReportData.commonOwner !== null
-                      ? sampleReportData.commonOwner.length == 1
+                      ? sampleReportData.commonOwner == '단독소유'
                         ? '안전'
                         : '주의'
                       : '분석불가'
@@ -447,7 +458,7 @@
             <p>
               {{
                 sampleReportData.commonOwner !== null
-                  ? sampleReportData.commonOwner === '단독'
+                  ? sampleReportData.commonOwner === '단독소유'
                     ? '해당 물건은 단독 소유입니다.'
                     : '해당 물건은 공동 소유입니다.'
                   : '해당 물건에 대한 데이터 부족합니다.'
@@ -679,6 +690,7 @@ const sampleReportData = ref({
   contractName: null,
   maximumOfBond: null,
   ownership: null,
+  price: null,
   // 다른 필드들도 여기에 추가
 });
 
