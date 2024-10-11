@@ -47,6 +47,7 @@ public class TestController {
         // 파싱
         int analysisNo = payload.getAnalysisNo();
         String propertyNo = payload.getPropertyNo();
+        log.info(propertyNo);
 
         Map<String, Object> payloadMap = new HashMap<>();
 
@@ -58,9 +59,9 @@ public class TestController {
         payloadMap.put("dong", payload.getDong());
         payloadMap.put("ho", payload.getHo());
         payloadMap.put("zipCode", payload.getZipCode());
-        payloadMap.put("deposit", payload.getDeposit());
+        payloadMap.put("jeonsePrice", payload.getJeonsePrice());
         payloadMap.put("contractName", payload.getContractName());
-        payloadMap.put("jibunAddress", payload.getJibunAddress());
+        payloadMap.put("addr-jibun-address", payload.getJibunAddress());
         payloadMap.put("propertyNo", payload.getPropertyNo());
         payloadMap.put("price", payload.getPrice());
 

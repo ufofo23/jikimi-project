@@ -956,3 +956,4 @@ SELECT count(*) from property_location;
 select * from bml_tbl;
 select * from cor_tbl;
 select * from report_tbl;
+select * from analysis_tbl;

@@ -48,17 +48,20 @@ public class ReportServiceImpl implements ReportService {
         ReportDTO report = new ReportDTO();
 
         CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
-        log.info("corDTO :::::::::::::: " + cor.toString());
+        log.info("corDTO :::::::::::::: " + cor);
         BuildingManagementLedgerDto bml = bmlMapper.selectBuildingData(analysisNo);
-        log.info("bmlDTO :::::::::::::: " + bml.toString());
+        log.info("bmlDTO :::::::::::::: " + bml);
 
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("addr-jibun-address").toString());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
+        log.info("JJJJJJJJJJJJJJJJJJJJJJJJJJJJEONSE");
+        log.info(payload.get("jeonsePrice"));
         if (payload.get("jeonsePrice") != null) {
             int jeonsePrice = Integer.parseInt(payload.get("jeonsePrice").toString());
+
             if (jeonsePrice != 0) {
                 report.setJeonseRate(jeonsePrice / Integer.parseInt(payload.get("price").toString()));
             }

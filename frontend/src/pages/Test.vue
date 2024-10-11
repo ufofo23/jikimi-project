@@ -71,8 +71,8 @@
         <input type="text" v-model="zipcode" class="form-control" />
       </div>
       <div class="form-group">
-        <label>deposit:</label>
-        <input type="text" v-model="deposit" class="form-control" />
+        <label>jeonsePrice:</label>
+        <input type="text" v-model="jeonsePrice" class="form-control" />
       </div>
       <div class="form-group">
         <label>contractName:</label>
@@ -119,9 +119,10 @@ const buildingName = ref('');
 const dong = ref('');
 const ho = ref('');
 const zipcode = ref('');
-const deposit = ref('');
+const jeonsePrice = ref('');
 const contractName = ref('');
 const jibunAddress = ref('');
+const propertyNo = ref('');
 const price = ref('');
 
 // result
@@ -158,6 +159,7 @@ const test = async () => {
   }
 
   const payload = {
+    propertyNo: emptyToNull(propertyNo.value),
     analysisNo: Number(emptyToNull(analysisNo.value)),
     addrSido: emptyToNull(addr_sido.value),
     addrDong: emptyToNull(addr_dong.value),
@@ -166,7 +168,7 @@ const test = async () => {
     dong: emptyToNull(dong.value),
     ho: emptyToNull(ho.value),
     zipcode: emptyToNull(zipcode.value),
-    deposit: emptyToNull(deposit.value),
+    jeonsePrice: emptyToNull(jeonsePrice.value),
     contractName: checkEmpty ? null : namesList,
     jibunAddress: emptyToNull(jibunAddress.value),
     price: emptyToNull(price.value),
@@ -180,7 +182,7 @@ const test = async () => {
     const response2 = await testApi.createBml(bmlData);
     console.log('bmlData complete : ', response2);
     const result = await testApi.analysis(payload);
-    console.log('analyzing complete : ', response2);
+    console.log('analyzing complete : ', result);
   } catch (e) {
     console.log(e);
   }

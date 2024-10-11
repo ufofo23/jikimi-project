@@ -17,7 +17,7 @@ public class Payload {
     private String dong;
     private String ho;
     private String zipCode;
-    private String deposit;
+    private String jeonsePrice;
     private List<String> contractName;
     private String jibunAddress;
     private String propertyNo;
