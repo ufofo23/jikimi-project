@@ -7,7 +7,7 @@
 
     <div v-if="chatVisible" class="chat-box">
       <div class="header">
-        <h3 class="title">Bugi Bot</h3>
+        <h3 class="title">나만의 부동산 도우미, 부기봇</h3>
         <button @click="toggleChat" class="close-button">
           <span>×</span>
         </button>
@@ -171,6 +171,10 @@ onMounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+h3 {
+    color: white;
+}
 
 .quick-chat {
   position: fixed;
