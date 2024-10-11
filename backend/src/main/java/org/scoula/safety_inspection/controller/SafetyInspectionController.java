@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,13 @@ public class SafetyInspectionController {
     @PostMapping("/address")
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
+            for (Map.Entry<String, Object> entry : payload.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                String type = (value != null) ? value.getClass().getSimpleName() : "null";
+
+                System.out.println(key + " : " + value + " - " + type);
+            }
 
 //            if (payload != null) {
 //                payload.forEach((key, value) ->
@@ -52,16 +56,10 @@ public class SafetyInspectionController {
 
     // 등기부 등본 관련
     @PostMapping("/cors")
-    public ResponseEntity<String> handleUniqueCode(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> handleUniqueCode(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> payload) {
         try {
-//            if (payload != null) {
-//                payload.forEach((key, value) ->
-//                        System.out.printf("Key: %s, Value: %s, Type: %s%n",
-//                                key, value, value == null ? "null" : value.getClass().getSimpleName()));
-//            }
-//
-//            return ResponseEntity.ok("p");
-            String reportNo = safetyInspectionService.processSafetyInspection(payload);
+
+            String reportNo = safetyInspectionService.processSafetyInspection(payload, token);
             return ResponseEntity.ok(reportNo);
         } catch (Exception e) {
             e.printStackTrace();

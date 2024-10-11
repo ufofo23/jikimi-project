@@ -176,7 +176,7 @@ const test = async () => {
     jeonsePrice: emptyToNull(jeonsePrice.value),
     contractName: checkEmpty ? null : namesList,
     jibunAddress: emptyToNull(jibunAddress.value),
-    price: emptyToNull(price.value),
+    price: emptyToNull(String(price.value)),
   };
 
   console.log('payload : ', payload);

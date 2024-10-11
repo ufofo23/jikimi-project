@@ -1,6 +1,7 @@
 package org.scoula.safety_inspection.service;
 
 import lombok.RequiredArgsConstructor;
+import org.scoula.like.report.service.LikeReportService;
 import org.scoula.report.mapper.ReportMapper;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerMultiService;
@@ -28,12 +29,13 @@ public class SafetyInspectionService {
     private final ReportService reportService;
     private final ExtractUnicodeService extractUnicodeService;
     private final ReportMapper reportMapper;
+    final private LikeReportService likeService;
 
     /**
      * API 추출 및 DB 저장 트랜잭션 관리를 위한 서비스
      * @param payload
      */
-    public String processSafetyInspection(Map<String, Object> payload) {
+    public String processSafetyInspection(Map<String, Object> payload, String token) {
         try {
             String propertyNo = (String) payload.get("propertyNo");
             Integer analysisNo = analysisService.processPropertyAnalysis(propertyNo, payload);
@@ -56,8 +58,11 @@ public class SafetyInspectionService {
 
             // 보고서 생성 및 저장
             ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
-            reportService.create(reportDTO, analysisNo);
+            reportService.create(reportDTO, analysisNo, token);
             int reportNo = reportMapper.getReportNo(analysisNo);
+
+            // like report
+            likeService.create(reportNo, token);
             return String.valueOf(reportNo);
 
         } catch (Exception e) {

@@ -16,9 +16,7 @@ export default {
 
   async create(reportNo) {
     try {
-      const { data } = await axiosInstance.get(
-        `${BASE_URL}/${reportNo}`
-      );
+      const { data } = await axiosInstance.get(`${BASE_URL}/${reportNo}`);
       return data;
     } catch (error) {
       throw error;
