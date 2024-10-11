@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="checklist-section" v-show="!showResults">
-      <h1 class="title">🏠 전세 사기 위험 체크리스트 🔍</h1>
+      <h1 class="title"> 전세 사기 위험 체크리스트 </h1>
 
       <form @submit.prevent="submitChecklist" class="checklist-form">
         <div
@@ -39,7 +39,7 @@
     </div>
 
     <div class="results-section" v-show="showResults">
-      <h1 class="title">📊 시나리오 분석 결과</h1>
+      <h1 class="title"> 시나리오가 도착했어요 !</h1>
       <Loading v-if="loading" />
 
       <div v-else>
@@ -50,12 +50,46 @@
           <div
             v-for="(scenario, index) in scenarios"
             :key="index"
-            class="scenario-item"
+            class="scenario-card"
+            :class="{ 'active': selectedScenario === index }"
           >
-            <div
-              class="scenario-content"
-              v-html="formatContent(scenario)"
-            ></div>
+            <div class="scenario-main">
+              <div class="scenario-header">
+                <div class="scenario-title">
+                  <span class="scenario-number">CASE {{ index + 1 }}</span>
+                  <h2>{{ scenario.name }}</h2>
+                </div>
+                <div class="fraud-badge">
+                  <span class="fraud-type">{{ scenario.type }}</span>
+                </div>
+              </div>
+              <div class="scenario-content">
+                <p class="fraud-scenario">{{ scenario.fraud }}</p>
+                <button 
+                  class="toggle-solution"
+                  @click="toggleSolution(index)"
+                >
+                  <span class="toggle-text">대처 방안 {{ selectedScenario === index ? '접기' : '펼치기' }}</span>
+                  <span class="toggle-icon" :class="{ 'rotated': selectedScenario === index }">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div 
+              class="solution-panel"
+              :class="{ 'show': selectedScenario === index }"
+            >
+              <div class="solution-content">
+                <div class="solution-header">
+                  <span class="solution-icon">🛡️</span>
+                  <h3>대처 방안</h3>
+                </div>
+                <p>{{ scenario.address }}</p>
+              </div>
+            </div>
           </div>
         </div>
         <button @click="resetForm" class="reset-button">다시 체크하기</button>
@@ -65,7 +99,6 @@
 </template>
 
 <script>
-import { marked } from 'marked';
 import Loading from '@/pages/Loading.vue';
 
 export default {
@@ -130,6 +163,7 @@ export default {
       scenarios: [],
       loading: false,
       showResults: false,
+      selectedScenario: null,
     };
   },
   methods: {
@@ -166,21 +200,38 @@ export default {
       }
     },
 
-    extractScenarios(content) {
-      const scenarios = [];
-      const scenarioRegex = /\/start\/([\s\S]*?)\/end\//g;
-      let match;
-
-      while ((match = scenarioRegex.exec(content)) !== null) {
-        const scenarioContent = match[1].trim();
-        scenarios.push(scenarioContent);
-      }
-
-      return scenarios;
+    toggleSolution(index) {
+    this.selectedScenario = this.selectedScenario === index ? null : index;
     },
 
-    formatContent(content) {
-      return marked(content);
+    extractScenarios(content) {
+      const nameRegex = /\$start-name\$(.*?)\$end-name\$/gs;
+      const fraudRegex = /\$start-fraud\$(.*?)\$end-fraud\$/gs;
+      const typeRegex = /\$start-type\$(.*?)\$end-type\$/gs;
+      const addressRegex = /\$start-address\$(.*?)\$end-address\$/gs;
+
+      const names = [...content.matchAll(nameRegex)].map(match => match[1].trim());
+      const frauds = [...content.matchAll(fraudRegex)].map(match => match[1].trim());
+      const types = [...content.matchAll(typeRegex)].map(match => match[1].trim());
+      const addresses = [...content.matchAll(addressRegex)].map(match => match[1].trim());
+
+      const scenarios = names.map((name, index) => ({
+        name,
+        fraud: frauds[index] || '',
+        type: types[index] || '',
+        address: addresses[index] || ''
+  }));
+
+  return scenarios;
+},
+
+    formatContent(scenario) {
+      return `
+        ${scenario.name}
+        ${scenario.type}
+        ${scenario.fraud}
+        ${scenario.address}
+      `;
     },
 
     resetForm() {
@@ -194,68 +245,77 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
-  font-family: 'Noto Sans KR', sans-serif;
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 60px 20px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  background-color: #f0f7ff;
 }
 
 .title {
-  color: #1e3a8a;
-  font-size: 2.5rem;
+  background: linear-gradient(135deg, #0050b3 0%, #1890ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 3.5rem;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
   font-weight: 700;
+  letter-spacing: -0.03em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .checklist-form {
   background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 3.5rem;
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(24, 144, 255, 0.1);
 }
 
 .question-item {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  margin-bottom: 2.5rem;
+  padding: 2.5rem;
+  border: 2px solid #e6f7ff;
+  border-radius: 20px;
   transition: all 0.3s ease;
+  background: #ffffff;
 }
 
 .question-item:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 16px rgba(24, 144, 255, 0.1);
+  transform: translateY(-4px);
 }
 
 .question-text {
-  font-size: 1.1rem;
-  color: #2d3748;
-  margin-bottom: 0.75rem;
+  font-size: 1.3rem;
+  color: #003a8c;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  text-align: left;
 }
 
 .radio-group {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .radio-group label {
   flex: 1;
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  margin: 0.25rem;
-  background-color: #edf2f7;
-  border-radius: 4px;
+  padding: 1.25rem;
+  margin: 0;
+  background: #f0f7ff;
+  border: 2px solid #bae7ff;
+  border-radius: 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  text-align: center;
 }
 
 .radio-group label:hover {
-  background-color: #e2e8f0;
+  background: #e6f7ff;
+  border-color: #69c0ff;
 }
 
 .radio-group input[type='radio'] {
@@ -263,120 +323,290 @@ export default {
 }
 
 .radio-group input[type='radio']:checked + .radio-label {
-  background-color: #3b82f6;
+  background-color: #1890ff;
   color: white;
   font-weight: bold;
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
 }
 
 .radio-label {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .submit-button,
 .reset-button {
-  display: block;
   width: 100%;
-  padding: 1rem;
-  margin-top: 2rem;
-  font-size: 1.1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #0050b3 0%, #1890ff 100%);
   color: white;
-  background-color: #3b82f6;
   border: none;
-  border-radius: 8px;
+  border-radius: 15px;
+  font-size: 1.3rem;
+  font-weight: 700;
   cursor: pointer;
+  margin-top: 2rem;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
 }
 
 .submit-button:hover,
 .reset-button:hover {
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #003a8c 0%, #0050b3 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
 }
 
 .submit-button:disabled {
-  background-color: #9ca3af;
+  background: #bae7ff;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .loading-spinner {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border: 3px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  border-top-color: #fff;
+  border-top-color: white;
   animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 .results-section {
-  margin-top: 2rem;
-}
-
-.scenarios-container {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.scenario-item {
   background-color: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 3.5rem;
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(24, 144, 255, 0.1);
 }
+
+.scenario-card {
+  margin-bottom: 2.5rem;
+  border: 2px solid #e6f7ff;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scenario-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(24, 144, 255, 0.15);
+}
+
+.scenario-main {
+  padding: 2.5rem;
+  overflow: hidden;
+}
+
+.scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.scenario-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.scenario-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1890ff;
+  letter-spacing: 0.05em;
+  background: rgba(24, 144, 255, 0.1);
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  display: inline-block;
+}
+
+.scenario-title h2 {
+  
+  font-size: 1.5rem;
+  color: #003a8c;
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.fraud-badge {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  background: rgba(24, 144, 255, 0.1); /* 일관된 배경색 */
+  color: #0050b3; /* 일관된 텍스트 색상 */
+  padding: 0.5rem 1.5rem; 
+  border-radius: 20px; /* 라운딩 처리 */
+  font-size: 0.875rem; /* 폰트 크기 일정 유지 */
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+
+.fraud-type {
+  color: #0078d4;
+  padding: 0.5rem 2rem; /* 패딩을 줄이고 가로 패딩을 늘림 */
+  border-radius: 24px;
+  font-size: 1.1rem; 
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 
 .scenario-content {
-  color: #4a5568;
-  line-height: 1.6;
+  color: #262626;
+  padding: 1.5rem;
+  background: #f0f7ff;
+  border-radius: 20px;
 }
 
-.scenario-content h1,
-.scenario-content h2,
-.scenario-content h3 {
-  color: #2d3748;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+.fraud-scenario {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: pre-line;
+  color: #262626;
 }
 
-.scenario-content ul,
-.scenario-content ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
+.toggle-solution {
+  width: 100%;
+  padding: 1.5rem;
+  background: rgba(24, 144, 255, 0.1);
+  border: 2px solid rgba(24, 144, 255, 0.3);
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #0050b3;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.scenario-content p {
-  margin-bottom: 1rem;
+.toggle-solution:hover {
+  background: rgba(24, 144, 255, 0.2);
 }
 
-.no-results {
-  text-align: center;
-  padding: 2rem;
-  color: #718096;
-  font-style: italic;
+.toggle-icon {
+  transition: transform 0.3s ease;
 }
 
-@media (max-width: 640px) {
+.toggle-icon.rotated {
+  transform: rotate(180deg);
+}
+
+.solution-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.5s ease-out;
+  background: #f9fcff;
+}
+
+.solution-panel.show {
+  max-height: 2000px;
+}
+
+.solution-content {
+  padding: 3rem;
+  border-top: 2px solid #e6f7ff;
+}
+
+.solution-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 3px solid rgba(24, 144, 255, 0.2);
+}
+
+.solution-icon {
+  font-size: 2rem;
+}
+
+.solution-header h3 {
+  color: #003a8c;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.solution-content p {
+  color: #262626;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: pre-line;
+}
+
+@media (max-width: 768px) {
   .container {
-    padding: 20px 10px;
+    padding: 40px 15px;
   }
 
   .title {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
 
+  .checklist-form,
+  .results-section {
+    padding: 2rem;
+  }
+
+  .question-item,
+  .scenario-main,
+  .solution-content {
+    padding: 1.5rem;
+  }
+
+  
   .radio-group {
     flex-direction: column;
+    gap: 1rem;
   }
 
-  .radio-group label {
-    margin: 0.25rem 0;
+  .scenario-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .scenario-title {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .scenario-title h2 {
+    font-size: 1.6rem;
+  }
+
+  .fraud-badge {
+    align-self: flex-start;
+  }
+
+  .fraud-type {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .fraud-scenario,
+  .solution-content p {
+    font-size: 1.1rem;
   }
 }
 </style>
