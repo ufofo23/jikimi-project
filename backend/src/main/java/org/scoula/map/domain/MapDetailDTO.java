@@ -12,8 +12,8 @@ public class MapDetailDTO {
     private int propertyNo;
     private String doroJuso;
     private String jibunJuso;
-    private int zipcode;
-    private int price;
+    private String zipCode;
+    private Double price;
     private String date;
     private String propertyArea;
     private String propertyAddrFloor;

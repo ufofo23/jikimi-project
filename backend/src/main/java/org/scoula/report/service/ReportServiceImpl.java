@@ -47,6 +47,7 @@ public class ReportServiceImpl implements ReportService {
     public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload) {
         ReportDTO report = new ReportDTO();
 
+
         CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
         log.info("corDTO :::::::::::::: " + cor);
         BuildingManagementLedgerDto bml = bmlMapper.selectBuildingData(analysisNo);
@@ -54,7 +55,7 @@ public class ReportServiceImpl implements ReportService {
 
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
-        report.setAddress(payload.get("addr-jibun-address").toString());
+        report.setAddress(payload.get("jibunAddress").toString());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         log.info("JJJJJJJJJJJJJJJJJJJJJJJJJJJJEONSE");
