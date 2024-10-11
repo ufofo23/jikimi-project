@@ -9,77 +9,77 @@
         <input type="text" v-model="analysisNo" class="form-control" />
       </div>
       <div class="form-group">
-        <label>ownerState:</label>
+        <label>ownerState(전유부분):</label>
         <input type="text" v-model="ownerState" class="form-control" />
       </div>
       <div class="form-group">
-        <label>ownership:</label>
+        <label>ownership(소유자):</label>
         <input type="text" v-model="ownership" class="form-control" />
       </div>
       <div class="form-group">
-        <label>commonOwner:</label>
+        <label>commonOwner(공동소유/단독소유 여부):</label>
         <input type="text" v-model="commonOwner" class="form-control" />
       </div>
       <div class="form-group">
-        <label>changeOwnerCount:</label>
+        <label>changeOwnerCount(소유자 바뀐 횟수):</label>
         <input type="text" v-model="changeOwnerCount" class="form-control" />
       </div>
       <div class="form-group">
-        <label>maximumOfBond:</label>
+        <label>maximumOfBond(채권최고액):</label>
         <input type="text" v-model="maximumOfBond" class="form-control" />
       </div>
 
       <!-- BML -->
       <h1 class="text-center mt-5">BML</h1>
       <div class="form-group">
-        <label>resViolationStatus:</label>
+        <label>resViolationStatus(위반건축물 여부):</label>
         <input type="text" v-model="resViolationStatus" class="form-control" />
       </div>
       <div class="form-group">
-        <label>resContents:</label>
+        <label>resContents(주용도):</label>
         <input type="text" v-model="resContents" class="form-control" />
       </div>
 
       <!-- payload -->
       <h1 class="text-center mt-5">payload</h1>
       <div class="form-group">
-        <label>addr_sido:</label>
+        <label>addr_sido(시/도):</label>
         <input type="text" v-model="addr_sido" class="form-control" />
       </div>
       <div class="form-group">
-        <label>addr_dong:</label>
+        <label>addr_dong(동):</label>
         <input type="text" v-model="addr_dong" class="form-control" />
       </div>
       <div class="form-group">
-        <label>addr_lotNumber:</label>
+        <label>addr_lotNumber(지번):</label>
         <input type="text" v-model="addr_lotNumber" class="form-control" />
       </div>
       <div class="form-group">
-        <label>buildingName:</label>
+        <label>buildingName(건물명):</label>
         <input type="text" v-model="buildingName" class="form-control" />
       </div>
       <div class="form-group">
-        <label>dong:</label>
+        <label>dong(건물동):</label>
         <input type="text" v-model="dong" class="form-control" />
       </div>
       <div class="form-group">
-        <label>ho:</label>
+        <label>ho(건물호):</label>
         <input type="text" v-model="ho" class="form-control" />
       </div>
       <div class="form-group">
-        <label>zipcode:</label>
+        <label>zipcode(우편번호):</label>
         <input type="text" v-model="zipcode" class="form-control" />
       </div>
       <div class="form-group">
-        <label>jeonsePrice:</label>
+        <label>jeonsePrice(전세금):</label>
         <input type="text" v-model="jeonsePrice" class="form-control" />
       </div>
       <div class="form-group">
-        <label>contractName:</label>
+        <label>contractName(계약자명):</label>
         <input type="text" v-model="contractName" class="form-control" />
       </div>
       <div class="form-group">
-        <label>jibunAddress:</label>
+        <label>jibunAddress(지번주소):</label>
         <input type="text" v-model="jibunAddress" class="form-control" />
       </div>
       <div class="form-group">
@@ -87,12 +87,13 @@
         <input type="text" v-model="propertyNo" class="form-control" />
       </div>
       <div class="form-group">
-        <label>price:</label>
+        <label>price(매매가):</label>
         <input type="text" v-model="price" class="form-control" />
       </div>
     </form>
     <button class="btn btn-danger mt-5 ml-4" @click="test">TEST</button>
   </div>
+  <h1>{{ result.totalScore }}</h1>
 </template>
 
 <script setup>
@@ -141,9 +142,13 @@ const test = async () => {
   };
 
   // bml 저장
+
   const bmlData = {
     analysisNo: Number(emptyToNull(analysisNo.value)),
-    resViolationStatus: Boolean(Number(emptyToNull(resViolationStatus.value))),
+    resViolationStatus:
+      emptyToNull(resViolationStatus.value) === null
+        ? null
+        : Boolean(Number(emptyToNull(resViolationStatus.value))),
     resContents: emptyToNull(resContents.value),
   };
 

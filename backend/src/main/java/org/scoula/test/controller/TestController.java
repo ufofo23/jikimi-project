@@ -61,7 +61,7 @@ public class TestController {
         payloadMap.put("zipCode", payload.getZipCode());
         payloadMap.put("jeonsePrice", payload.getJeonsePrice());
         payloadMap.put("contractName", payload.getContractName());
-        payloadMap.put("addr-jibun-address", payload.getJibunAddress());
+        payloadMap.put("jibunAddress", payload.getJibunAddress());
         payloadMap.put("propertyNo", payload.getPropertyNo());
         payloadMap.put("price", payload.getPrice());
 

@@ -58,13 +58,14 @@ public class ReportServiceImpl implements ReportService {
         report.setAddress(payload.get("jibunAddress").toString());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
-        log.info("JJJJJJJJJJJJJJJJJJJJJJJJJJJJEONSE");
-        log.info(payload.get("jeonsePrice"));
         if (payload.get("jeonsePrice") != null) {
-            int jeonsePrice = Integer.parseInt(payload.get("jeonsePrice").toString());
+            Long jeonsePrice = Long.parseLong(payload.get("jeonsePrice").toString());
 
             if (jeonsePrice != 0) {
-                report.setJeonseRate(jeonsePrice / Integer.parseInt(payload.get("price").toString()));
+                log.info("jeonsePrice : " + jeonsePrice);
+                log.info("Price : " + Long.parseLong(payload.get("price").toString()));
+                log.info("jeonseRate : " + 100 * jeonsePrice / Long.parseLong(payload.get("price").toString()));
+                report.setJeonseRate((int)(100 * jeonsePrice / Long.parseLong(payload.get("price").toString())));
             }
         } else {
             report.setJeonseRate(null);
@@ -188,27 +189,32 @@ public class ReportServiceImpl implements ReportService {
                 getTotalScore(report, Integer.parseInt(payload.get("price").toString()))
         );
 
-        log.info("TotalllllllllllllllllScoreeeeeeeeeeeeeeeee");
-        log.info(report.getTotalScore());
-
         return report;
     }
 
     public static boolean isAccordOwner(List<String> contractNameList, List<String> ownershipList) {
+
+
+
         // 1. 두 리스트의 크기가 같지 않으면 일대일 매칭 불가
         if (contractNameList.size() != ownershipList.size()) {
+            log.info("=============사이즈가 다름=============");
             return false;
         }
 
+        Set<String> conSet = new HashSet<>(contractNameList);
+        Set<String> ownSet = new HashSet<>(ownershipList);
+
         // 2. 각 인덱스의 원소가 같은지 확인
-        for (int i = 0; i < contractNameList.size(); i++) {
-            if (!contractNameList.get(i).equals(ownershipList.get(i))) {
-                return false;
-            }
-        }
+        return conSet.equals(ownSet);
+//        for (int i = 0; i < contractNameList.size(); i++) {
+//            if (!contractNameList.get(i).equals(ownershipList.get(i))) {
+//                return false;
+//            }
+//        }
 
         // 모든 원소가 동일하면 true 반환
-        return true;
+//        return true;
     }
 
     private int getTotalScore(ReportDTO report, int price) {
@@ -216,42 +222,64 @@ public class ReportServiceImpl implements ReportService {
         int totalScore = 100;
 
         // 전세가율에 따른 감점
-        int jeonseRate = report.getJeonseRate();
-        if(jeonseRate > 70) {
-            if(jeonseRate <= 80)
-                totalScore -= 7;
-            else if(jeonseRate <= 90)
-                totalScore -= 17;
-            else
-                return 0;
+        Integer jeonseRate = report.getJeonseRate();
+        if(jeonseRate != null) {
+            if(jeonseRate > 70) {
+                if(jeonseRate <= 80) {
+                    log.info("jeonseRate : " + jeonseRate + "로 -7점 감점");
+                    totalScore -= 7;
+                }
+                else if(jeonseRate <= 90) {
+                    log.info("jeonseRate : " + jeonseRate + "로 -17점 감점");
+                    totalScore -= 17;
+                }
+                else {
+                    log.info("jeonseRate : " + jeonseRate + "로 총점 0점");
+                    return 0;
+                }
+            }
         }
 
         // 계약자, 소유자 불일치 시 고위험
-        if(report.getAccordOwner()!=null && !report.getAccordOwner())
+        if(report.getAccordOwner()!=null && !report.getAccordOwner()) {
+            log.info("계약자 - 소유자가 불일치하여 총점 0점");
             return 0;
+        }
 
         // 근저당권(채권 최고액)에 따른 감점
-        int maximumOfBond = report.getMaximumOfBond();
+        Long maximumOfBond = report.getMaximumOfBond();
         if(maximumOfBond != 0) {
-            int rate = maximumOfBond / price;
-            if(rate <= 30)
+            int rate = (int)(maximumOfBond * 100 / price) ;
+            if(rate <= 30) {
+                log.info("근저당권(채권최고액) : " + rate + "로 -5점 감점");
                 totalScore -= 5;
-            else if(rate < 50)
+            }
+            else if(rate < 50) {
+                log.info("근저당권(채권최고액) : " + rate + "로 -10점 감점");
                 totalScore -= 10;
-            else if(rate < 70)
+            }
+            else if(rate < 70) {
+                log.info("근저당권(채권최고액) : " + rate + "로 -15점 감점");
                 totalScore -= 15;
-            else
+            }
+            else {
+                log.info("근저당권(채권최고액) : " + rate + "로 총점 0점");
                 return 0;
+            }
         }
 
         // 주용도가 거주가 아니면 고위험 (거주일때 어떻게 값이 들어가는 지 확인 필요)
         String useType = report.getUseType();
-        if(!(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거")))
+        if(useType == null || !(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거"))) {
+            log.info("주용도가 거주용이 아니라 총점 0점");
             return 0;
+        }
 
         // 위반 건축물이면 고위험
-        if(report.getViolationStructure() == null || report.getViolationStructure())
+        if(report.getViolationStructure() == null || report.getViolationStructure()) {
+            log.info("위반 건축물이라 총점 0점");
             return 0;
+        }
 
 //        // 대지권 등기에 따른 감점 (대지권 등기에 따라 어떻게 값이 들어가는 지 확인 필요)
 //        String landrights = report.getKindOfLandrights();
@@ -263,8 +291,10 @@ public class ReportServiceImpl implements ReportService {
 //            return 0;
 
         // 총점 50점 기준
-        if(totalScore < 50)
+        if(totalScore < 70) {
+            log.info("총점이 70점 미만이라 총점 0점");
             return 0;
+        }
 
         return totalScore;
     }

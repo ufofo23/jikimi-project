@@ -126,7 +126,7 @@ CREATE TABLE cor_tbl (
                          type_of_ownership VARCHAR(255),
                          common_owner VARCHAR(255),
                          change_owner_count INT,
-                         maximum_of_bond INT
+                         maximum_of_bond bigint
 );
 
 DROP TABLE IF EXISTS bml_tbl;
@@ -148,7 +148,7 @@ CREATE TABLE report_tbl (
                             rent int,
                             price int,
                             jeonse_rate int,
-                            maximum_of_bond int,
+                            maximum_of_bond bigint,
                             ownership varchar(20),
                             change_owner_count int NOT NULL,
                             accord_owner tinyint NOT NULL,
