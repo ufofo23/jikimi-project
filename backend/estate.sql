@@ -29,8 +29,6 @@ show global variables like 'local_infile';
 
 # property_tbl 관련 추가!
 DROP TABLE IF EXISTS property_tbl;
-
-
 CREATE TABLE property_tbl (
                               property_no int PRIMARY KEY AUTO_INCREMENT,
                               property_addr_sigungu_code int not null,
@@ -82,8 +80,8 @@ LOAD DATA LOCAL INFILE './property_location_final_2.csv'
     LINES TERMINATED BY '\n'; -- 행 구분자를 줄바꿈으로 설정
 UPDATE property_location
 SET jibun_juso = property_jibun_juso WHERE property_jibun_juso <> '';
+update property_location SET zipcode = concat("0", zipcode) WHERE zipcode <100000;
 SELECT count(*) from property_location;
-
 
 -- member_report sample
 # desc member_report_tbl;
