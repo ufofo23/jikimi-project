@@ -46,7 +46,6 @@ public class ChatBotService extends ChatServiceImpl {
                         String.format("<a href='/study/dictionary/detail/%d' class='dictionary-link' style='color: green; font-weight: bold;'>%s</a>",
                                 dictionary.getDictionaryNo(), title));
 
-                // response가 변경되었으면 바로 break
                 if (!newResponse.equals(response)) {
                     response = newResponse;
                     break; // 변경된 경우 루프 종료
@@ -62,7 +61,7 @@ public class ChatBotService extends ChatServiceImpl {
 
     @Override
     protected String getModelName() {
-        return "gpt-3.5-turbo";
+        return "gpt-4o-mini";
     }
 
     @Override
