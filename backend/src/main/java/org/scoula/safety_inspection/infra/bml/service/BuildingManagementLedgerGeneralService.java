@@ -87,19 +87,19 @@ public class BuildingManagementLedgerGeneralService{
 
             String responseCode = (String) resultMap.get("code");
 
-            if ("CF-00000".equals(responseCode)) {
-                if (dataMap != null) {
-                    extractAndSaveDataFromDataMap(dataMap, analysisNo);
-                }
-            }
-
-            if ("CF-03002".equals(responseCode)) {
-                handleTwoWayCertification(dataMap, payload, analysisNo);
-            }
-
-            else{
-//                BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, null, null);
-////                buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+            switch (responseCode) {
+                case "CF-00000":
+                    if (dataMap != null) {
+                        extractAndSaveDataFromDataMap(dataMap, analysisNo);
+                    }
+                    break;
+                case "CF-03002":
+                    handleTwoWayCertification(dataMap, payload, analysisNo);
+                    break;
+                default:
+                    BuildingManagementLedgerDto ledgerData = new BuildingManagementLedgerDto(analysisNo, null, null);
+                    buildingManagementLedgerMapper.insertBuildingData(ledgerData);
+                    break;
             }
 
         } catch (Exception e) {

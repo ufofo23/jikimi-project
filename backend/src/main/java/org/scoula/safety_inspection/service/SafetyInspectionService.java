@@ -1,6 +1,7 @@
 package org.scoula.safety_inspection.service;
 
 import lombok.RequiredArgsConstructor;
+import org.scoula.report.mapper.ReportMapper;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerMultiService;
 import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterGeneralService;
@@ -26,6 +27,7 @@ public class SafetyInspectionService {
     private final BuildingManagementLedgerGeneralService buildingManagementLedgerGeneralService;
     private final ReportService reportService;
     private final ExtractUnicodeService extractUnicodeService;
+    private final ReportMapper reportMapper;
 
     /**
      * API 추출 및 DB 저장 트랜잭션 관리를 위한 서비스
@@ -54,8 +56,9 @@ public class SafetyInspectionService {
 
             // 보고서 생성 및 저장
             ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
-            reportService.create(reportDTO,analysisNo);
-            return String.valueOf(reportDTO.getReportNo());
+            reportService.create(reportDTO, analysisNo);
+            int reportNo = reportMapper.getReportNo(analysisNo);
+            return String.valueOf(reportNo);
 
         } catch (Exception e) {
             e.printStackTrace();

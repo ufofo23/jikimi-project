@@ -14,4 +14,6 @@ public interface ReportMapper {
     // 레포트 삭제
     public int delete(int analysisNo);
 
+    public int getReportNo(int analysisNo);
+
 }

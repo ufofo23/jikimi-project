@@ -33,6 +33,14 @@ public class SafetyInspectionController {
     @PostMapping("/address")
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
+
+//            if (payload != null) {
+//                payload.forEach((key, value) ->
+//                        System.out.printf("Key: %s, Value: %s, Type: %s%n",
+//                                key, value, value == null ? "null" : value.getClass().getSimpleName()));
+//            }
+//            return null;
+
             List<Map<String,String>> response = extractUnicodeService.getUniqueCode(payload);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -46,6 +54,13 @@ public class SafetyInspectionController {
     @PostMapping("/cors")
     public ResponseEntity<String> handleUniqueCode(@RequestBody Map<String, Object> payload) {
         try {
+//            if (payload != null) {
+//                payload.forEach((key, value) ->
+//                        System.out.printf("Key: %s, Value: %s, Type: %s%n",
+//                                key, value, value == null ? "null" : value.getClass().getSimpleName()));
+//            }
+//
+//            return ResponseEntity.ok("p");
             String reportNo = safetyInspectionService.processSafetyInspection(payload);
             return ResponseEntity.ok(reportNo);
         } catch (Exception e) {
