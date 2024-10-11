@@ -1,43 +1,5 @@
-<template>
-  <div class="quick-chat">
-    <button @click="toggleChat" class="chat-bot-button">
-      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" /> Bugi Bot
-    </button>
-
-    <div v-if="chatVisible" class="chat-box">
-      <div class="header">
-        <button @click="toggleChat" class="close-button">닫기</button>
-      </div>
-      <div class="chat-container">
-        <div class="messages" ref="messagesContainer">
-          <div class="disclaimer">
-            챗봇 서비스 사용 시 입력한 개인정보는 수집될 수 있습니다. 또한 부동산 투자에 대한 피해에 대한 책임은 지지 않습니다.
-          </div>
-          <div
-            v-for="(message, index) in messages"
-            :key="index"
-            :class="['message', message.role === '부린이' ? 'user-message' : 'bot-message']"
-          >
-            <strong>{{ message.role }}:</strong>
-            <span v-html="message.content"></span>
-          </div>
-        </div>
-        <div class="input-area">
-          <input
-            v-model="userInput"
-            @keyup.enter="sendMessage"
-            placeholder="메시지를 입력하세요"
-            ref="inputField"
-          />
-          <button @click="sendMessage">전송</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import axios from 'axios';
 
 const chatVisible = ref(false);
@@ -45,62 +7,59 @@ const messages = ref([]);
 const userInput = ref('');
 const messagesContainer = ref(null);
 
-// API 호출 설정
 const api = axios.create({
   baseURL: 'http://localhost:8080',
   withCredentials: true,
 });
 
-// 챗봇 창을 토글하는 함수
 const toggleChat = () => {
   chatVisible.value = !chatVisible.value;
 };
 
-// 메시지 로드 및 저장
-const loadMessages = () => {
+const saveMessagesToLocalStorage = () => {
+  localStorage.setItem('chatMessages', JSON.stringify(messages.value));
+};
+
+const loadMessagesFromLocalStorage = () => {
   const storedMessages = localStorage.getItem('chatMessages');
   if (storedMessages) {
     messages.value = JSON.parse(storedMessages);
   }
 };
 
-const saveMessages = () => {
-  localStorage.setItem('chatMessages', JSON.stringify(messages.value));
-};
-
-// 메시지를 전송하는 함수
 const sendMessage = async () => {
   if (userInput.value.trim() === '') return;
 
   messages.value.push({ role: '부린이', content: userInput.value });
-  saveMessages();  // 메시지 저장
+  saveMessagesToLocalStorage();
 
   try {
-    const response = await api.post('/api/chat/chatbot', {
-      prompt: userInput.value,
-    }, {
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    });
+    const response = await api.post(
+      '/api/chat/chatbot',
+      { prompt: userInput.value },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      }
+    );
 
     const content = response.data.content || '';
     messages.value.push({ role: '부기봇', content });
-    saveMessages();  // 메시지 저장
+    saveMessagesToLocalStorage();
   } catch (error) {
     console.error('Error:', error);
     messages.value.push({
       role: '부기봇',
       content: '메시지 전송에 실패했습니다. 다시 시도해 주세요.',
     });
-    saveMessages();  // 메시지 저장
+    saveMessagesToLocalStorage();
   }
 
   userInput.value = '';
   scrollToBottom();
 };
 
-// 메시지 창을 항상 하단에 고정시키는 함수
 const scrollToBottom = () => {
   const container = messagesContainer.value;
   if (container) {
@@ -108,10 +67,8 @@ const scrollToBottom = () => {
   }
 };
 
-// 컴포넌트가 마운트될 때 메시지 로드
-onMounted(() => {
-  loadMessages();
-});
+// 컴포넌트가 마운트될 때 메시지를 로드합니다.
+loadMessagesFromLocalStorage();
 </script>
 
 <style scoped>

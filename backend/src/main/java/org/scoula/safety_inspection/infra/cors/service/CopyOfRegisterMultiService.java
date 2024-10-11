@@ -147,7 +147,8 @@ public class CopyOfRegisterMultiService {
             if ("소유권에 관한 사항".equals(registration.getResType1())) {
                 ResContentsList[] resContentsList = registration.getResContentsList();
                 String owner = resContentsList[resContentsList.length - 1].getResDetailList()[0].getResContents();
-                return owner.split("-")[0];
+
+                return owner.split("[-\\n]")[0];
             }
         }
         return "";

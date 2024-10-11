@@ -19,6 +19,10 @@
             where mrt.report_no = #{report_no}
     </select>
 
+    <select id="getReportNo" resultType="int">
+        SELECT report_no FROM report_tbl WHERE analysis_no = #{analysisNo}
+    </select>
+
     <delete id="delete">
         DELETE FROM member_report_tbl WHERE member_report_no = #{report_no};
     </delete>
