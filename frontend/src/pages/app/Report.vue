@@ -70,11 +70,24 @@
         <!-- Section 1: 안전진단 점수 - 안전 -->
         <button @click="togglePanel(1)" class="sec">
           1. 안전진단 점수
-          <span class="summary">{{
-            sampleReportData.totalScore !== null
-              ? sampleReportData.totalScore
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.totalScore < 50
+                  ? 'red'
+                  : sampleReportData.totalScore < 70
+                  ? 'orange'
+                  : 'green',
+            }"
+            >{{
+              sampleReportData.totalScore < 50
+                ? '위험'
+                : sampleReportData.totalScore < 70
+                ? '경고'
+                : '안전'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[1]"
@@ -83,8 +96,13 @@
           <p>
             {{
               sampleReportData.totalScore !== null
-                ? `안전진단 점수: ${sampleReportData.totalScore}`
-                : '해당 물건에 대한 세부정보가 부족합니다. 내용을 분석할 수 없습니다'
+                ? sampleReportData.totalScore < 50
+                  ? `안전진단 점수가 ${sampleReportData.totalScore}으로 매우 낮습니다. 이 물건은 상당한 위험이 있을 수 있으므로 계약 전에 철저한 검토가 필요합니다.`
+                  : sampleReportData.totalScore < 70
+                  ? `안전진단 점수가 ${sampleReportData.totalScore}으로 경고 수준입니다. 이 물건은 안전하지 않을 가능성이 있으며, 신중한 선택이 필요합니다.`
+                  : `안전진단 점수가 ${sampleReportData.totalScore}으로 안전하다고 판단됩니다. \n
+                  그래도 집 계약때까지 신중함을 잃지마세요!`
+                : '해당 물건에 대한 데이터가 부족합니다. 내용을 분석할 수 없습니다.'
             }}
           </p>
         </div>
@@ -92,11 +110,28 @@
         <!-- Section 2: 전세가율 - 80% -->
         <button @click="togglePanel(2)" class="sec">
           2. 전세가율
-          <span class="summary">{{
-            sampleReportData.jeonseRate !== null
-              ? sampleReportData.jeonseRate + '%'
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.jeonseRate !== null
+                  ? sampleReportData.jeonseRate < 70
+                    ? 'green'
+                    : sampleReportData.jeonseRate < 90
+                    ? 'orange'
+                    : 'red'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.jeonseRate !== null
+                ? sampleReportData.jeonseRate < 60
+                  ? '안전'
+                  : sampleReportData.jeonseRate < 80
+                  ? '경고'
+                  : '위험'
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[2]"
@@ -105,8 +140,12 @@
           <p>
             {{
               sampleReportData.jeonseRate !== null
-                ? `전세가율: ${sampleReportData.jeonseRate}`
-                : '해당 물건에 대한 세부정보가 부족합니다. 내용을 분석할 수 없습니다'
+                ? sampleReportData.jeonseRate < 60
+                  ? `전세가율이 ${sampleReportData.jeonseRate}%로 안전합니다.`
+                  : sampleReportData.jeonseRate < 80
+                  ? `전세가율이 ${sampleReportData.jeonseRate}%로 경고 수준입니다. 전세가율이 적절하지 않아 리스크가 있을 수 있습니다.`
+                  : `전세가율이 ${sampleReportData.jeonseRate}%로 매우 위험합니다. 전세가율이 낮을수록 보증금 회수의 위험이 커집니다. 계약에 신중을 기하세요.`
+                : '해당 물건에 대한 데이터 부족합니다. 내용을 분석할 수 없습니다.'
             }}
           </p>
         </div>
@@ -114,67 +153,63 @@
         <!-- Section 3: 소유자 = 계약자 여부 - 동일 -->
         <button @click="togglePanel(3)" class="sec">
           3. 소유자와 계약자의 일치 여부
-          <span class="summary">{{
-            sampleReportData.accordOwner ? '동일' : '다름'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color: !sampleReportData.accordOwner
+                ? 'red'
+                : 'green',
+            }"
+            >{{
+              !sampleReportData.accordOwner
+                ? '다름'
+                : '동일'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[3]"
           class="panel bg-blue-100 p-4"
         >
-          <div
-            v-if="
-              sampleReportData.accordOwner &&
-              sampleReportData.ownership ==
-                sampleReportData.contractName
-            "
-          >
-            <p>
-              소유자 {{ sampleReportData.ownership }}와
-              계약자 {{ sampleReportData.contractName }}은
-              같습니다.
-            </p>
-            <p>
-              소유자의 이름과 주민등록번호, 거주지를 잘
-              확인하고 내가 지금 계약하려는 집의 임대인의
-              인적사항과 비교해보세요. 당연히 계약서에도
-              동일한 사람의 인적사항이 적혀 있어야 해요.
-            </p>
-          </div>
-
-          <div
-            v-else-if="
-              sampleReportData.ownership !=
-              sampleReportData.contractName
-            "
-          >
-            <p>
-              소유자 {{ sampleReportData.ownership }}와
-              계약자 {{ sampleReportData.contractName }}은
-              동일하지 않습니다.
-            </p>
-            <p>
-              소유자의 이름과 주민등록번호, 거주지를 잘
-              확인하세요! 계약할 때 계약서에 내가 지금
-              계약하려는 집의 임대인이
-              {{ sampleReportData.ownership }}이 맞는지
-              확인하세요!
-            </p>
-          </div>
-          <p v-else>
-            해당 물건에 대한 세부정보가 부족합니다. 내용을
-            분석할 수 없습니다
+          <p>
+            {{
+              sampleReportData.accordOwner == null
+                ? sampleReportData.accordOwner != null &&
+                  !sampleReportData.accordOwner
+                  ? `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치하지 않습니다. 계약을 진행하기 전에 반드시
+                      등기부등본을 다시 확인하고 소유자의 동의 여부를확인하세요.`
+                  : `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치합니다.`
+                : '해당 물건에 대한 데이터 부족합니다. 내용을 분석할 수 없습니다'
+            }}
           </p>
         </div>
 
         <!-- Section 4: 근저당권 채권 최고액 - 5억 -->
         <button @click="togglePanel(4)" class="sec">
           4. 근저당권 채권 최고액
-          <span class="summary">{{
-            sampleReportData.maximumOfBond !== null
-              ? sampleReportData.maximumOfBond + '억'
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.maximumOfBond !== null
+                  ? sampleReportData.maximumOfBond > 0
+                    ? 'red'
+                    : 'green'
+                  : 'black',
+            }"
+          >
+            {{
+              sampleReportData.maximumOfBond !== null
+                ? sampleReportData.maximumOfBond >= 10000
+                  ? `${Math.floor(
+                      sampleReportData.maximumOfBond / 10000
+                    )}억 ${
+                      sampleReportData.maximumOfBond % 10000
+                    }만원`
+                  : `안전`
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[4]"
@@ -183,30 +218,56 @@
           <p>
             {{
               sampleReportData.maximumOfBond !== null
-                ? `근저당권 채권 최고액: ${sampleReportData.maximumOfBond}억`
-                : '해당 물건에 대한 세부정보가 부족합니다. 내용을 분석할 수 없습니다'
+                ? sampleReportData.maximumOfBond > 0
+                  ? `근저당권 채권 최고액이 ${sampleReportData.maximumOfBond}만원으로 위험 수준입니다. 보증금 반환에 대한 리스크를 고려하여 계약에 신중하세요.`
+                  : `근저당권으로 잡힌 채권이 없어 안전합니다.`
+                : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
             }}
+          </p>
+          <p>
+            근저당권 설정 금액을 꼭 확인하여 임대인이 빚을
+            갚지 못할 경우 보증금 보호가 가능한지
+            판단하세요.
           </p>
         </div>
 
         <!-- Section 5: 건물의 주용도 (거주 등등) - 거주 -->
         <button @click="togglePanel(5)" class="sec">
           5. 건물의 주용도
-          <span class="summary">{{
-            sampleReportData.useType !== null
-              ? sampleReportData.useType
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.useType !== null
+                  ? sampleReportData.useType > 0
+                    ? 'green'
+                    : 'red'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.useType !== null
+                ? sampleReportData.useType > 0
+                  ? '안전'
+                  : '위험'
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[5]"
           class="panel bg-blue-100 p-4"
         >
           <p>
+            전세자금 대출 가능 여부는 주용도에 따라 달라질
+            수 있습니다.
+          </p>
+          <p>
             {{
-              sampleReportData.useType !== '주거'
-                ? `해당 건물은 ${sampleReportData.useType}용 건물입니다.`
-                : '건축물의 용도를 확인하세요. 근린생활시설 같은 경우 주거용 건물이 아니기 때문에 전세자금 대출이 어려울 수 있으니, 집 알아볼 때 유의하세요!'
+              sampleReportData.useType !== null
+                ? sampleReportData.useType == '주거'
+                  ? '해당 건물은 주거용 건물입니다.'
+                  : `해당 건물은 ${sampleReportData.useType}용 건물입니다. \n 근린생활시설 같은 경우 주거용 건물이 아니기 때문에 전세자금 대출이 어려울 수 있으니, 집 알아볼 때 유의하세요!`
+                : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
             }}
           </p>
         </div>
@@ -214,22 +275,37 @@
         <!-- Section 6: 대지권등기 - 있음 -->
         <button @click="togglePanel(6)" class="sec">
           6. 대지권등기
-          <span class="summary">{{
-            sampleReportData.kindOfLandrights !== null
-              ? sampleReportData.kindOfLandrights
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.kindOfLandrights !== null
+                  ? sampleReportData.kindOfLandrights ==
+                    '주거'
+                    ? 'green'
+                    : 'orange'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.kindOfLandrights !== null
+                ? sampleReportData.kindOfLandrights > 0
+                  ? '안전'
+                  : '주의'
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[6]"
           class="panel bg-blue-100 p-4"
         >
-          <p>대지권등기에 관한 세부 정보.</p>
           <p>
             {{
               sampleReportData.kindOfLandrights !== null
-                ? `해당 물건에 대한 대지권은 ${sampleReportData.kindOfLandrights}㎡입니다.`
-                : '대지권은 임대인이 땅에 대해 가지는 권리를 말해요.대지권이 없다고 해서 위험한건 아니지만, 대지권이 없다면 주택의 가치가 하락할 수 있으니 주의하세요.'
+                ? sampleReportData.kindOfLandrights > 0
+                  ? `해당 물건에 대한 대지권은 ${sampleReportData.kindOfLandrights}㎡ 입니다.`
+                  : '해당 물건은 대지에 대한 권리가 없습니다. 대지권이 없다면 주택의 가치가 하락할 수 있으니 주의하세요.'
+                : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
             }}
           </p>
         </div>
@@ -237,42 +313,43 @@
         <!-- Section 7: 공동소유/ 단독소유 여부 - 단독 -->
         <button @click="togglePanel(7)" class="sec">
           7. 공동소유 단독소유 여부
-          <span class="summary">{{
-            sampleReportData.commonOwner !== null
-              ? sampleReportData.commonOwner
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.commonOwner !== null
+                  ? sampleReportData.commonOwner.length == 1
+                    ? 'green'
+                    : 'orange'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.commonOwner !== null
+                ? sampleReportData.commonOwner.length == 1
+                  ? '안전'
+                  : '주의'
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[7]"
           class="panel bg-blue-100 p-4"
         >
           <div v-if="sampleReportData.commonOwner === null">
-            해당 물건에 대한 세부정보가 부족합니다. 내용을
+            해당 물건에 대한 데이터 부족합니다. 내용을
             분석할 수 없습니다
           </div>
 
           <div
-            v-else-if="
-              sampleReportData.commonOwner == '단독'
-            "
+            v-if="sampleReportData.commonOwner === '단독'"
           >
-            <p>
-              해당 물건은
-              {{ sampleReportData.commonOwner }} 소유
-              물건입니다.
-            </p>
+            <p>해당 물건은 단독 소유입니다.</p>
           </div>
           <div v-else>
             <p>
-              해당 물건은
-              {{ sampleReportData.commonOwner }} 소유
-              물건입니다.
-            </p>
-            <p>
-              {{ sampleReportData.commonOwner }} 소유라고
-              해서 위험한건 아니지만, 계약할 때 꼭
-              확인하세요!
+              해당 물건은 공동 소유입니다. 계약 시 소유자
+              전원의 동의를 확인하세요.
             </p>
           </div>
         </div>
@@ -280,26 +357,35 @@
         <!-- Section 8: 소유권 변경 횟수 - 2회 (압류/가압류) -->
         <button @click="togglePanel(8)" class="sec">
           8. 소유권 변경 횟수
-          <span class="summary">{{
-            sampleReportData.changeOwnerCount !== null
-              ? sampleReportData.changeOwnerCount
-              : '분석불가'
-          }}</span>
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.changeOwnerCount !== null
+                  ? sampleReportData.changeOwnerCount < 3
+                    ? 'green'
+                    : 'orange'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.changeOwnerCount !== null
+                ? sampleReportData.changeOwnerCount < 3
+                  ? '안전'
+                  : `${sampleReportData.changeOwnerCount}회`
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[8]"
           class="panel bg-blue-100 p-4"
         >
-          <p>
-            소유권 변경 횟수 및 그 원인(압류/가압류 등)에
-            관한 세부 정보.
-          </p>
           <div
             v-if="
               sampleReportData.changeOwnerCount === null
             "
           >
-            해당 물건에 대한 세부정보가 부족합니다. 내용을
+            해당 물건에 대한 데이터 부족합니다. 내용을
             분석할 수 없습니다
           </div>
 
@@ -328,29 +414,87 @@
           </div>
         </div>
 
-        <!-- Section 9: 전유 부분 (건물 소유 면적) - 85㎡ -->
+        <!-- Section 9: 위반건축물 여부 - true-->
         <button @click="togglePanel(9)" class="sec">
-          9. 전유 부분 (건물 소유 면적)
-          <span class="summary">85㎡</span>
+          9. 위반건축물 여부
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.violationStructure != null
+                  ? !sampleReportData.violationStructure
+                    ? 'green'
+                    : 'red'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.violationStructure != null
+                ? !sampleReportData.violationStructure
+                  ? '안전'
+                  : '위험'
+                : '해당없음'
+            }}</span
+          >
         </button>
         <div
           v-show="openPanels[9]"
           class="panel bg-blue-100 p-4"
         >
           <p>
-            전유 부분의 건물 소유 면적에 관한 세부 정보.
+            {{
+              sampleReportData.violationStructure != null
+                ? !sampleReportData.violationStructure
+                  ? '위반건축물과 관련된 내용이 없습니다.'
+                  : '위반건축물과 관련된 사항이 있습니다. 위반 건축물은 주택임대차보호법 적용을 받지 않아 전입신고를 할 수 없으며 보증금 보호가 어렵습니다. '
+                : '해당 물건에 대한 데이터가 부족합니다. 내용을 분석할 수 없습니다'
+            }}
+          </p>
+        </div>
+        <!-- Section 10: 전유 부분 (건물 소유 면적) - 85㎡ -->
+        <button @click="togglePanel(10)" class="sec">
+          10. 전유 부분 (건물 소유 면적)
+          <span
+            class="summary"
+            :style="{
+              color:
+                sampleReportData.ownerState != null
+                  ? 'blue'
+                  : 'black',
+            }"
+            >{{
+              sampleReportData.ownerState != null
+                ? `${sampleReportData.ownerState}㎡`
+                : '해당없음'
+            }}</span
+          >
+        </button>
+        <div
+          v-show="openPanels[10]"
+          class="panel bg-blue-100 p-4"
+        >
+          <p>
+            {{
+              sampleReportData.ownerState != null
+                ? `해당 물건에서 전유 부분의 건물 소유에 대한 면적은 총 ${sampleReportData.ownerState}㎡ 입니다.`
+                : '해당 물건에 대한 데이터가 부족합니다. 내용을 분석할 수 없습니다'
+            }}
           </p>
         </div>
       </div>
-      <div class="d-flex flex-row-revers">
+      <div class="d-flex justify-content-end mt-3">
         <button
-          class="btn btn-danger ml-9"
+          class="btn btn-danger p-3 px-4"
+          style="font: 20px bold"
           @click="deleteSelected(sampleNo)"
         >
           삭제
         </button>
 
-        <button class="btn btn-primary ml-9" @click="back">
+        <button
+          class="btn btn-primary ml-4 p-3 px-4"
+          style="font: 20px bold"
+          @click="back"
+        >
           목록
         </button>
       </div>
