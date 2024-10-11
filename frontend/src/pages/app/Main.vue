@@ -24,21 +24,22 @@
             >
           </li>
         </ul>
-
-        <div class="piece-sense-container">
-          <div class="scroll-container" ref="scrollContainer">
-            <div class="scroll-wrapper">
-              <div
-                v-for="article in articles"
-                :key="article.commonSenseNo"
-                class="card"
-              >
-                <PieceSenseCard
-                  :commonSenseTitle="article.commonSenseTitle"
-                  :commonSenseNo="article.commonSenseNo"
-                  :commonSenseContent="article.commonSenseContent"
-                  :commonPieceSense="article.pieceSense"
-                />
+        <div class="swiper">
+          <div class="piece-sense-container">
+            <div class="scroll-container" ref="scrollContainer">
+              <div class="scroll-wrapper">
+                <div
+                  v-for="article in articles"
+                  :key="article.commonSenseNo"
+                  class="card"
+                >
+                  <PieceSenseCard
+                    :commonSenseTitle="article.commonSenseTitle"
+                    :commonSenseNo="article.commonSenseNo"
+                    :commonSenseContent="article.commonSenseContent"
+                    :commonPieceSense="article.pieceSense"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -59,7 +60,7 @@
       </div>
     </div>
   </div>
-  <!-- ====== Hero Section End -->
+  <Footer></Footer>
 </template>
 
 <script setup lang="ts">
@@ -68,6 +69,7 @@ import { useRouter } from 'vue-router'; // Vue Router 사용
 import useAuthStore from '@/stores/auth'; // 인증 스토어 가져오기
 import api from '@/api/senseApi';
 import PieceSenseCard from '@/components/Cards/PieceSenseCard.vue';
+import Footer from '@/components/Footer.vue';
 
 const open = ref(false);
 const dropdownButtonRef = ref<HTMLButtonElement | null>(null);
@@ -276,11 +278,6 @@ body {
 
 /* 토막 바 스타일 */
 
-.piece-sense-container {
-  margin-top: 2rem;
-  width: 100%;
-}
-
 .piece-sense-title {
   font-size: 1.2rem;
   font-weight: bold;
@@ -401,11 +398,19 @@ body {
   display: flex;
   min-height: 100vh;
 
-  padding-top: 170px; /* 헤더 높이 + 여백 */
+  padding-top: 0; /* 헤더 높이 + 여백 */
   padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
 }
 .hero-compo {
   margin-left: 6rem;
+}
+.piece-sense-container {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.swiper {
+  margin-left: 0;
 }
 .left-section,
 .right-section {

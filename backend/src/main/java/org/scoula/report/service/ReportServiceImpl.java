@@ -2,6 +2,9 @@ package org.scoula.report.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.scoula.like.report.mapper.LikeReportMapper;
+import org.scoula.like.report.service.LikeReportService;
+import org.scoula.oauth.jwt.JwtUtil;
 import org.scoula.report.domain.ReportDTO;
 import org.scoula.report.domain.ReportVO;
 import org.scoula.report.mapper.ReportMapper;
@@ -23,18 +26,25 @@ public class ReportServiceImpl implements ReportService {
     final private ReportMapper mapper;
     final private CopyOfRegisterMapper corMapper;
     final private BuildingManagementLedgerMapper bmlMapper;
+    final private JwtUtil jwtUtil;
 
     @Override
-    public ReportDTO get(int analysisNo) {
-        ReportDTO report = ReportDTO.of(mapper.get(analysisNo));
+    public ReportDTO get(int reportNo, String token) {
+        token = token.substring(7);
+        String userId = jwtUtil.getUserIdFromToken(token);
+
+        log.info("reportNo : " + reportNo + "userId : " + userId);
+        ReportDTO report = ReportDTO.of(mapper.get(reportNo, userId));
         return Optional.ofNullable(report)
                 .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public int create(ReportDTO report, Integer analysisNo) {
+    public int create(ReportDTO report, Integer analysisNo, String token) {
         ReportVO reportVO = report.toVO();
         reportVO.setAnalysisNo(analysisNo);
+
+
         return mapper.create(reportVO);
     }
 
@@ -47,6 +57,13 @@ public class ReportServiceImpl implements ReportService {
     public ReportDTO analysis(int analysisNo, String propertyNo, Map<String, Object> payload) {
         ReportDTO report = new ReportDTO();
 
+        for (Map.Entry<String, Object> entry : payload.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String type = (value != null) ? value.getClass().getSimpleName() : "null";
+
+            System.out.println(key + " : " + value + " - " + type);
+        }
 
         CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
         log.info("corDTO :::::::::::::: " + cor);
@@ -58,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
         report.setAddress(payload.get("jibunAddress").toString());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
-        if (payload.get("jeonsePrice") != null || payload.get("jeonsePrice").equals("")) {
+        if (payload.get("jeonsePrice") != null && payload.get("jeonsePrice") != "") {
             Long jeonsePrice = Long.parseLong(payload.get("jeonsePrice").toString());
 
             if (jeonsePrice != 0) {
@@ -270,7 +287,7 @@ public class ReportServiceImpl implements ReportService {
 
         // 주용도가 거주가 아니면 고위험 (거주일때 어떻게 값이 들어가는 지 확인 필요)
         String useType = report.getUseType();
-        if(useType == null || !(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거"))) {
+        if(useType == null || !(useType.contains("아파트") || useType.contains("주택") || useType.contains("주거") || useType.contains("오피스텔"))) {
             log.info("주용도가 거주용이 아니라 총점 0점");
             return 0;
         }

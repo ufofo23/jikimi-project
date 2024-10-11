@@ -5,97 +5,16 @@
       <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
-    <!-- 매매전월세 건물유형 관련 -->
-    <div class="filter-container">
-      <!-- 거래유형 -->
-      <div class="filter-buttons">
-        <button @click="toggleFilter('transactionType')">매매/전월세</button>
-        <button @click="toggleFilter('buildingType')">건물유형</button>
-      </div>
-
-      <!-- 매매/전월세 -->
-      <div v-if="activeFilter === 'transactionType'" class="dropdown">
-        <button
-          :class="{
-            active: selectedTransaction === '전체',
-          }"
-          @click="selectTransaction('전체')"
-        >
-          전체
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '1',
-          }"
-          @click="selectTransaction('1')"
-        >
-          매매
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '2',
-          }"
-          @click="selectTransaction('2')"
-        >
-          전세
-        </button>
-        <button
-          :class="{
-            active: selectedTransaction === '3',
-          }"
-          @click="selectTransaction('3')"
-        >
-          월세
-        </button>
-      </div>
-      <div v-if="activeFilter === 'buildingType'" class="dropdown">
-        <button
-          :class="{
-            active: selectedBuilding === '전체',
-          }"
-          @click="selectBuilding('전체')"
-        >
-          전체
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '3',
-          }"
-          @click="selectBuilding('3')"
-        >
-          연립다세대
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '2',
-          }"
-          @click="selectBuilding('2')"
-        >
-          오피스텔
-        </button>
-        <button
-          :class="{ active: selectedBuilding === '1' }"
-          @click="selectBuilding('1')"
-        >
-          아파트
-        </button>
-        <button
-          :class="{
-            active: selectedBuilding === '4',
-          }"
-          @click="selectBuilding('4')"
-        >
-          단독다가구
-        </button>
-      </div>
-    </div>
-
     <!-- 즐겨찾기 토글 -->
     <div class="wishlist-toggle">
-      <h2 @click="toggleWishlist">
+      <div @click="toggleWishlist">
         즐겨찾기
-        <span>{{ wishlistVisible ? '▲' : '▼' }}</span>
-      </h2>
+        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
       <div v-if="wishlistVisible">
         <ul v-if="wishlist.length">
           <li
@@ -119,10 +38,14 @@
 
     <!-- 상세보기 토글 -->
     <div class="detail-toggle">
-      <h2 @click="toggleDetails">
+      <div @click="toggleDetails">
         상세보기
-        <span>{{ detailsVisible ? '▲' : '▼' }}</span>
-      </h2>
+        <span class="hamburger-menu" :class="{ active: detailsVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
       <div v-if="detailsVisible">
         <div v-if="selectedProperty && selectedProperty.length">
           <h2 class="apart-name">
@@ -302,7 +225,7 @@ const analyzeProperty = () => {
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
-    
+
     router.push({
       name: 'mapAnalyzing',
       query: {
@@ -310,7 +233,7 @@ const analyzeProperty = () => {
         buildingName: buildingName,
         propertyNo: propertyNo,
         zipCode: zipCode,
-        price: price
+        price: price,
       },
     });
   }
@@ -342,6 +265,35 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.hamburger-menu {
+  width: 30px;
+  height: 25px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: black;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu.active .bar:nth-child(1) {
+  transform: translateY(11px) rotate(45deg);
+}
+
+.hamburger-menu.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+  transform: translateY(-11px) rotate(-45deg);
+}
+
 .left-panel {
   width: 30%;
   height: 100%;
@@ -351,6 +303,9 @@ onMounted(() => {
   align-content: baseline;
 }
 
+.p {
+  border: none !important;
+}
 .search {
   border-bottom-width: 0px;
 }
@@ -361,9 +316,10 @@ onMounted(() => {
 
 .wishlist-toggle,
 .detail-toggle {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   cursor: pointer;
   border-bottom-width: 0px;
+  margin-top: 50px;
 }
 
 .detail-toggle div {
@@ -427,45 +383,60 @@ table th {
 .analyze-button-container button:hover {
   background-color: #45a049;
 }
-
-/* 매매전월세 건물유형 관련 CSS */
 .filter-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.filter-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.filter-buttons button {
   padding: 10px;
-  background-color: #f7f7f7;
+  background-color: #f9f9f9;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  width: 100%; /* Make sure the container takes full width */
+  max-width: 1200px; /* Optional: Limit the max width for large screens */
+  margin: 0 auto; /* Center the container */
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.dropdown {
+.filter-inline {
   display: flex;
-  gap: 8px;
-  padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  flex-direction: column; /* Default for small screens (stacked vertically) */
+  gap: 20px;
+  align-items: center;
+  width: 100%; /* Take full width */
 }
 
-.dropdown button {
-  padding: 4px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+/* From Uiverse.io by alexroumi */
+button {
+  padding: 15px 25px;
+  border: unset;
+  border-radius: 15px;
+  color: #212121;
+  z-index: 1;
+  background: #e8e8e8;
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+  overflow: hidden;
+  width: 200px;
 }
 
-.dropdown button.active {
-  background-color: mediumaquamarine;
-  color: white;
-  border: 1px solid mediumaquamarine;
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .filter-inline {
+    flex-direction: row; /* On larger screens, arrange items horizontally */
+    justify-content: space-between; /* Spread the dropdowns horizontally */
+    align-items: center;
+  }
+
+  .dropdown-group {
+    flex: 1; /* Ensure each dropdown takes equal space */
+    margin: 0 10px; /* Optional: Add some margin between dropdowns */
+  }
+
+  select {
+    width: 100%; /* Ensure the select dropdowns fill their container */
+    max-width: none; /* Remove any width limitation */
+  }
 }
 </style>

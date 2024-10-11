@@ -31,38 +31,38 @@ show global variables like 'local_infile';
 DROP TABLE IF EXISTS property_tbl;
 
 CREATE TABLE property_tbl (
-                                  property_no int PRIMARY KEY AUTO_INCREMENT,
-                                  property_addr_sigungu_code int not null,
-                                  property_addr_sigungu varchar(200) not null,
-                                  property_addr_bubjung_code int not null,
-                                  property_addr_bubjung varchar(200) not null,
-                                  property_addr_bonbun int,
-                                  property_addr_bubun int,
-                                  property_addr_floor int,
-                                  property_addr_building_name varchar(50),
-                                  contract_date int,
-                                  trade_type varchar(50),
-                                  property_building_area float,
-                                  deposit int,
-                                  rent int,
-                                  price int,
-                                  property_land_area float,
-                                  contract_right_type varchar(50),
-                                  contract_type varchar(50),
-                                  contract_offce_name varchar(50),
-                                  building_year int,
-                                  property_type varchar(50),
-                                  contract_period varchar(50),
-                                  contract_renewed varchar(50),
-                                  contract_renew_used varchar(50),
-                                  deposit_previous int,
-                                  rent_previous int,
-                                  property_jibun_juso varchar(200),
-                                  location_no int,
-                                  formated_date date,
-                                  formated_price DECIMAL(10,2),
-                                  property_type_code int,
-                                  trade_type_code int
+                              property_no int PRIMARY KEY AUTO_INCREMENT,
+                              property_addr_sigungu_code int not null,
+                              property_addr_sigungu varchar(200) not null,
+                              property_addr_bubjung_code int not null,
+                              property_addr_bubjung varchar(200) not null,
+                              property_addr_bonbun int,
+                              property_addr_bubun int,
+                              property_addr_floor int,
+                              property_addr_building_name varchar(50),
+                              contract_date int,
+                              trade_type varchar(50),
+                              property_building_area float,
+                              deposit int,
+                              rent int,
+                              price int,
+                              property_land_area float,
+                              contract_right_type varchar(50),
+                              contract_type varchar(50),
+                              contract_offce_name varchar(50),
+                              building_year int,
+                              property_type varchar(50),
+                              contract_period varchar(50),
+                              contract_renewed varchar(50),
+                              contract_renew_used varchar(50),
+                              deposit_previous int,
+                              rent_previous int,
+                              property_jibun_juso varchar(200),
+                              location_no int,
+                              formated_date date,
+                              formated_price DECIMAL(10,2),
+                              property_type_code int,
+                              trade_type_code int
 );
 
 select * from property_tbl where property_no = 46948;
@@ -142,7 +142,7 @@ CREATE TABLE report_tbl (
                             property_no int NOT NULL,
                             analysis_no int NOT NULL,
                             address varchar(50) NOT NULL,
-                            violation_structure tinyint NOT NULL,
+                            violation_structure tinyint,
                             total_score int,
                             deposit int,
                             rent int,
@@ -154,7 +154,7 @@ CREATE TABLE report_tbl (
                             accord_owner tinyint NOT NULL,
                             common_owner varchar(50),
                             owner_state double,
-                            use_type varchar(50) NOT NULL
+                            use_type varchar(50)
 );
 
 DROP TABLE IF EXISTS member_report_tbl;
@@ -232,43 +232,43 @@ show tables;
 
 # 샘플 데이터
 # 회원 샘플
-INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_birthday, member_phone, member_role)
-VALUES
-    (
-        'N11111', 'one@naver.com', '김일번', 0, '2000-01-01', '010-1111-1111', 'MEMBER'
-    ),
-    (
-        'G22222', 'two@gmail.com', '정이번', 1, '1999-02-02', '010-2222-2222', 'MEMBER'
-    ),
-    (
-        'N33333', 'three@naver.com', '이삼번', 1, '1998-03-03', '010-3333-3333', 'MEMBER'
-    );
+# INSERT INTO member_tbl (member_id, member_email, member_name, member_sex, member_birthday, member_phone, member_role)
+# VALUES
+#     (
+#         'N11111', 'one@naver.com', '김일번', 0, '2000-01-01', '010-1111-1111', 'MEMBER'
+#     ),
+#     (
+#         'G22222', 'two@gmail.com', '정이번', 1, '1999-02-02', '010-2222-2222', 'MEMBER'
+#     ),
+#     (
+#         'N33333', 'three@naver.com', '이삼번', 1, '1998-03-03', '010-3333-3333', 'MEMBER'
+#     );
 
 #부동산 매물 찜 목록
-INSERT INTO like_property_tbl (member_no, property_no)
-VALUES
-    (
-        1, 1
-    ),
-    (
-        2, 2
-    ),
-    (
-        3, 3
-    );
+# INSERT INTO like_property_tbl (member_no, property_no)
+# VALUES
+#     (
+#         1, 1
+#     ),
+#     (
+#         2, 2
+#     ),
+#     (
+#         3, 3
+#     );
 
 # 분석
-INSERT INTO analysis_tbl (property_no)
-VALUES
-    (
-        1
-    ),
-    (
-        2
-    ),
-    (
-        3
-    );
+# INSERT INTO analysis_tbl (property_no)
+# VALUES
+#     (
+#         1
+#     ),
+#     (
+#         2
+#     ),
+#     (
+#         3
+#     );
 
 
 # 레포트
@@ -276,17 +276,17 @@ VALUES
 
 
 # 회원 레포트 목록
-INSERT INTO member_report_tbl (member_no, report_no)
-VALUES
-    (
-        1, 1
-    ),
-    (
-        2, 2
-    ),
-    (
-        3, 3
-    );
+# INSERT INTO member_report_tbl (member_no, report_no)
+# VALUES
+#     (
+#         1, 1
+#     ),
+#     (
+#         2, 2
+#     ),
+#     (
+#         3, 3
+#     );
 
 # 부동산 상식
 INSERT INTO common_sense_tbl (common_sense_title, common_sense_content, piece_sense)
@@ -840,6 +840,10 @@ VALUES
     (
         '부동산 안전진단을 받을 때 주요 점검 항목은 무엇인가요?',
         '주요 점검 항목에는 건물의 소유권 및 저당권, 주용도, 위반건축물 여부, 대지권등기 등이 있습니다.'
+    ),
+    (
+        '우리 서비스에서 제공하는 주요 기능은 무엇인가요?',
+        '우리 서비스는 부동산 안전진단, 실거래가 조회, 부동산 스터디, 내 집 분석 기능을 제공합니다. 이를 통해 사용자는 부동산 거래 및 투자의 위험을 사전에 확인하고, 부동산 시세와 관련 정보를 신속하게 파악할 수 있습니다.'
     );
 
 
@@ -996,3 +1000,24 @@ select * from bml_tbl;
 select * from cor_tbl;
 select * from report_tbl;
 select * from analysis_tbl;
+desc analysis_tbl;
+select * from property_location;
+select * from dictionary_tbl;
+desc property_tbl;
+desc report_tbl;
+select * from report_tbl;
+select * from member_report_tbl;
+update member_report_tbl set report_no = 2 where member_report_no = 3;
+delete from member_report_tbl where report_no = 0;
+insert into member_report_tbl (member_no, report_no) values (1, 1);
+select * from member_tbl;
+
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (2, 3186, 6, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (3, 3186, 7, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (4, 3186, 8, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
+
+# 오피스텔
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (8, 3, 21.3945, '박민서 (소유자)', '단독소유', 6, 0);
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (8, 3, 0, '업무시설(오피스텔)');
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (2, 889, 3, '서울특별시 강남구 역삼동 832-16', 0, 0, null, null, null, null, 0, null, 6, 0, '단독소유', 21.3945, '업무시설(오피스텔)');

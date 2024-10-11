@@ -2,24 +2,29 @@
   <div class="address-search-container">
     <!-- 주소 검색과 폼 화면 -->
     <div v-if="showAddressForm">
-      <input type="button" @click="openDaumPostcode" value="단지, 지역, 지하철, 학교 검색" class="search-input"
-        :disabled="isLoading" />
-
-      <div v-if="isLoading" class="loading-spinner">
-        검색 중...
-      </div>
+      <div v-if="isLoading" class="loading-spinner">검색 중...</div>
 
       <!-- 주소 입력 폼 -->
       <div v-if="selectedAddress" class="selected-address-form">
         <h3>주소 입력</h3>
         <div class="form-group">
           <label>주소:</label>
-          <input type="text" :value="selectedAddress.jibunJuso" readonly class="form-control" />
+          <input
+            type="text"
+            :value="selectedAddress.jibunJuso"
+            readonly
+            class="form-control"
+          />
         </div>
 
         <div class="form-group">
           <label>건물명:</label>
-          <input type="text" :value="selectedAddress.buildingName" readonly class="form-control" />
+          <input
+            type="text"
+            :value="selectedAddress.buildingName"
+            readonly
+            class="form-control"
+          />
         </div>
 
         <!-- 동/호수 입력 폼 -->
@@ -27,13 +32,23 @@
           <form @submit.prevent="submitForm">
             <div class="form-group">
               <label>동 (선택사항):</label>
-              <input type="text" v-model="dong" class="form-control" pattern="[0-9]{1,4}"
-                title="1-4자리 숫자만 입력 가능합니다" />
+              <input
+                type="text"
+                v-model="dong"
+                class="form-control"
+                pattern="[0-9]{1,4}"
+                title="1-4자리 숫자만 입력 가능합니다"
+              />
             </div>
             <div class="form-group">
               <label>호수 (선택사항):</label>
-              <input type="text" v-model="ho" class="form-control" pattern="[0-9]{1,4}"
-                title="1-4자리 숫자만 입력 가능합니다" />
+              <input
+                type="text"
+                v-model="ho"
+                class="form-control"
+                pattern="[0-9]{1,4}"
+                title="1-4자리 숫자만 입력 가능합니다"
+              />
             </div>
           </form>
         </div>
@@ -42,12 +57,22 @@
         <div class="contract-in-progress">
           <p>지금 부동산 계약을 하는 중인가요?</p>
           <div class="button-group">
-            <button @click="handleProgressType('yes')"
-              :class="['progress-option-button', { active: progressType === 'yes' }]">
+            <button
+              @click="handleProgressType('yes')"
+              :class="[
+                'progress-option-button',
+                { active: progressType === 'yes' },
+              ]"
+            >
               예
             </button>
-            <button @click="handleProgressType('no')"
-              :class="['progress-option-button', { active: progressType === 'no' }]">
+            <button
+              @click="handleProgressType('no')"
+              :class="[
+                'progress-option-button',
+                { active: progressType === 'no' },
+              ]"
+            >
               아니오
             </button>
           </div>
@@ -57,16 +82,48 @@
         <div v-if="progressType === 'yes'" class="detail-form">
           <form @submit.prevent="submitForm">
             <div class="form-group">
-              <label>전세금:<span v-if="Number(jeonsePrice) >= 10000">&nbsp;{{ formattedDeposit }}</span> </label>
-              <input type="text" v-model="jeonsePrice" required class="form-control" />
+              <label
+                >전세금:<span v-if="Number(jeonsePrice) >= 10000"
+                  >&nbsp;{{ formattedDeposit }}</span
+                >
+              </label>
+              <input
+                type="text"
+                v-model="jeonsePrice"
+                required
+                class="form-control"
+              />
             </div>
             <div class="form-group">
               <label>집주인 성명:</label>
-              <div v-for="(name, index) in names" :key="index" class="name-input-container">
-                <input type="text" v-model="names[index]" required class="form-control" placeholder="집주인 성명" />
+              <div
+                v-for="(name, index) in names"
+                :key="index"
+                class="name-input-container"
+              >
+                <input
+                  type="text"
+                  v-model="names[index]"
+                  required
+                  class="form-control"
+                  placeholder="집주인 성명"
+                />
                 <div class="button-group">
-                  <button @click="addName(index)" type="button" class="add-button">+</button>
-                  <button v-if="index !== 0" @click="removeName(index)" type="button" class="remove-button">-</button>
+                  <button
+                    @click="addName(index)"
+                    type="button"
+                    class="add-button"
+                  >
+                    +
+                  </button>
+                  <button
+                    v-if="index !== 0"
+                    @click="removeName(index)"
+                    type="button"
+                    class="remove-button"
+                  >
+                    -
+                  </button>
                 </div>
               </div>
             </div>
@@ -75,10 +132,16 @@
 
         <!-- 제출 버튼 -->
         <div class="submit-section">
-          <button @click="submitForm" class="submit-button" :disabled="isLoading ||
-            !progressType ||
-            (progressType === 'yes' && (!jeonsePrice || names.some(name => !name)))
-            ">
+          <button
+            @click="submitForm"
+            class="submit-button"
+            :disabled="
+              isLoading ||
+              !progressType ||
+              (progressType === 'yes' &&
+                (!jeonsePrice || names.some((name) => !name)))
+            "
+          >
             제출
           </button>
         </div>
@@ -88,21 +151,27 @@
     <!-- 유니크 코드 목록 화면 -->
     <div v-if="!showAddressForm && addresses.length > 0" class="address-list">
       <h3>현재 거주중인 주소를 선택해주세요</h3>
-      <div v-for="address in addresses" :key="address.commonUniqueNo" class="address-item">
+      <div
+        v-for="address in addresses"
+        :key="address.commonUniqueNo"
+        class="address-item"
+      >
         <div class="address-details">
           <p class="unique-code">유니크 코드: {{ address.commonUniqueNo }}</p>
           <p class="address">주소: {{ address.commAddrLotNumber }}</p>
           <p class="status">상태: {{ address.resState }}</p>
         </div>
-        <button @click="sendUniqueCode(address.commonUniqueNo)" class="select-button" :disabled="isLoading">
+        <button
+          @click="sendUniqueCode(address.commonUniqueNo)"
+          class="select-button"
+          :disabled="isLoading"
+        >
           선택
         </button>
       </div>
 
       <!-- 뒤로가기 버튼 -->
-      <button @click="goBack" class="back-button">
-        뒤로가기
-      </button>
+      <button @click="goBack" class="back-button">뒤로가기</button>
     </div>
 
     <div v-if="errorMessage" class="error-message" role="alert">
@@ -113,12 +182,10 @@
 </template>
 
 <script setup>
-import { ref, watch ,onMounted } from 'vue';
-import axios from 'axios';
+import { ref, watch, onMounted } from 'vue';
+import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-
-
 const route = useRoute();
 const router = useRouter();
 
@@ -144,10 +211,10 @@ const goBack = () => {
 const formatDeposit = (value) => {
   const numValue = Number(value);
   if (isNaN(numValue)) return '';
-  
+
   const billions = Math.floor(numValue / 100000000);
   const millions = Math.floor((numValue % 100000000) / 10000);
-  
+
   if (billions > 0) {
     return `${billions}억${millions}만원`;
   } else {
@@ -159,7 +226,6 @@ const formatDeposit = (value) => {
 watch(jeonsePrice, (newValue) => {
   formattedDeposit.value = formatDeposit(newValue);
 });
-
 
 // 계약자 추가 함수
 const addName = () => {
@@ -174,15 +240,16 @@ const removeName = (index) => {
 };
 
 // API 설정
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/safety-inspection',
-  timeout: 100000,
-});
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080/api/safety-inspection',
+//   timeout: 500000,
+// });
 
 // 에러 처리 함수
 const handleError = (error, customMessage) => {
   console.error(error);
-  errorMessage.value = customMessage || '처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
+  errorMessage.value =
+    customMessage || '처리 중 오류가 발생했습니다. 다시 시도해 주세요.';
   isLoading.value = false;
 };
 
@@ -223,15 +290,16 @@ const generatePayload = (uniqueCode) => {
   const addr_dong = jibunAddressParts[1] || '';
   const addr_lotNumber = jibunAddressParts[jibunAddressParts.length - 1] || '';
   const jibunAddressStr = selectedAddress.value.jibunJuso;
-  const jibunAddress = jibunAddressStr.replace(addr_sido, addr_sido+" ").trim();
-  const price = selectedAddress.value.price * 100000000;
-  
+  const jibunAddress = jibunAddressStr
+    .replace(addr_sido, addr_sido + ' ')
+    .trim();
+  const price = String(Math.round(selectedAddress.value.price * 100000000));
 
-  let zipCode = "";
-  if (selectedAddress.value.zipCode < 10000) {
-    zipCode = "0" + selectedAddress.value.zipCode;
+  let zipCode = '';
+  if (selectedAddress.value.zipcode < 10000) {
+    zipCode = '0' + selectedAddress.value.zipCode;
   } else {
-    zipCode = "" + selectedAddress.value.zipCode;
+    zipCode = '' + selectedAddress.value.zipCode;
   }
 
   const payload = {
@@ -253,7 +321,6 @@ const generatePayload = (uniqueCode) => {
   return payload;
 };
 
-
 // 폼 제출 함수 수정
 const submitForm = async () => {
   if (isLoading.value) return;
@@ -263,7 +330,13 @@ const submitForm = async () => {
     const payload = generatePayload();
     console.log(payload);
 
-    const response = await api.post('/address', payload);
+    const response = await axiosInstance.post(
+      '/api/safety-inspection/address',
+      payload,
+      {
+        timeout: 300000,
+      }
+    );
     if (Array.isArray(response.data) && response.data.length > 0) {
       addresses.value = response.data;
       showAddressForm.value = false; // 폼 화면 숨기기
@@ -280,25 +353,26 @@ const submitForm = async () => {
 // 유니크 코드 전송
 const sendUniqueCode = async (uniqueCode) => {
   if (isLoading.value) return;
-
   isLoading.value = true;
   try {
     const payload = generatePayload(uniqueCode);
     console.log('Sending Unique Code with:', payload);
-
-    const response = await api.post('/cors', payload);
+    const response = await axiosInstance.post(
+      '/api/safety-inspection/cors',
+      payload,
+      {
+        timeout: 300000,
+      }
+    );
     const reportNo = response.data;
     console.log(reportNo);
-
-    router.push(`/report/${reportNo}`)
+    router.push(`/report/${reportNo}`);
   } catch (error) {
-
     handleError(error, '유니크 코드 전송에 실패했습니다.');
   } finally {
     isLoading.value = false;
   }
 };
-
 
 // 초기화 함수 수정
 const resetForm = (fullReset = true) => {
@@ -322,119 +396,277 @@ onMounted(() => {
       jibunJuso: route.query.jibunJuso,
       buildingName: route.query.buildingName,
       propertyNo: route.query.propertyNo,
-      zipCode: route.query.zipCode,
-      price: route.query.price
+      zipCode: route.query.zipcode,
+      price: route.query.price,
     };
   }
 });
 </script>
 
-
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+.address-search-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.search-button {
+  width: 100%;
+  height: 60px;
+  border-radius: 30px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.search-button:disabled {
+  background-color: #b0d4ff;
+  cursor: not-allowed;
+}
+
+.search-button i {
+  margin-right: 10px;
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  color: #007bff;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 123, 255, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.form-title,
+.list-title {
+  color: #007bff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.progress-option-button {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  background-color: white;
+  color: #007bff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.progress-option-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.name-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.add-button,
+.remove-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-button {
+  background-color: #28a745;
+}
+
+.add-button:hover {
+  background-color: #218838;
+}
+
+.remove-button {
+  background-color: #dc3545;
+}
+
+.remove-button:hover {
+  background-color: #c82333;
+}
+
+.submit-button,
+.select-button,
+.back-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button {
+  background-color: #007bff;
+  margin-top: 20px;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submit-button:disabled {
+  background-color: #b0d4ff;
+  cursor: not-allowed;
+}
+
+.address-list {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.address-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  margin: 15px 0;
+  padding: 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.address-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.address-details p {
+  margin: 5px 0;
+  color: #495057;
+}
+
+.unique-code {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.select-button {
+  background-color: #28a745;
+  padding: 8px 16px;
+}
+
+.select-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.select-button:disabled {
+  background-color: #8fc7a1;
+  cursor: not-allowed;
+}
 
 .back-button {
   background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
   margin-top: 20px;
-  transition: background-color 0.3s ease;
 }
 
 .back-button:hover {
   background-color: #5a6268;
 }
 
-.address-search-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.search-input {
-  width: 100%;
-  height: 60px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  padding: 0 15px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.search-input:hover:not(:disabled) {
-  border-color: rgb(0, 181, 0);
-}
-
-.search-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
-.loading-spinner {
-  text-align: center;
-  margin: 20px 0;
-  color: #666;
-}
-
-.address-list {
-  margin-top: 20px;
-}
-
-.address-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #eee;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.address-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.select-button {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.select-button:hover:not(:disabled) {
-  background-color: rgb(0, 150, 0);
-}
-
-.select-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-control {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 .error-message {
-  background-color: #fff3f3;
-  color: #dc3545;
-  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
   border-radius: 4px;
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -443,327 +675,8 @@ onMounted(() => {
 .close-error {
   background: none;
   border: none;
-  color: #dc3545;
+  color: #721c24;
+  font-size: 18px;
   cursor: pointer;
 }
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.option-button,
-.progress-option-button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-  cursor: pointer;
-}
-
-.option-button.active,
-.progress-option-button.active {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border-color: rgb(0, 181, 0);
-}
-
-.submit-button {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.submit-button:hover:not(:disabled) {
-  background-color: rgb(0, 150, 0);
-}
-
-.submit-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.submit-section {
-  margin-top: 20px;
-}
-
-.new-search-button {
-  background-color: #666;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-}
-
-.new-search-button:hover {
-  background-color: #555;
-}
-
-.address-list {
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-}
-
-
-.button-group {
-  display: flex;
-  align-items: center;
-  gap: 5px; /* 버튼들 간의 간격 */
-}
-
-.add-button,
-.remove-button {
-  background-color: #0d6efd; 
-  color: white;
-  border: none;
-  padding: 10px; 
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 40px; /* 버튼의 너비를 고정 */
-  height: 40px; /* 버튼의 높이도 고정 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.add-button {
-  background-color: #0d6efd; /* 추가 버튼*/
-}
-
-.remove-button {
-  background-color: #dc3545; /* 삭제 버튼*/
-}
-
-.add-button:hover {
-  background-color: #0d6efd; /* 마우스 호버*/
-}
-
-.remove-button:hover {
-  background-color: #c82333; /* 마우스 호버*/
-}
-
-</style>
-
-
-<style scoped>
-.address-search-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.search-input {
-  width: 100%;
-  height: 60px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  padding: 0 15px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.search-input:hover:not(:disabled) {
-  border-color: rgb(0, 181, 0);
-}
-
-.search-input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
-.loading-spinner {
-  text-align: center;
-  margin: 20px 0;
-  color: #666;
-}
-
-.address-list {
-  margin-top: 20px;
-}
-
-.address-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #eee;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.address-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.select-button {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.select-button:hover:not(:disabled) {
-  background-color: rgb(0, 150, 0);
-}
-
-.select-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-control {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.error-message {
-  background-color: #fff3f3;
-  color: #dc3545;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.close-error {
-  background: none;
-  border: none;
-  color: #dc3545;
-  cursor: pointer;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.option-button,
-.progress-option-button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-  cursor: pointer;
-}
-
-.option-button.active,
-.progress-option-button.active {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border-color: rgb(0, 181, 0);
-}
-
-.submit-button {
-  background-color: rgb(0, 181, 0);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.submit-button:hover:not(:disabled) {
-  background-color: rgb(0, 150, 0);
-}
-
-.submit-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.submit-section {
-  margin-top: 20px;
-}
-
-.new-search-button {
-  background-color: #666;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-}
-
-.new-search-button:hover {
-  background-color: #555;
-}
-
-.address-list {
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-}
-
-
-.button-group {
-  display: flex;
-  align-items: center;
-  gap: 5px; /* 버튼들 간의 간격 */
-}
-
-.add-button,
-.remove-button {
-  background-color: #0d6efd; 
-  color: white;
-  border: none;
-  padding: 10px; 
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 40px; /* 버튼의 너비를 고정 */
-  height: 40px; /* 버튼의 높이도 고정 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.add-button {
-  background-color: #0d6efd; /* 추가 버튼*/
-}
-
-.remove-button {
-  background-color: #dc3545; /* 삭제 버튼*/
-}
-
-.add-button:hover {
-  background-color: #0d6efd; /* 마우스 호버*/
-}
-
-.remove-button:hover {
-  background-color: #c82333; /* 마우스 호버*/
-}
-
 </style>
