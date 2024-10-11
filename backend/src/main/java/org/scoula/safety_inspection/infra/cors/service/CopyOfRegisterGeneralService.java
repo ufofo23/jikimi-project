@@ -90,7 +90,7 @@ public class CopyOfRegisterGeneralService {
         String commonOwner = getCommonOwner(firstEntry);
         String changeOwnerCountStr = getChangeOwnerCount(firstEntry);
         Integer changeOwnerCount = Integer.parseInt(changeOwnerCountStr);
-        Integer maximumOfBond = Integer.parseInt(getMaximumOfBond(firstEntry));
+        Long maximumOfBond = Long.parseLong(getMaximumOfBond(firstEntry));
 
         CopyOfRegisterDto registerDto = new CopyOfRegisterDto(
                 analysisNo, ownerState, ownership,
