@@ -65,6 +65,8 @@ CREATE TABLE property_tbl (
                                   trade_type_code int
 );
 
+select * from property_tbl where property_no = 46948;
+
 LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
     INTO TABLE estate.property_tbl
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
@@ -953,6 +955,39 @@ SELECT * FROM property_location;
 SELECT count(*) from property_location;
 
 
-select * from bml_tbl;
-select * from cor_tbl;
-select * from report_tbl;
+# report_tbl 샘플 데이터
+# INSERT INTO report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+# VALUES
+#     (1, 101, 'Seoul, Gangnam-gu, Apgujeong-dong', 1, 85, 50000, 2000, 800000, 60, 30000, 'Kim Minho', 1, 1, 'Kim Minho', 75.5, 'Residential'),
+#     (2, 102, 'Seoul, Jongno-gu, Samcheong-dong', 0, 92, 0, 0, 1200000, 0, 0, 'Choi Sumin', 0, 1, 'Choi Sumin', 85.0, 'Commercial'),
+#     (3, 103, 'Busan, Haeundae-gu, Jwa-dong', 1, 78, 10000, 500, 500000, 50, 25000, 'Park Jihyun', 2, 0, 'Park Jihyun', 65.0, 'Mixed'),
+#     (4, 104, 'Incheon, Yeonsu-gu, Songdo-dong', 0, 88, 30000, 1000, 700000, 45, 20000, 'Lee Jun', 1, 1, 'Lee Jun', 80.0, 'Residential'),
+#     (5, 105, 'Daegu, Suseong-gu, Beomeo-dong', 0, 90, 0, 0, 1100000, 0, 0, 'Oh Seungmin', 0, 1, 'Oh Seungmin', 95.0, 'Commercial'),
+#     (6, 106, 'Gwangju, Dong-gu, Hak-dong', 1, 65, 15000, 800, 400000, 60, 22000, 'Jang Hyejin', 3, 0, 'Jang Hyejin', 55.5, 'Residential'),
+#     (7, 107, 'Daejeon, Seo-gu, Dunsan-dong', 0, 80, 20000, 1000, 600000, 55, 18000, 'Yoon Jiho', 1, 1, 'Yoon Jiho', 70.0, 'Mixed'),
+#     (8, 108, 'Seoul, Seocho-gu, Banpo-dong', 0, 93, 60000, 2500, 900000, 65, 32000, 'Kim Hana', 2, 1, 'Kim Hana', 88.0, 'Residential'),
+#     (9, 109, 'Gyeonggi, Suwon-si, Yeongtong-gu', 1, 72, 12000, 600, 480000, 55, 17000, 'Shin Donghyuk', 1, 0, 'Shin Donghyuk', 60.0, 'Commercial'),
+#     (10, 110, 'Ulsan, Nam-gu, Samsan-dong', 1, 25, 10000, 500, 520000, 60, 20000, 'Han Seoyeon', 3, 0, 'Han Seoyeon', 66.5, 'Residential'),
+#     (11, 111, 'Jeju, Jeju-si, Nohyeong-dong', 0, 89, 0, 0, 1050000, 0, 0, 'Kim Jisoo', 0, 1, 'Kim Jisoo', 92.0, 'Commercial'),
+#     (12, 112, 'Seoul, Mapo-gu, Sangsu-dong', 0, 81, 25000, 1200, 720000, 52, 25000, 'Kang Minwoo', 2, 1, 'Kang Minwoo', 75.0, 'Mixed'),
+#     (13, 113, 'Busan, Suyeong-gu, Gwangalli', 1, 77, 17000, 700, 560000, 48, 23000, 'Lee Soyeon', 1, 0, 'Lee Soyeon', 62.0, 'Residential'),
+#     (14, 114, 'Gyeonggi, Yongin-si, Giheung-gu', 0, 84, 22000, 900, 680000, 50, 19000, 'Jung Hyunwoo', 2, 1, 'Jung Hyunwoo', 78.5, 'Commercial'),
+#     (15, 115, 'Seoul, Seodaemun-gu, Sinchon-dong', 1, 87, 45000, 2000, 850000, 58, 29000, 'Kim Taehyun', 1, 1, 'Kim Taehyun', 82.0, 'Residential');
+#
+# INSERT INTO member_report_tbl (member_no, report_no)
+# VALUES
+#     (1, 4),
+#     (1, 5),
+#     (2, 6),
+#     (2, 7),
+#     (3, 8),
+#     (3, 9),
+#     (4, 10),
+#     (4, 11),
+#     (5, 12),
+#     (5, 13),
+#     (6, 14),
+#     (6, 15),
+#     (7, 16),
+#     (7, 17),
+#     (8, 18);

@@ -33,27 +33,21 @@ public class SafetyInspectionController {
     @PostMapping("/address")
     public ResponseEntity<List<Map<String, String>>> handleAccess(@RequestBody Map<String, Object> payload) {
         try {
-            System.out.println("SafetyInspectionController.handleAccess");
-            for (Map.Entry<String, Object> entry : payload.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                System.out.println("address: " + key + ", address: " + value);
-            }
             List<Map<String,String>> response = extractUnicodeService.getUniqueCode(payload);
-            System.out.println("response = " + response);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(List.of(Map.of("error", "An error occurred while processing the request.")), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     // 등기부 등본 관련
     @PostMapping("/cors")
     public ResponseEntity<String> handleUniqueCode(@RequestBody Map<String, Object> payload) {
         try {
-            safetyInspectionService.processSafetyInspection(payload);
-            return ResponseEntity.ok("성공");
+            String reportNo = safetyInspectionService.processSafetyInspection(payload);
+            return ResponseEntity.ok(reportNo);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

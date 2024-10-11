@@ -38,7 +38,8 @@ public class LikeReportServiceImpl implements LikeReportService {
 
         token = token.substring(7);
         String userId = jwtUtil.getUserIdFromToken(token);
-
+        System.out.println("userId: " + userId);
+        System.out.println("pageRequest: " + pageRequest);
         List<ReportVO> report = mapper.getPage(userId, pageRequest);
 
         int totalCount = mapper.getTotalCount();
@@ -51,7 +52,7 @@ public class LikeReportServiceImpl implements LikeReportService {
     public List<ReportDTO> getList(String token) {
         token = token.substring(7);
         String userId = jwtUtil.getUserIdFromToken(token);
-
+        System.out.println("userId = " + userId);
         return mapper.getList(userId).stream()
                 .map(ReportDTO::of)
                 .toList();
