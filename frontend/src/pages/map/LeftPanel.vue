@@ -300,7 +300,7 @@ const analyzeProperty = () => {
     const jibunJuso = props.selectedProperty[0].jibunJuso;
     const buildingName = props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
-    const zipcode = props.selectedProperty[0].zipcode;
+    const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
     
     router.push({
@@ -309,7 +309,7 @@ const analyzeProperty = () => {
         jibunJuso: jibunJuso,
         buildingName: buildingName,
         propertyNo: propertyNo,
-        zipcode: zipcode,
+        zipCode: zipCode,
         price: price
       },
     });
