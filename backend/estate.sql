@@ -952,3 +952,7 @@ WHERE CHAR_LENGTH(jibun_juso) < 5;
 SELECT * FROM property_location;
 SELECT count(*) from property_location;
 
+
+select * from bml_tbl;
+select * from cor_tbl;
+select * from report_tbl;

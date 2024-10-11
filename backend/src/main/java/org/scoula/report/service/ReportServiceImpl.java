@@ -48,7 +48,10 @@ public class ReportServiceImpl implements ReportService {
         ReportDTO report = new ReportDTO();
 
         CopyOfRegisterDto cor = corMapper.selectCopyOfRegister(analysisNo);
+        log.info("corDTO :::::::::::::: " + cor.toString());
         BuildingManagementLedgerDto bml = bmlMapper.selectBuildingData(analysisNo);
+        log.info("bmlDTO :::::::::::::: " + bml.toString());
+
 
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("addr-jibun-address").toString());
@@ -180,6 +183,9 @@ public class ReportServiceImpl implements ReportService {
         report.setTotalScore(
                 getTotalScore(report, Integer.parseInt(payload.get("price").toString()))
         );
+
+        log.info("TotalllllllllllllllllScoreeeeeeeeeeeeeeeee");
+        log.info(report.getTotalScore());
 
         return report;
     }

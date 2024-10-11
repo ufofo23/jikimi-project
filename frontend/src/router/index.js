@@ -21,6 +21,7 @@ import PreventionDetailPage from '@/pages/study/PreventionDetailPage.vue';
 import MapAnalyzing from '@/pages/map/MapAnalyzing.vue';
 import MyReport from '@/pages/mypage/MyReport.vue';
 import Report from '@/pages/app/Report.vue';
+import Test from '@/pages/Test.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,14 +119,17 @@ const router = createRouter({
       name: 'report',
       component: Report,
     },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test,
+    },
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  const requiresAuth = to.matched.some(
-    (record) => record.meta.requiresAuth
-  );
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
   authStore.checkAuth(); // 인증 체크
 

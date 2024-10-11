@@ -35,7 +35,8 @@ import javax.sql.DataSource;
         "org.scoula.prevention.mapper",
         "org.scoula.report.mapper",
         "org.scoula.like.report.mapper",
-        "org.scoula.like.property.mapper"})
+        "org.scoula.like.property.mapper",
+        "org.scoula.test.mapper"})
 @ComponentScan(basePackages = {
         "org.scoula.oauth",
         "org.scoula.safety_inspection",
@@ -48,7 +49,8 @@ import javax.sql.DataSource;
         "org.scoula.prevention.service",
         "org.scoula.report.service",
         "org.scoula.like.report.service",
-        "org.scoula.like.property.service"
+        "org.scoula.like.property.service",
+        "org.scoula.test.service"
 })
 @Slf4j
 @EnableTransactionManagement
