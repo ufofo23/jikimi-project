@@ -1,6 +1,5 @@
 package org.scoula.map.service;
 
-import com.nimbusds.openid.connect.sdk.claims.Address;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.ibatis.annotations.Param;
@@ -26,66 +25,15 @@ public class MapServiceImpl implements MapService {
     }
 
     @Override
-    public List<MapVO> getAddressListMoveAll(  @Param("lat") double lat,
-                                            @Param("lon") double lon,
-                                            @Param("zoomLevel") int zoomLevel) {
+    public List<MapVO> getAddressListMoveAll(@Param("lat") double lat, @Param("lon") double lon, @Param("zoomLevel") int zoomLevel) {
         return mapper.getAddressListMoveAll(lat, lon, zoomLevel);
     }
 
     @Override
-    public List<MapVO> getAddressListMovePropertyFilter(  @Param("lat") double lat,
-                                            @Param("lon") double lon,
-                                            @Param("zoomLevel") int zoomLevel,
-                                            @Param("property_type") int property_type) {
-        return mapper.getAddressListMovePropertyFilter(lat, lon, zoomLevel, property_type);
-    }
-
-
-    @Override
-    public List<MapVO> getAddressListMoveTradeFilter(  @Param("lat") double lat,
-                                            @Param("lon") double lon,
-                                            @Param("zoomLevel") int zoomLevel,
-                                            @Param("trade_type") int trade_type) {
-        return mapper.getAddressListMoveTradeFilter(lat, lon, zoomLevel, trade_type);
-    }
-
-    @Override
-    public List<MapClusterVO> getAddressListMoveClusterAll(
-            @Param("lat") double lat,
-            @Param("lon") double lon,
-            @Param("zoomLevel") int zoomLevel,
-            @Param("page") int page,
-            @Param("limit") int limit
-    ) {
+    public List<MapClusterVO> getAddressListMoveClusterAll(@Param("lat") double lat, @Param("lon") double lon, @Param("zoomLevel") int zoomLevel, @Param("page") int page, @Param("limit") int limit) {
         int offset = (page - 1) * limit;  // Calculate offset based on page and limit
         return mapper.getAddressListMoveClusterAll(lat, lon, zoomLevel, limit, offset);  // Pass limit and offset to the mapper
     }
-
-    @Override
-    public List<MapClusterVO> getAddressListMoveClusterPropertyFilter(
-            @Param("lat") double lat,
-            @Param("lon") double lon,
-            @Param("zoomLevel") int zoomLevel,
-            @Param("property_type") int property_type,
-            @Param("page") int page,
-            @Param("limit") int limit
-    ) {
-        int offset = (page - 1) * limit;  // Calculate offset based on page and limit
-        return mapper.getAddressListMoveClusterPropertyFilter(lat, lon, zoomLevel, property_type, limit, offset);  // Pass limit and offset to the mapper
-    }
-    @Override
-    public List<MapClusterVO> getAddressListMoveClusterTradeFilter(
-            @Param("lat") double lat,
-            @Param("lon") double lon,
-            @Param("zoomLevel") int zoomLevel,
-            @Param("trade_type") int trade_type,
-            @Param("page") int page,
-            @Param("limit") int limit
-    ) {
-        int offset = (page - 1) * limit;  // Calculate offset based on page and limit
-        return mapper.getAddressListMoveClusterTradeFilter(lat, lon, zoomLevel, trade_type, limit, offset);  // Pass limit and offset to the mapper
-    }
-
 
     @Override
     public List<MapDetailDTO> getAddressDetails(Long id) { // 반환 타입을 List로 변경
