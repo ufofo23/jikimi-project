@@ -83,13 +83,13 @@
           <form @submit.prevent="submitForm">
             <div class="form-group">
               <label
-                >전세금:<span v-if="Number(deposit) >= 10000"
+                >전세금:<span v-if="Number(jeonsePrice) >= 10000"
                   >&nbsp;{{ formattedDeposit }}</span
                 >
               </label>
               <input
                 type="text"
-                v-model="deposit"
+                v-model="jeonsePrice"
                 required
                 class="form-control"
               />
@@ -139,7 +139,7 @@
               isLoading ||
               !progressType ||
               (progressType === 'yes' &&
-                (!deposit || names.some((name) => !name)))
+                (!jeonsePrice || names.some((name) => !name)))
             "
           >
             제출
@@ -183,7 +183,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import axios from 'axios';
+import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 const route = useRoute();
@@ -198,7 +198,7 @@ const errorMessage = ref('');
 const isLoading = ref(false);
 const progressType = ref(null);
 const showAddressForm = ref(false);
-const deposit = ref('');
+const jeonsePrice = ref('');
 const names = ref(['']);
 const formattedDeposit = ref('');
 
@@ -223,7 +223,7 @@ const formatDeposit = (value) => {
 };
 
 // deposit이 변경될 때마다 formattedDeposit 업데이트
-watch(deposit, (newValue) => {
+watch(jeonsePrice, (newValue) => {
   formattedDeposit.value = formatDeposit(newValue);
 });
 
@@ -240,10 +240,10 @@ const removeName = (index) => {
 };
 
 // API 설정
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api/safety-inspection',
-  timeout: 500000,
-});
+// const api = axios.create({
+//   baseURL: 'http://localhost:8080/api/safety-inspection',
+//   timeout: 500000,
+// });
 
 // 에러 처리 함수
 const handleError = (error, customMessage) => {
@@ -278,7 +278,7 @@ const openDaumPostcode = () => {
 const handleProgressType = (type) => {
   progressType.value = type;
   if (type === 'no') {
-    deposit.value = '';
+    jeonsePrice.value = '';
     names.value = [''];
   }
 };
@@ -293,7 +293,7 @@ const generatePayload = (uniqueCode) => {
   const jibunAddress = jibunAddressStr
     .replace(addr_sido, addr_sido + ' ')
     .trim();
-  const price = selectedAddress.value.price * 100000000;
+  const price = String(Math.round(selectedAddress.value.price * 100000000));
 
   let zipCode = '';
   if (selectedAddress.value.zipcode < 10000) {
@@ -310,7 +310,7 @@ const generatePayload = (uniqueCode) => {
     dong: dong.value || '',
     ho: ho.value || '',
     zipCode,
-    deposit: progressType.value === 'yes' ? deposit.value : '',
+    jeonsePrice: progressType.value === 'yes' ? jeonsePrice.value : '',
     contractName: names.value,
     jibunAddress,
     uniqueCode,
@@ -330,7 +330,13 @@ const submitForm = async () => {
     const payload = generatePayload();
     console.log(payload);
 
-    const response = await api.post('/address', payload);
+    const response = await axiosInstance.post(
+      '/api/safety-inspection/address',
+      payload,
+      {
+        timeout: 300000,
+      }
+    );
     if (Array.isArray(response.data) && response.data.length > 0) {
       addresses.value = response.data;
       showAddressForm.value = false; // 폼 화면 숨기기
@@ -351,7 +357,13 @@ const sendUniqueCode = async (uniqueCode) => {
   try {
     const payload = generatePayload(uniqueCode);
     console.log('Sending Unique Code with:', payload);
-    const response = await api.post('/cors', payload);
+    const response = await axiosInstance.post(
+      '/api/safety-inspection/cors',
+      payload,
+      {
+        timeout: 300000,
+      }
+    );
     const reportNo = response.data;
     console.log(reportNo);
     router.push(`/report/${reportNo}`);
@@ -371,7 +383,7 @@ const resetForm = (fullReset = true) => {
   }
   dong.value = '';
   ho.value = '';
-  deposit.value = '';
+  jeonsePrice.value = '';
   names.value = [''];
   errorMessage.value = '';
   progressType.value = null;

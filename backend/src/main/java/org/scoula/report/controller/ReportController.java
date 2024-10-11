@@ -15,9 +15,9 @@ public class ReportController {
 
     private final ReportService service;
 
-    @GetMapping("/{analysisNo}")
-    public ResponseEntity<ReportDTO> get(@PathVariable("analysisNo") int analysisNo) {
-        return ResponseEntity.ok(service.get(analysisNo));
+    @GetMapping("/{reportNo}")
+    public ResponseEntity<ReportDTO> get(@RequestHeader("Authorization") String token, @PathVariable int reportNo) {
+        return ResponseEntity.ok(service.get(reportNo, token));
     }
 
     @DeleteMapping("{analysisNo}")

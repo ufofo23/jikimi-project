@@ -16,7 +16,7 @@
     <select id="get" resultType="org.scoula.report.domain.ReportVO">
         SELECT * FROM member_report_tbl mrt
         JOIN report_tbl rt ON mrt.report_no = rt.report_no
-            where mrt.report_no = #{report_no}
+            where rt.report_no = #{reportNo} and mrt.member_no = (select member_no from member_tbl where member_id = #{userId})
     </select>
 
     <select id="getReportNo" resultType="int">
