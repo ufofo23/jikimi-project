@@ -96,6 +96,7 @@ public class ReportServiceImpl implements ReportService {
 
             String ownership = cor.getOwnership();
 
+            report.setOwnership(ownership);
             // 정규 표현식을 사용하여 이름 부분만 추출
             Pattern pattern = Pattern.compile("(\\S+)(?= \\([^)]*\\))");
             Matcher matcher = pattern.matcher(ownership);
