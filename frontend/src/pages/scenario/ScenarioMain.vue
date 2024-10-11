@@ -1,94 +1,64 @@
 <template>
   <div class="container">
     <div class="checklist-section" v-show="!showResults">
-      <h5 class="text-center my-4 checklist-title">
-        전세 사기 위험 체크리스트
-      </h5>
+      <h1 class="title">🏠 전세 사기 위험 체크리스트 🔍</h1>
 
-      <form @submit.prevent="submitChecklist">
-        <table class="table-auto w-full text-left">
-          <thead>
-            <tr class="border-b">
-              <th class="px-4 py-2 text-left">문항 번호</th>
-              <th class="px-4 py-2 text-left">질문</th>
-              <th class="px-4 py-2 text-left">응답</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(question, index) in questions"
-              :key="index"
-              class="border-t"
+      <form @submit.prevent="submitChecklist" class="checklist-form">
+        <div
+          v-for="(question, index) in questions"
+          :key="index"
+          class="question-item"
+        >
+          <p class="question-text">{{ question.text }}</p>
+          <div class="radio-group">
+            <label
+              v-for="option in ['예', '아니오', '모르겠습니다']"
+              :key="option"
             >
-              <td class="px-4 py-2">{{ index + 1 }}</td>
-              <td class="px-4 py-2">{{ question.text }}</td>
-              <td class="px-4 py-2">
-                <div class="radio-group flex space-x-4">
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      :name="'question-' + index"
-                      value="yes"
-                      v-model="selectedAnswers[index]"
-                      class="form-radio"
-                    />
-                    <span class="ml-2">예</span>
-                  </label>
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      :name="'question-' + index"
-                      value="no"
-                      v-model="selectedAnswers[index]"
-                      class="form-radio"
-                    />
-                    <span class="ml-2">아니오</span>
-                  </label>
-                  <label class="inline-flex items-center">
-                    <input
-                      type="radio"
-                      :name="'question-' + index"
-                      value="unknown"
-                      v-model="selectedAnswers[index]"
-                      class="form-radio"
-                    />
-                    <span class="ml-2">모르겠습니다</span>
-                  </label>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="text-center mt-6">
-          <button type="submit" :disabled="loading" class="btn-primary">
-            사기 시나리오 확인하기
-          </button>
+              <input
+                type="radio"
+                :name="'question-' + index"
+                :value="
+                  option === '예'
+                    ? 'yes'
+                    : option === '아니오'
+                    ? 'no'
+                    : 'unknown'
+                "
+                v-model="selectedAnswers[index]"
+              />
+              <span class="radio-label">{{ option }}</span>
+            </label>
+          </div>
         </div>
+        <button type="submit" :disabled="loading" class="submit-button">
+          <span v-if="!loading">사기 시나리오 확인하기</span>
+          <span v-else class="loading-spinner"></span>
+        </button>
       </form>
     </div>
 
     <div class="results-section" v-show="showResults">
-      <h1 class="text-center my-4">시나리오가 도착했어요 📊</h1>
+      <h1 class="title">📊 시나리오 분석 결과</h1>
       <Loading v-if="loading" />
 
       <div v-else>
         <div v-if="scenarios.length === 0" class="no-results">
           <p>시나리오를 찾을 수 없습니다.</p>
         </div>
-        <div v-else>
+        <div v-else class="scenarios-container">
           <div
             v-for="(scenario, index) in scenarios"
             :key="index"
             class="scenario-item"
           >
-            <div class="scenario-content">
-              <div v-html="formatContent(scenario)"></div>
-            </div>
+            <div
+              class="scenario-content"
+              v-html="formatContent(scenario)"
+            ></div>
           </div>
         </div>
-        <div class="text-center mt-6">
-          <button @click="resetForm" class="btn-primary">다시 체크하기</button>
-        </div>
+        <button @click="resetForm" class="reset-button">다시 체크하기</button>
       </div>
     </div>
   </div>
@@ -184,7 +154,7 @@ export default {
         );
 
         if (!response.ok) {
-          throw new Error('서버로 부터 응답이 없습니다.');
+          throw new Error('서버로부터 응답이 없습니다.');
         }
 
         const data = await response.json();
@@ -224,66 +194,189 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 70%;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.table-auto {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 50px;
+.title {
+  color: #1e3a8a;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
 }
 
-td {
-  border-bottom: 0.7px solid #ddd;
-  padding: 10px;
-  font-size: 1rem;
+.checklist-form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-th {
-  font-weight: bold;
+.question-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
 
-  border-bottom: 2px solid #dddddd;
-  padding: 10px;
-  font-size: 1rem;
+.question-item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.question-text {
+  font-size: 1.1rem;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .radio-group label {
-  display: inline-flex;
+  flex: 1;
+  display: flex;
   align-items: center;
-}
-
-button {
-  padding: 12px 24px;
-  background-color: #0066ff;
-  color: white;
-  border: none;
+  padding: 0.5rem;
+  margin: 0.25rem;
+  background-color: #edf2f7;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
 }
 
-button:hover {
-  background-color: #0037ff;
+.radio-group label:hover {
+  background-color: #e2e8f0;
 }
 
-button:disabled {
-  background-color: #cccccc;
+.radio-group input[type='radio'] {
+  display: none;
+}
+
+.radio-group input[type='radio']:checked + .radio-label {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+}
+
+.radio-label {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.submit-button,
+.reset-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: white;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover,
+.reset-button:hover {
+  background-color: #2563eb;
+}
+
+.submit-button:disabled {
+  background-color: #9ca3af;
   cursor: not-allowed;
 }
 
-.reset-button {
-  margin-top: 20px;
-  background-color: #2196f3;
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
 }
 
-.reset-button:hover {
-  background-color: #1976d2;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
-.checklist-title {
-  font-size: 1.8rem; /* 글자 크기 증가 */
-  font-weight: bold;
+
+.results-section {
+  margin-top: 2rem;
+}
+
+.scenarios-container {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.scenario-item {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.scenario-content {
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.scenario-content h1,
+.scenario-content h2,
+.scenario-content h3 {
+  color: #2d3748;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.scenario-content ul,
+.scenario-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.scenario-content p {
+  margin-bottom: 1rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .radio-group {
+    flex-direction: column;
+  }
+
+  .radio-group label {
+    margin: 0.25rem 0;
+  }
 }
 </style>
