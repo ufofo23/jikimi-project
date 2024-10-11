@@ -26,9 +26,7 @@
               </li>
 
               <li class="dropdown">
-                <router-link :to="{ name: 'study' }" class="nav-item"
-                  >Study</router-link
-                >
+                <div class="nav-item">Study</div>
                 <ul class="dropdown-menu">
                   <li>
                     <router-link
@@ -273,8 +271,9 @@ body {
   left: 0;
   width: 100%; /* 화면 너비 전체 */
   background-color: white;
-  z-index: 1000;
-  height: 120px;
+  z-index: 10000;
+  height: 180px;
+  border-bottom: 1px solid #ccc; /* 아래쪽 보더라인 추가 */
 }
 
 .navbar-content {
@@ -286,7 +285,7 @@ body {
 }
 
 .logo img {
-  height: 40px;
+  height: full;
 }
 
 .menu-toggle {
@@ -308,6 +307,7 @@ body {
   margin: 0 1rem;
   color: #333;
   text-decoration: none;
+  font-size: 30px;
 }
 
 .button-border {
@@ -348,7 +348,7 @@ body {
 /* Hero 섹션 스타일 */
 .hero-section {
   display: flex;
-  min-height: 100vh;
+  min-height: 1000vh;
   padding-top: 80px; /* 네비게이션 바 높이만큼 여백 */
 }
 .hero-compo {

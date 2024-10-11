@@ -4,7 +4,6 @@ import Main from '../pages/app/Main.vue';
 import Login from '../pages/Login.vue';
 import MyPage from '../pages/mypage/Mypage.vue';
 import Analyzing from '@/pages/app/Analyzing.vue';
-import Study from '@/pages/app/Study.vue';
 import FAQ from '@/pages/FAQ.vue';
 import Loading from '@/pages/Loading.vue';
 import ScenarioMain from '@/pages/scenario/ScenarioMain.vue';
@@ -39,12 +38,7 @@ const router = createRouter({
       component: Analyzing,
       meta: { requiresAuth: true },
     },
-    {
-      path: '/study',
-      name: 'study',
-      component: Study,
-      meta: { requiresAuth: true },
-    },
+
     { path: '/faq', name: 'faq', component: FAQ },
     {
       path: '/introduce',

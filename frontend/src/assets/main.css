@@ -1,11 +1,17 @@
 /* main.css 또는 App.vue 안의 <style> 섹션에서 설정 */
 body {
-  font-family: 'Roboto', sans-serif; /* Google Fonts에서 불러오기 가능 */
+  /* font-family: 'Roboto', sans-serif; */
   font-size: 16px;
   line-height: 1.6;
   color: #333; /* 기본 텍스트 색상 */
   margin: 0;
   padding: 0;
+}
+@import url('https://static.toss.im/tps/main.css');
+@import url('https://static.toss.im/tps/others.css');
+
+* {
+  font-family: 'Toss Product Sans';
 }
 
 h1,

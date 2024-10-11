@@ -1,56 +1,63 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">
-      <i class="fa-solid fa-paste"></i> 게시글 목록
-    </h1>
-
-    <!-- 로딩 상태 -->
-    <div v-if="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">로딩 중...</span>
-      </div>
-    </div>
-
-    <!-- 에러 메시지 -->
-    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
-      {{ errorMessage }}
-    </div>
-
-    <!-- 게시글 목록 -->
-    <div v-else class="line-remove">
-      <div v-for="article in articles" :key="article.faqNo" class="card mb-3">
-        <div
-          class="card-header d-flex justify-content-between align-items-center"
-          @click="toggleDetails(article.faqNo)"
-          style="cursor: pointer"
-        >
-          <h3 class="mb-0">{{ article.faqQuestion }}</h3>
-          <span>
-            <i
-              :class="
-                openSections.includes(article.faqNo)
-                  ? 'fa-solid fa-chevron-up'
-                  : 'fa-solid fa-chevron-down'
-              "
-            ></i>
-          </span>
-        </div>
-
-        <div v-if="openSections.includes(article.faqNo)" class="card-body">
-          <p class="card-text">{{ article.faqAnswer }}</p>
+  <section class="faq-section">
+    <div class="container">
+      <div class="column">
+        <div class="heading">
+          <h2 class="title">FAQ</h2>
+          <p class="description">
+            자주 묻는 질문을 통해 궁금증을 빠르게 해결해보세요!
+          </p>
         </div>
       </div>
+
+      <!-- 로딩 상태 -->
+      <div v-if="isLoading" class="text-center my-4">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">로딩 중...</span>
+        </div>
+      </div>
+
+      <!-- 에러 메시지 -->
+      <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <!-- 게시글 목록 -->
+      <div v-else class="faq-grid">
+        <div v-for="article in articles" :key="article.faqNo" class="faq-card">
+          <button class="faq-btn" @click="toggleDetails(article.faqNo)">
+            <div class="faq-icon">
+              <svg
+                class="icon"
+                :class="{ 'rotate-180': openSections.includes(article.faqNo) }"
+                width="17"
+                height="10"
+                viewBox="0 0 17 10"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                  fill=""
+                  stroke=""
+                />
+              </svg>
+            </div>
+            <div class="faq-content">
+              <h4 class="faq-title">{{ article.faqQuestion }}</h4>
+            </div>
+          </button>
+
+          <div v-if="openSections.includes(article.faqNo)" class="faq-answer">
+            <p class="faq-text">{{ article.faqAnswer }}</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/faqApi'; // API 모듈
-
-const cr = useRoute();
-const router = useRouter();
 
 // 상태 관리
 const page = ref({
@@ -104,48 +111,114 @@ onMounted(() => {
   load();
 });
 </script>
-<style scoped>
+<style>
+/* 전체 섹션 스타일 */
+.faq-section {
+  position: relative;
+  padding-top: 120px;
+  padding-bottom: 90px;
+  background-color: white;
+}
+
 .container {
-  max-width: 800px; /* 최대 너비 설정 */
-  margin: 0 auto; /* 중앙 정렬 */
-  padding: 0 15px; /* 좌우 패딩 추가 */
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.container .line-remove {
-  padding: 10px 10px 10px 10px;
-  border-bottom-width: 0px;
+/* 헤더 섹션 */
+.heading {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
-.mb-3 {
-  border-bottom: none;
+.subheading {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 20px;
 }
 
-.table-hover tbody tr:hover {
-  background-color: #f5f5f5;
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #007bff;
+  margin-bottom: 20px;
 }
 
-.text-decoration-none {
-  color: inherit;
+.description {
+  font-size: 16px;
+  color: #666;
 }
 
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
+/* FAQ 카드 */
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2열로 설정 */
+  gap: 40px; /* 카드 간 간격을 넓혀줌 */
+}
+
+.faq-card {
+  padding: 30px; /* 카드 크기 증가 */
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 20px 95px rgba(201, 203, 204, 0.3);
+  text-align: left;
+}
+
+.faq-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+.faq-icon {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e7f3ff;
+  border-radius: 50%;
+}
+
+.icon {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.faq-content {
+  flex-grow: 1;
+}
+
+.faq-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
 }
 
 .faq-answer {
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-left: 4px solid #007bff;
+  padding-top: 15px;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
 }
 
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
-  }
-  .table th,
-  .table td {
-    font-size: 0.9rem;
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .faq-grid {
+    grid-template-columns: 1fr; /* 태블릿 이하에서 1열로 변경 */
   }
 }
 </style>
