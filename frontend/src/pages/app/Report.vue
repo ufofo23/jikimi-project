@@ -5,7 +5,7 @@
     >
       <!-- 리포트 제목 -->
       <div class="mx-auto max-w-3xl text-center">
-        <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">리포트</h2>
+        <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">REPORT</h2>
 
         <p class="mt-4 text-gray-500 sm:text-xl"></p>
         <p>{{ sampleReportData.address }}에 대한 리포트가 도착했어요!</p>
@@ -143,7 +143,7 @@
                         : sampleReportData.jeonseRate < 80
                         ? '경고'
                         : '위험'
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -192,7 +192,13 @@
                     color: !sampleReportData.accordOwner ? 'red' : 'green',
                   }"
                 >
-                  {{ !sampleReportData.accordOwner ? '다름' : '동일' }}
+                  {{
+                    sampleReportData.accordOwner !== null
+                      ? sampleReportData.accordOwner
+                        ? '동일'
+                        : '다름'
+                      : '분석불가'
+                  }}
                 </span>
               </h4>
             </div>
@@ -200,11 +206,11 @@
           <div v-show="openPanels[3]" class="faq-answer">
             <p>
               {{
-                sampleReportData.accordOwner == null
+                sampleReportData.accordOwner !== null
                   ? sampleReportData.accordOwner != null &&
                     !sampleReportData.accordOwner
-                    ? `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치하지 않습니다.`
-                    : `소유자 ${sampleReportData.ownership}와 계약자 ${sampleReportData.contractName}은 일치합니다.`
+                    ? `소유자와 계약자가 일치하지 않습니다.`
+                    : `소유자와 계약자가 일치합니다.`
                   : '해당 물건에 대한 데이터 부족합니다.'
               }}
             </p>
@@ -238,22 +244,26 @@
                   :style="{
                     color:
                       sampleReportData.maximumOfBond !== null
-                        ? sampleReportData.maximumOfBond > 0
-                          ? 'red'
+                        ? (sampleReportData.maximumOfBond * 100) /
+                            sampleReportData.price <
+                          50
+                          ? (sampleReportData.maximumOfBond * 100) /
+                              sampleReportData.price <=
+                            30
+                            ? 'red'
+                            : 'yellow'
                           : 'green'
                         : 'black',
                   }"
                 >
                   {{
                     sampleReportData.maximumOfBond !== null
-                      ? sampleReportData.maximumOfBond >= 100000000
-                        ? `${Math.floor(
-                            sampleReportData.maximumOfBond / 100000000
-                          )}억 ${
-                            (sampleReportData.maximumOfBond % 100000000) / 10000
-                          }만원`
-                        : `안전`
-                      : '해당없음'
+                      ? `${Math.floor(
+                          sampleReportData.maximumOfBond / 100000000
+                        )}억 ${
+                          (sampleReportData.maximumOfBond % 100000000) / 10000
+                        }만원`
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -263,10 +273,16 @@
             <p>
               {{
                 sampleReportData.maximumOfBond !== null
-                  ? sampleReportData.maximumOfBond > 0
-                    ? `근저당권 채권 최고액이 ${sampleReportData.maximumOfBond}만원으로 위험 수준입니다.`
-                    : `근저당권으로 잡힌 채권이 없어 안전합니다.`
-                  : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
+                  ? (sampleReportData.maximumOfBond * 100) /
+                      sampleReportData.price <=
+                    30
+                    ? `근저당권으로 잡힌 채권이 없어 안전합니다.`
+                    : (sampleReportData.maximumOfBond * 100) /
+                        sampleReportData.price <
+                      50
+                    ? `근저당권 채권 최고액이 주의 수준입니다.`
+                    : `근저당권 채권 최고액이 위험 수준입니다.`
+                  : `해당 물건에 대한 데이터를 불러올 수 없습니다.`
               }}
             </p>
           </div>
@@ -298,19 +314,27 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.useType !== null
-                        ? sampleReportData.useType > 0
+                      sampleReportData.useType !== null || undefined
+                        ? sampleReportData.useType &&
+                          (sampleReportData.useType.indexOf('주택') >= 0 ||
+                            sampleReportData.useType.indexOf('아파트') >= 0 ||
+                            sampleReportData.useType.indexOf('주거') >= 0 ||
+                            sampleReportData.useType.indexOf('오피스텔') >= 0)
                           ? 'green'
                           : 'red'
                         : 'black',
                   }"
                 >
                   {{
-                    sampleReportData.useType !== null
-                      ? sampleReportData.useType > 0
+                    sampleReportData.useType !== null || undefined
+                      ? sampleReportData.useType &&
+                        (sampleReportData.useType.indexOf('주택') >= 0 ||
+                          sampleReportData.useType.indexOf('아파트') >= 0 ||
+                          sampleReportData.useType.indexOf('주거') >= 0 ||
+                          sampleReportData.useType.indexOf('오피스텔') >= 0)
                         ? '안전'
                         : '위험'
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -330,7 +354,7 @@
         </div>
 
         <!-- Section 6: 대지권등기 -->
-        <div class="faq-card">
+        <!--<div class="faq-card">
           <button @click="togglePanel(6)" class="faq-btn">
             <div class="faq-icon">
               <svg
@@ -367,7 +391,7 @@
                       ? sampleReportData.kindOfLandrights > 0
                         ? '안전'
                         : '주의'
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -384,15 +408,15 @@
               }}
             </p>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Section 7: 공동소유/ 단독소유 여부 -->
+        <!-- Section 6: 공동소유/ 단독소유 여부 -->
         <div class="faq-card">
-          <button @click="togglePanel(7)" class="faq-btn">
+          <button @click="togglePanel(6)" class="faq-btn">
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(7) }"
+                :class="{ 'rotate-180': openPanels.includes(6) }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -407,13 +431,13 @@
             </div>
             <div class="faq-content">
               <h4 class="faq-title">
-                7. 공동소유 단독소유 여부
+                6. 공동소유 단독소유 여부
                 <span
                   class="summary"
                   :style="{
                     color:
                       sampleReportData.commonOwner !== null
-                        ? sampleReportData.commonOwner.length == 1
+                        ? sampleReportData.commonOwner == '단독소유'
                           ? 'green'
                           : 'orange'
                         : 'black',
@@ -421,20 +445,20 @@
                 >
                   {{
                     sampleReportData.commonOwner !== null
-                      ? sampleReportData.commonOwner.length == 1
+                      ? sampleReportData.commonOwner == '단독소유'
                         ? '안전'
                         : '주의'
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
             </div>
           </button>
-          <div v-show="openPanels[7]" class="faq-answer">
+          <div v-show="openPanels[6]" class="faq-answer">
             <p>
               {{
                 sampleReportData.commonOwner !== null
-                  ? sampleReportData.commonOwner === '단독'
+                  ? sampleReportData.commonOwner === '단독소유'
                     ? '해당 물건은 단독 소유입니다.'
                     : '해당 물건은 공동 소유입니다.'
                   : '해당 물건에 대한 데이터 부족합니다.'
@@ -481,7 +505,7 @@
                       ? sampleReportData.changeOwnerCount < 3
                         ? '안전'
                         : `${sampleReportData.changeOwnerCount}회`
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -538,7 +562,7 @@
                       ? !sampleReportData.violationStructure
                         ? '안전'
                         : '위험'
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -549,8 +573,8 @@
               {{
                 sampleReportData.violationStructure != null
                   ? !sampleReportData.violationStructure
-                    ? '위반건축물과 관련된 내용이 없습니다.'
-                    : '위반건축물과 관련된 사항이 있습니다.'
+                    ? '해당 건물은 위반 건축물이 아닙니다.'
+                    : '해당 건물은 위반 건축물입니다.'
                   : '해당 물건에 대한 데이터가 부족합니다.'
               }}
             </p>
@@ -589,7 +613,7 @@
                   {{
                     sampleReportData.ownerState != null
                       ? `${sampleReportData.ownerState}㎡`
-                      : '해당없음'
+                      : '분석불가'
                   }}
                 </span>
               </h4>
@@ -665,6 +689,8 @@ const sampleReportData = ref({
   commonOwner: null,
   contractName: null,
   maximumOfBond: null,
+  ownership: null,
+  price: null,
   // 다른 필드들도 여기에 추가
 });
 
@@ -764,8 +790,8 @@ const toggleDetails = (no) => {
 const moveToSelectedProperty = async () => {
   try {
     const data = await addressApi.getAddressDetails(
-      // sampleReportData.value.propertyNo
-      sampleNo
+      sampleReportData.value.propertyNo
+      // sampleNo
     );
     console.log(sampleReportData.value.reportNo);
 
@@ -785,9 +811,9 @@ const moveToSelectedProperty = async () => {
 };
 
 // 컴포넌트가 마운트될 때 데이터를 가져옴
-onMounted(() => {
-  fetchReportData();
-  moveToSelectedProperty();
+onMounted(async () => {
+  await fetchReportData(); // 데이터를 먼저 가져옴
+  moveToSelectedProperty(); // 데이터가 로드된 후 좌표 이동
 });
 </script>
 
