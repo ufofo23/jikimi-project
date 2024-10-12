@@ -15,6 +15,7 @@
 #                                      HAVING COUNT(property_doro_juso) > 1)
     </select>
 
+
     <select id="getAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
         select pl.location_no,
                pr.property_no,

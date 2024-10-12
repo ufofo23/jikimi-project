@@ -1,60 +1,124 @@
 <template>
-  <section class="faq-section">
-    <div class="container">
-      <div class="column">
-        <div class="heading">
-          <h2 class="title">FAQ</h2>
-          <p class="description">
-            자주 묻는 질문을 통해 궁금증을 빠르게 해결해보세요!
-          </p>
-        </div>
-      </div>
-
-      <!-- 로딩 상태 -->
-      <div v-if="isLoading" class="text-center my-4">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">로딩 중...</span>
-        </div>
-      </div>
-
-      <!-- 에러 메시지 -->
-      <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
-        {{ errorMessage }}
-      </div>
-
-      <!-- 게시글 목록 -->
-      <div v-else class="faq-grid">
-        <div v-for="article in articles" :key="article.faqNo" class="faq-card">
-          <button class="faq-btn" @click="toggleDetails(article.faqNo)">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{ 'rotate-180': openSections.includes(article.faqNo) }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">{{ article.faqQuestion }}</h4>
-            </div>
-          </button>
-
-          <div v-if="openSections.includes(article.faqNo)" class="faq-answer">
-            <p class="faq-text">{{ article.faqAnswer }}</p>
+  <section
+    class="relative z-20 overflow-hidden bg-white dark:bg-dark pt-20 pb-12 lg:pt-[120px] lg:pb-[90px]"
+  >
+    <div class="container mx-auto">
+      <div class="-mx-4 flex flex-wrap">
+        <div class="w-full px-4">
+          <div class="mx-auto mb-[60px] max-w-[520px] text-center lg:mb-20">
+            <h2
+              class="mb-4 text-3xl font-bold text-primary dark:text-white sm:text-[40px] sm:leading-[48px]"
+            >
+              FAQ
+            </h2>
+            <p class="text-base text-xl text-body-color dark:text-dark-6">
+              자주 묻는 질문을 통해 궁금증을 빠르게 해결하세요!
+            </p>
           </div>
+        </div>
+      </div>
+
+      <div class="-mx-4 flex flex-wrap">
+        <div class="w-full px-4 lg:w-1/2">
+          <template v-for="article in oddArticles" :key="article.faqNo">
+            <div
+              class="mb-8 w-full rounded-lg bg-white p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8"
+            >
+              <button
+                class="faq-btn flex w-full text-left"
+                @click="handleToggle(article.faqNo)"
+              >
+                <div
+                  class="mr-5 flex h-10 w-full max-w-[40px] items-center justify-center rounded-lg bg-primary/5 text-primary dark:bg-white/5"
+                >
+                  <svg
+                    class="fill-primary stroke-primary duration-200 ease-in-out"
+                    :class="{ 'rotate-180': activeFaq === article.faqNo }"
+                    width="17"
+                    height="10"
+                    viewBox="0 0 17 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                      fill=""
+                      stroke=""
+                    />
+                  </svg>
+                </div>
+
+                <div class="w-full">
+                  <h4
+                    class="mt-1 text-lg font-semibold text-dark dark:text-white"
+                  >
+                    {{ article.faqQuestion }}
+                  </h4>
+                </div>
+              </button>
+
+              <div v-show="activeFaq === article.faqNo" class="pl-[62px]">
+                <p
+                  class="py-3 text-base leading-relaxed text-body-color dark:text-dark-6 text-left"
+                >
+                  {{ article.faqAnswer }}
+                </p>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="w-full px-4 lg:w-1/2">
+          <template v-for="article in evenArticles" :key="article.faqNo">
+            <div
+              class="mb-8 w-full rounded-lg bg-white p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8"
+            >
+              <button
+                class="faq-btn flex w-full text-left"
+                @click="handleToggle(article.faqNo)"
+              >
+                <div
+                  class="mr-5 flex h-10 w-full max-w-[40px] items-center justify-center rounded-lg bg-primary/5 text-primary dark:bg-white/5"
+                >
+                  <svg
+                    class="fill-primary stroke-primary duration-200 ease-in-out"
+                    :class="{ 'rotate-180': activeFaq === article.faqNo }"
+                    width="17"
+                    height="10"
+                    viewBox="0 0 17 10"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                      fill=""
+                      stroke=""
+                    />
+                  </svg>
+                </div>
+
+                <div class="w-full">
+                  <h4
+                    class="mt-1 text-lg font-semibold text-dark dark:text-white"
+                  >
+                    {{ article.faqQuestion }}
+                  </h4>
+                </div>
+              </button>
+
+              <div v-show="activeFaq === article.faqNo" class="pl-[62px]">
+                <p
+                  class="py-3 text-base leading-relaxed text-body-color dark:text-dark-6 text-left"
+                >
+                  {{ article.faqAnswer }}
+                </p>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
   </section>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import api from '@/api/faqApi'; // API 모듈
@@ -67,7 +131,7 @@ const page = ref({
 const isLoading = ref(true);
 const errorMessage = ref('');
 
-// 페이지 요청 정보 (현재는 단순 페이지 1, 항목 수 10으로 설정)
+// 페이지 요청 정보
 const pageRequest = ref({
   page: 1,
   amount: 10,
@@ -76,17 +140,20 @@ const pageRequest = ref({
 // 게시글 목록 계산 속성
 const articles = computed(() => page.value.list);
 
-// 상세 보기 토글을 위한 변수 (여러 섹션을 열 수 있도록 배열로 설정)
-const openSections = ref([]);
+// 홀수와 짝수 번호의 게시글을 분리
+const oddArticles = computed(() =>
+  articles.value.filter((article, index) => index % 2 === 0)
+);
+const evenArticles = computed(() =>
+  articles.value.filter((article, index) => index % 2 !== 0)
+);
 
-// 토글 함수
-const toggleDetails = (no) => {
-  const index = openSections.value.indexOf(no);
-  if (index === -1) {
-    openSections.value.push(no);
-  } else {
-    openSections.value.splice(index, 1);
-  }
+// 상세 보기 토글을 위한 변수 (단일 섹션만 열림)
+const activeFaq = ref(null);
+
+// 토글 함수 (단일 섹션만 열림)
+const handleToggle = (faqNo) => {
+  activeFaq.value = activeFaq.value === faqNo ? null : faqNo;
 };
 
 // 데이터 로드 함수
@@ -111,114 +178,21 @@ onMounted(() => {
   load();
 });
 </script>
+
 <style>
-/* 전체 섹션 스타일 */
-.faq-section {
-  position: relative;
-  padding-top: 120px;
-  padding-bottom: 90px;
-  background-color: white;
+/* 스타일은 이전과 동일하게 유지합니다. */
+.text-base {
+  font-size: 28px; /* 설명 텍스트의 글씨 크기를 28px로 키웠습니다. */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* 헤더 섹션 */
-.heading {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.subheading {
-  display: block;
-  font-size: 18px;
-  font-weight: 600;
-  color: #007bff;
-  margin-bottom: 20px;
-}
-
-.title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #007bff;
-  margin-bottom: 20px;
-}
-
-.description {
-  font-size: 16px;
-  color: #666;
-}
-
-/* FAQ 카드 */
-.faq-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2열로 설정 */
-  gap: 40px; /* 카드 간 간격을 넓혀줌 */
-}
-
-.faq-card {
-  padding: 30px; /* 카드 크기 증가 */
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0px 20px 95px rgba(201, 203, 204, 0.3);
-  text-align: left;
-}
-
-.faq-btn {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  background: none;
-  border: none;
-  outline: none;
-  padding: 0;
-}
-
-.faq-icon {
-  margin-right: 20px;
+/* 버튼을 둘러싼 동그라미 스타일 */
+.faq-btn .mr-5 {
+  background-color: #e7f3ff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: #e7f3ff;
-  border-radius: 50%;
-}
-
-.icon {
-  transition: transform 0.3s ease;
-}
-
-.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.faq-content {
-  flex-grow: 1;
-}
-
-.faq-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-}
-
-.faq-answer {
-  padding-top: 15px;
-  font-size: 16px;
-  color: #666;
-  line-height: 1.6;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .faq-grid {
-    grid-template-columns: 1fr; /* 태블릿 이하에서 1열로 변경 */
-  }
 }
 </style>
