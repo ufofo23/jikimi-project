@@ -2,14 +2,19 @@
   <div class="left-panel">
     <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
-      <SearchBar @address-selected="handleAddressSelected" />
+      <SearchBar
+        @address-selected="handleAddressSelected"
+      />
     </div>
 
     <!-- 즐겨찾기 토글 -->
     <div class="wishlist-toggle">
       <div @click="toggleWishlist">
         즐겨찾기
-        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: wishlistVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -20,14 +25,20 @@
           <li
             v-for="wish in wishlist"
             :key="wish.propertyNo"
-            @click="selectApartment(wish.propertyAddrAptName)"
+            @click="
+              selectApartment(wish.propertyAddrAptName)
+            "
           >
-            <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
+            <span @click="favoriteClick(wish)">{{
+              wish.doroJuso
+            }}</span>
 
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
-              @click.stop="removeFromWishlist(wish.propertyNo)"
+              @click.stop="
+                removeFromWishlist(wish.propertyNo)
+              "
               style="color: #ffd43b"
             />
           </li>
@@ -40,19 +51,28 @@
     <div class="detail-toggle">
       <div @click="toggleDetails">
         상세보기
-        <span class="hamburger-menu" :class="{ active: detailsVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: detailsVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
       <div v-if="detailsVisible">
-        <div v-if="selectedProperty && selectedProperty.length">
+        <div
+          v-if="selectedProperty && selectedProperty.length"
+        >
           <h2 class="apart-name">
             {{ selectedProperty[0].propertyAddrAptName }}
             <font-awesome-icon
               class="favorite-icon"
-              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
+              :icon="
+                isFavorite
+                  ? ['fas', 'star']
+                  : ['far', 'star']
+              "
               :style="{
                 color: isFavorite ? '#FFD43B' : 'black',
               }"
@@ -69,16 +89,19 @@
             <thead>
               <tr>
                 <th>계약일자</th>
-                <th>거래</th>
                 <th>가격</th>
                 <th>면적</th>
                 <th>층</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(property, index) in selectedProperty" :key="index">
+              <tr
+                v-for="(
+                  property, index
+                ) in selectedProperty"
+                :key="index"
+              >
                 <td>{{ property.date }}</td>
-                <td>{{ property.contractType }}</td>
                 <td>{{ property.price }}억 원</td>
                 <td>{{ property.propertyArea }} m²</td>
                 <td>{{ property.propertyAddrFloor }}</td>
@@ -86,7 +109,9 @@
             </tbody>
           </table>
           <div class="analyze-button-container">
-            <button @click="analyzeProperty">매물 분석하기</button>
+            <button @click="analyzeProperty">
+              매물 분석하기
+            </button>
           </div>
         </div>
         <p v-else>매물을 골라주세요.</p>
@@ -184,7 +209,11 @@ const toggleDetails = () => {
 
 // 즐겨찾기 상태 토글
 const toggleFavorite = async () => {
-  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
+  if (
+    !props.selectedProperty ||
+    props.selectedProperty.length === 0
+  )
+    return;
 
   if (isFavorite.value) {
     // 즐겨찾기 O -> X
@@ -201,7 +230,8 @@ const toggleFavorite = async () => {
 // 아파트 선택 함수
 const selectApartment = (propertyAddrAptName) => {
   const selected = props.selectedProperty.find(
-    (prop) => prop.propertyAddrAptName === propertyAddrAptName
+    (prop) =>
+      prop.propertyAddrAptName === propertyAddrAptName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);
@@ -218,10 +248,14 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
+  if (
+    props.selectedProperty.length > 0 &&
+    props.selectedProperty[0].doroJuso
+  ) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName = props.selectedProperty[0].propertyAddrAptName;
+    const buildingName =
+      props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
@@ -245,7 +279,8 @@ const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트�
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 
 const toggleFilter = (filterType) => {
-  activeFilter.value = activeFilter.value === filterType ? null : filterType;
+  activeFilter.value =
+    activeFilter.value === filterType ? null : filterType;
 };
 
 const selectTransaction = (type) => {

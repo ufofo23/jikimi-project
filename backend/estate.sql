@@ -54,7 +54,8 @@ CREATE TABLE property_tbl (
                               formated_price DECIMAL(10,2)
 );
 
-LOAD DATA LOCAL INFILE './property_tbl_final2.csv'
+
+LOAD DATA LOCAL INFILE './property_tbl_final_3.csv'
     INTO TABLE estate.property_tbl
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
@@ -73,16 +74,12 @@ CREATE TABLE property_location (
                                    jibun_juso VARCHAR(50)
 );
 
-LOAD DATA LOCAL INFILE './property_location_final_2.csv'
+LOAD DATA LOCAL INFILE './property_location_final_3.csv'
     INTO TABLE estate.property_location
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
     LINES TERMINATED BY '\n'; -- 행 구분자를 줄바꿈으로 설정
-UPDATE property_location
-SET jibun_juso = property_jibun_juso WHERE property_jibun_juso <> '';
-update property_location SET zipcode = concat("0", zipcode) WHERE zipcode <100000;
 SELECT count(*) from property_location;
-
 -- member_report sample
 # desc member_report_tbl;
 # desc report_tbl;
@@ -990,14 +987,6 @@ select * from analysis_tbl;
 desc analysis_tbl;
 select * from property_location;
 select * from dictionary_tbl;
-desc property_tbl;
-desc report_tbl;
-select * from report_tbl;
-select * from member_report_tbl;
-update member_report_tbl set report_no = 2 where member_report_no = 3;
-delete from member_report_tbl where report_no = 0;
-insert into member_report_tbl (member_no, report_no) values (1, 1);
-select * from member_tbl;
 
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
@@ -1019,3 +1008,12 @@ select * from member_tbl;
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (889, 3, '서울특별시 강남구 역삼동 832-16', 0, 0, null, null, null, null, 0, null, 6, 0, '단독소유', 21.3945, '업무시설(오피스텔)');
 
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (1, 2, 0, '아파트');
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 2, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 15566, 2, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
+
+# SAMPLE DATA 2024.10.12
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (1, 1, 0, '아파트');
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
+# INSERT INTO estate.analysis_tbl (analysis_no, property_no) VALUES (1, 15566);
