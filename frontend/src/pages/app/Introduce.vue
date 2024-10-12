@@ -1,144 +1,285 @@
 <template>
-  <div class="about-us-container">
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <h1>You are in <span class="highlight">Charge</span></h1>
-      <p>
-        At [Your Company Name], we empower professionals like you to shape their
-        own careers. Join us and take charge of your future.
-      </p>
-      <button class="cta-button">Learn More</button>
-    </section>
+  <div class="about-us">
+    <header class="header">
+      <h1>You are in Charge</h1>
+      <p>Junior Legal Expert</p>
+      <button class="cta-button">Get Started</button>
+    </header>
 
-    <!-- Expertise Section -->
-    <section class="expertise-section">
-      <div class="expert-card">
-        <h3>Junior Legal Expert</h3>
-        <button class="cta-button">Apply Now</button>
-      </div>
-    </section>
-
-    <!-- Recruitment Game Section -->
-    <section class="recruitment-section">
-      <h2>Let's change the <span class="highlight">recruitment game</span></h2>
-      <p>
-        The recruitment process has been the same for too long. It's time to
-        take control and make it work for you.
-      </p>
-      <div class="steps-container">
-        <div class="step">
-          <h4>You are in charge</h4>
-        </div>
-        <div class="step">
-          <h4>It's your precious time</h4>
-        </div>
-        <div class="step">
-          <h4>It's our job to serve you</h4>
+    <section class="team-section">
+      <h2>Our Exceptional Team</h2>
+      <div class="team-members">
+        <div
+          v-for="(member, index) in teamMembers"
+          :key="member.id"
+          class="team-member"
+          :class="{ left: index % 2 === 0, right: index % 2 !== 0 }"
+        >
+          <div class="member-content">
+            <img :src="member.image" :alt="member.name" class="member-image" />
+            <div class="member-info">
+              <h3>{{ member.name }}</h3>
+              <p class="member-role">{{ member.role }}</p>
+              <p class="member-description">{{ member.description }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Chat Section -->
-    <section class="chat-section">
-      <div class="chat-container">
-        <div class="chat-content">
-          <h2>Chat with <span class="highlight">[Your Company Name]</span></h2>
-          <p>
-            If you have any questions or need assistance, we're here to help.
-            Feel free to reach out to us via chat.
-          </p>
-        </div>
+    <section class="features">
+      <div class="feature" v-for="feature in features" :key="feature.id">
+        <img :src="feature.icon" :alt="feature.title" class="feature-icon" />
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
       </div>
     </section>
 
-    <!-- Pitch Section -->
-    <section class="pitch-section">
-      <h2>Listen to our <span class="highlight">pitch</span></h2>
-      <p>
-        We believe in transparency and open communication. Watch our pitch to
-        learn more about how we can help you achieve your career goals.
-      </p>
-      <button class="cta-button">Watch Now</button>
+    <section class="contact">
+      <h2>Chat with ASK.Q</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <button class="chat-button">Start Chat</button>
     </section>
   </div>
-  <Footer></Footer>
 </template>
-
-<script setup>
-import Footer from '@/components/Footer.vue';
+//고재성 박지현 이석진 전채영 정안용 정홍관
+<script>
+export default {
+  name: 'AboutUs',
+  data() {
+    return {
+      teamMembers: [
+        {
+          id: 1,
+          name: '재성',
+          role: 'Leader / BE',
+          description:
+            '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+          image: 'src/assets/members/js.png',
+        },
+        {
+          id: 2,
+          name: '지현',
+          role: 'UI / FE',
+          description:
+            '안녕하세요! 지키미의 UI 담당자입니다. 저 또한 지키미로 안전한 집에서 잘 지내고 있습니다. 여러분도 한번 이용해보세요!',
+          image: 'src/assets/members/zh.png',
+        },
+        {
+          id: 3,
+          name: '석진',
+          role: 'COO',
+          description:
+            '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+          image: 'src/assets/members/seokjin.png',
+        },
+        {
+          id: 1,
+          name: '채영',
+          role: 'UX/ FE',
+          description:
+            '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+          image: 'src/assets/members/chaeyoung.png',
+        },
+        {
+          id: 2,
+          name: '안용',
+          role: 'CTO',
+          description:
+            '최신 기술을 활용하여 법률 서비스의 혁신을 주도합니다. AI와 빅데이터를 활용한 법률 분석 시스템 개발에 주력하고 있으며, 사용자 경험을 개선하기 위해 끊임없이 노력합니다.',
+          image: 'src/assets/members/anyong.png',
+        },
+        {
+          id: 3,
+          name: '홍관',
+          role: 'COO',
+          description:
+            '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+          image: 'src/assets/members/honggwan.png',
+        },
+      ],
+      features: [
+        {
+          id: 1,
+          title: '신뢰성',
+          description: '정확한 법률 정보 제공',
+          icon: '/path/to/icon1.svg',
+        },
+        {
+          id: 2,
+          title: '효율성',
+          description: '빠른 법률 서비스',
+          icon: '/path/to/icon2.svg',
+        },
+        {
+          id: 3,
+          title: '접근성',
+          description: '쉬운 법률 상담',
+          icon: '/path/to/icon3.svg',
+        },
+      ],
+    };
+  },
+};
 </script>
 
 <style scoped>
-.about-us-container {
-  font-family: Arial, sans-serif;
+.about-us {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.hero-section {
+.header {
   text-align: center;
-  padding: 50px;
-  background-color: #f8f9fa;
+  margin-bottom: 4rem;
+  background-color: #f9f9a0;
+  padding: 4rem;
+  border-radius: 10px;
 }
 
-.highlight {
-  color: #ffc107;
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
-.cta-button {
+.cta-button,
+.chat-button {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
-.expertise-section {
+.cta-button:hover,
+.chat-button:hover {
+  background-color: #0056b3;
+}
+
+.team-section {
+  margin-bottom: 4rem;
+}
+
+.team-section h2,
+.features h2,
+.contact h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.team-members {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.team-member {
+  margin-bottom: 4rem;
+  width: 100%;
+}
+
+.member-content {
+  display: flex;
   align-items: center;
-  padding: 50px;
-  background-color: #f1f3f5;
+  background-color: #f8f8f8;
+  border-radius: 15px;
+  padding: 3rem;
+  max-width: 90%;
+  min-height: 300px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.expert-card {
-  text-align: center;
+.team-member.left .member-content {
+  margin-right: auto;
 }
 
-.recruitment-section {
-  text-align: center;
-  padding: 50px;
+.team-member.right .member-content {
+  margin-left: auto;
+  flex-direction: row-reverse;
 }
 
-.steps-container {
+.member-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.team-member.left .member-image {
+  margin-right: 3rem;
+}
+
+.team-member.right .member-image {
+  margin-left: 3rem;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.member-info h3 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.member-role {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+
+.member-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.features {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 4rem;
 }
 
-.step {
+.feature {
+  flex-basis: calc(33.333% - 2rem);
   text-align: center;
-  max-width: 200px;
 }
 
-.chat-section {
-  background-color: #e9ecef;
-  padding: 50px;
-  display: flex;
-  justify-content: center;
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1.5rem;
 }
 
-.chat-container {
-  display: flex;
-  gap: 30px;
-}
-
-.chat-content {
-  max-width: 400px;
-}
-
-.pitch-section {
+.contact {
   text-align: center;
-  padding: 50px;
+  background-color: #e6f7ff;
+  padding: 4rem;
+  border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+  .member-content {
+    flex-direction: column !important;
+    text-align: center;
+    max-width: 100%;
+    padding: 2rem;
+  }
+
+  .member-image {
+    margin: 0 0 2rem 0 !important;
+  }
+
+  .feature {
+    flex-basis: 100%;
+    margin-bottom: 2rem;
+  }
 }
 </style>
