@@ -179,6 +179,13 @@
       <button @click="errorMessage = ''" class="close-error">✕</button>
     </div>
   </div>
+  <div v-if="isLoadingCORS" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p>안전진단 보고서를 생성하고 있습니다...</p>
+        <p>잠시만 기다려주세요.</p>
+      </div>
+    </div>
 </template>
 
 <script setup>
@@ -201,6 +208,7 @@ const showAddressForm = ref(false);
 const jeonsePrice = ref('');
 const names = ref(['']);
 const formattedDeposit = ref('');
+const isLoadingCORS = ref(false);
 
 // 뒤로가기 함수 추가
 const goBack = () => {
@@ -354,6 +362,7 @@ const submitForm = async () => {
 const sendUniqueCode = async (uniqueCode) => {
   if (isLoading.value) return;
   isLoading.value = true;
+  isLoadingCORS.value = true;
   try {
     const payload = generatePayload(uniqueCode);
     console.log('Sending Unique Code with:', payload);
@@ -371,6 +380,7 @@ const sendUniqueCode = async (uniqueCode) => {
     handleError(error, '유니크 코드 전송에 실패했습니다.');
   } finally {
     isLoading.value = false;
+    isLoadingCORS.value = false;
   }
 };
 
@@ -396,7 +406,7 @@ onMounted(() => {
       jibunJuso: route.query.jibunJuso,
       buildingName: route.query.buildingName,
       propertyNo: route.query.propertyNo,
-      zipCode: route.query.zipcode,
+      zipCode: route.query.zipCode,
       price: route.query.price,
     };
   }
@@ -678,5 +688,47 @@ onMounted(() => {
   color: #721c24;
   font-size: 18px;
   cursor: pointer;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 123, 255, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-content p {
+  margin: 10px 0;
+  color: #333;
+  font-size: 18px;
 }
 </style>

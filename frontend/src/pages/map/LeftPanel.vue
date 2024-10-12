@@ -1,29 +1,27 @@
 <template>
   <div class="left-panel">
-    <!-- SearchBar 컴포넌트 추가 -->
     <div class="search">
       <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
-    <!-- 즐겨찾기 토글 -->
-    <div class="wishlist-toggle">
-      <div @click="toggleWishlist">
-        즐겨찾기
+    <div class="panel-section wishlist-toggle">
+      <div class="section-header" @click="toggleWishlist">
+        <span class="header-text">즐겨찾기</span>
         <span class="hamburger-menu" :class="{ active: wishlistVisible }">
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
-      <div v-if="wishlistVisible">
-        <ul v-if="wishlist.length">
+      <div v-if="wishlistVisible" class="section-content">
+        <ul v-if="wishlist.length" class="wishlist">
           <li
             v-for="wish in wishlist"
             :key="wish.propertyNo"
             @click="selectApartment(wish.propertyAddrAptName)"
+            class="wishlist-item"
           >
             <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
-
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
@@ -32,64 +30,69 @@
             />
           </li>
         </ul>
-        <p v-else>즐겨찾기가 비어있습니다.</p>
+        <p v-else class="empty-message">즐겨찾기가 비어있습니다.</p>
       </div>
     </div>
 
-    <!-- 상세보기 토글 -->
-    <div class="detail-toggle">
-      <div @click="toggleDetails">
-        상세보기
+    <div class="panel-section detail-toggle">
+      <div class="section-header" @click="toggleDetails">
+        <span class="header-text">상세보기</span>
         <span class="hamburger-menu" :class="{ active: detailsVisible }">
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
-      <div v-if="detailsVisible">
-        <div v-if="selectedProperty && selectedProperty.length">
-          <h2 class="apart-name">
-            {{ selectedProperty[0].propertyAddrAptName }}
-            <font-awesome-icon
-              class="favorite-icon"
-              :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
-              :style="{
-                color: isFavorite ? '#FFD43B' : 'black',
-              }"
-              @click="toggleFavorite"
-            />
-          </h2>
-          <h4>
-            {{ selectedProperty[0].doroJuso }} (건축년도:
-            {{ selectedProperty[0].buildingYear }})
-          </h4>
+      <div v-if="detailsVisible" class="section-content">
+        <div v-if="selectedProperty && selectedProperty.length" class="property-details">
+          <div class="property-header">
+            <h2 class="apart-name">
+              {{ selectedProperty[0].propertyAddrAptName }}
+              <font-awesome-icon
+                class="favorite-icon"
+                :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
+                :style="{
+                  color: isFavorite ? '#FFD43B' : '#8E8E8E',
+                }"
+                @click="toggleFavorite"
+              />
+            </h2>
+            <h4 class="address">
+              {{ selectedProperty[0].doroJuso }}
+              <span class="year">(건축년도: {{ selectedProperty[0].buildingYear }})</span>
+            </h4>
+          </div>
 
-          <!-- 실거래가 표 -->
-          <table>
-            <thead>
-              <tr>
-                <th>계약일자</th>
-                <th>거래</th>
-                <th>가격</th>
-                <th>면적</th>
-                <th>층</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(property, index) in selectedProperty" :key="index">
-                <td>{{ property.date }}</td>
-                <td>{{ property.contractType }}</td>
-                <td>{{ property.price }}억 원</td>
-                <td>{{ property.propertyArea }} m²</td>
-                <td>{{ property.propertyAddrFloor }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table class="property-table">
+              <thead>
+                <tr>
+                  <th>계약일자</th>
+                  <th>거래</th>
+                  <th>가격</th>
+                  <th>면적</th>
+                  <th>층</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(property, index) in selectedProperty" :key="index">
+                  <td>{{ property.date }}</td>
+                  <td>{{ property.contractType }}</td>
+                  <td>{{ property.price }}억 원</td>
+                  <td>{{ property.propertyArea }} m²</td>
+                  <td>{{ property.propertyAddrFloor }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
           <div class="analyze-button-container">
-            <button @click="analyzeProperty">매물 분석하기</button>
+            <button class="analyze-button" @click="analyzeProperty">
+              매물 분석하기
+            </button>
           </div>
         </div>
-        <p v-else>매물을 골라주세요.</p>
+        <p v-else class="empty-message">매물을 골라주세요.</p>
       </div>
     </div>
   </div>
@@ -265,11 +268,54 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.hamburger-menu {
-  width: 30px;
-  height: 25px;
+.left-panel {
+  width: 30%;
+  height: 100%;
+  padding: 24px;
   position: relative;
+  overflow-y: auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.panel-section {
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 12px 12px 0 0;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.section-header:hover {
+  background: #1557b0;
+}
+
+.header-text {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.section-content {
+  padding: 20px;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+}
+
+.hamburger-menu {
+  width: 24px;
+  height: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -277,13 +323,14 @@ onMounted(() => {
 
 .hamburger-menu .bar {
   width: 100%;
-  height: 3px;
-  background-color: black;
+  height: 2px;
+  background-color: #fff;
   transition: all 0.3s ease;
+  border-radius: 2px;
 }
 
 .hamburger-menu.active .bar:nth-child(1) {
-  transform: translateY(11px) rotate(45deg);
+  transform: translateY(8px) rotate(45deg);
 }
 
 .hamburger-menu.active .bar:nth-child(2) {
@@ -291,152 +338,138 @@ onMounted(() => {
 }
 
 .hamburger-menu.active .bar:nth-child(3) {
-  transform: translateY(-11px) rotate(-45deg);
+  transform: translateY(-8px) rotate(-45deg);
 }
 
-.left-panel {
-  width: 30%;
-  height: 100%;
-  padding: 20px;
-  position: relative;
-  overflow-y: auto;
-  align-content: baseline;
+.wishlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.p {
-  border: none !important;
-}
-.search {
-  border-bottom-width: 0px;
-}
-
-.search div {
-  border-bottom: none;
-}
-
-.wishlist-toggle,
-.detail-toggle {
-  margin-bottom: 30px;
-  cursor: pointer;
-  border-bottom-width: 0px;
-  margin-top: 50px;
-}
-
-.detail-toggle div {
-  border-bottom: none;
-}
-
-h2 {
+.wishlist-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.2em;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wishlist-item:hover {
+  background: #e9ecef;
+  transform: translateX(4px);
+}
+
+.property-header {
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .apart-name {
-  text-align: center;
+  font-size: 24px;
+  color: #1a73e8;
+  margin-bottom: 8px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1.5em;
+  justify-content: center;
+  gap: 12px;
 }
 
-.favorite-icon {
-  margin-left: 15px;
+.address {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
 }
 
-h4 {
-  text-align: center;
+.year {
+  color: #888;
+  font-size: 13px;
 }
 
-table {
+.table-container {
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.property-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
 }
 
-table th,
-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+.property-table th {
+  background: #1a73e8;
+  color: white;
+  padding: 12px;
+  font-weight: 500;
   text-align: center;
 }
 
-table th {
-  background-color: #f4f4f4;
+.property-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+.property-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.empty-message {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
 .analyze-button-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
-.analyze-button-container button {
-  padding: 10px 20px;
-  background-color: #4caf50;
+.analyze-button {
+  background: #1a73e8;
   color: white;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.analyze-button-container button:hover {
-  background-color: #45a049;
-}
-.filter-container {
-  padding: 10px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  padding: 12px 24px;
   border-radius: 8px;
-  width: 100%; /* Make sure the container takes full width */
-  max-width: 1200px; /* Optional: Limit the max width for large screens */
-  margin: 0 auto; /* Center the container */
-  margin-top: 20px;
-  margin-bottom: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
 }
 
-.filter-inline {
-  display: flex;
-  flex-direction: column; /* Default for small screens (stacked vertically) */
-  gap: 20px;
-  align-items: center;
-  width: 100%; /* Take full width */
+.analyze-button:hover {
+  background: #1557b0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
 }
 
-/* From Uiverse.io by alexroumi */
-button {
-  padding: 15px 25px;
-  border: unset;
-  border-radius: 15px;
-  color: #212121;
-  z-index: 1;
-  background: #e8e8e8;
-  position: relative;
-  font-weight: 1000;
-  font-size: 17px;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
-  transition: all 250ms;
-  overflow: hidden;
-  width: 200px;
+.favorite-icon {
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-/* Media query for larger screens */
-@media (min-width: 768px) {
-  .filter-inline {
-    flex-direction: row; /* On larger screens, arrange items horizontally */
-    justify-content: space-between; /* Spread the dropdowns horizontally */
-    align-items: center;
-  }
+.favorite-icon:hover {
+  transform: scale(1.2);
+}
 
-  .dropdown-group {
-    flex: 1; /* Ensure each dropdown takes equal space */
-    margin: 0 10px; /* Optional: Add some margin between dropdowns */
-  }
+.search {
+  margin-bottom: 24px;
+}
 
-  select {
-    width: 100%; /* Ensure the select dropdowns fill their container */
-    max-width: none; /* Remove any width limitation */
+@media (max-width: 768px) {
+  .left-panel {
+    width: 100%;
+    height: auto;
   }
 }
 </style>
