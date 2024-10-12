@@ -1,13 +1,16 @@
 <template>
   <div class="left-panel">
     <div class="search">
-      <SearchBar @address-selected="handleAddressSelected" />
+      <SearchBar
+        @address-selected="handleAddressSelected"
+      />
     </div>
 
     <div class="panel-section wishlist-toggle">
       <div class="section-header" @click="toggleWishlist">
         <span class="header-text">즐겨찾기</span>
         <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -25,7 +28,9 @@
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
-              @click.stop="removeFromWishlist(wish.propertyNo)"
+              @click.stop="
+                removeFromWishlist(wish.propertyNo)
+              "
               style="color: #ffd43b"
             />
           </li>
@@ -38,6 +43,7 @@
       <div class="section-header" @click="toggleDetails">
         <span class="header-text">상세보기</span>
         <span class="hamburger-menu" :class="{ active: detailsVisible }">
+
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -68,7 +74,6 @@
               <thead>
                 <tr>
                   <th>계약일자</th>
-                  <th>거래</th>
                   <th>가격</th>
                   <th>면적</th>
                   <th>층</th>
@@ -77,7 +82,6 @@
               <tbody>
                 <tr v-for="(property, index) in selectedProperty" :key="index">
                   <td>{{ property.date }}</td>
-                  <td>{{ property.contractType }}</td>
                   <td>{{ property.price }}억 원</td>
                   <td>{{ property.propertyArea }} m²</td>
                   <td>{{ property.propertyAddrFloor }}</td>
@@ -88,6 +92,7 @@
           
           <div class="analyze-button-container">
             <button class="analyze-button" @click="analyzeProperty">
+
               매물 분석하기
             </button>
           </div>
@@ -187,7 +192,11 @@ const toggleDetails = () => {
 
 // 즐겨찾기 상태 토글
 const toggleFavorite = async () => {
-  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
+  if (
+    !props.selectedProperty ||
+    props.selectedProperty.length === 0
+  )
+    return;
 
   if (isFavorite.value) {
     // 즐겨찾기 O -> X
@@ -204,7 +213,8 @@ const toggleFavorite = async () => {
 // 아파트 선택 함수
 const selectApartment = (propertyAddrAptName) => {
   const selected = props.selectedProperty.find(
-    (prop) => prop.propertyAddrAptName === propertyAddrAptName
+    (prop) =>
+      prop.propertyAddrAptName === propertyAddrAptName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);
@@ -221,10 +231,14 @@ const handleAddressSelected = (coordinates) => {
 const router = useRouter();
 
 const analyzeProperty = () => {
-  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
+  if (
+    props.selectedProperty.length > 0 &&
+    props.selectedProperty[0].doroJuso
+  ) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName = props.selectedProperty[0].propertyAddrAptName;
+    const buildingName =
+      props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
@@ -248,7 +262,8 @@ const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트�
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 
 const toggleFilter = (filterType) => {
-  activeFilter.value = activeFilter.value === filterType ? null : filterType;
+  activeFilter.value =
+    activeFilter.value === filterType ? null : filterType;
 };
 
 const selectTransaction = (type) => {

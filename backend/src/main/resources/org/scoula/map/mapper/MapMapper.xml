@@ -16,68 +16,37 @@
     </select>
 
     <select id="getAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
-        select
-            pl.location_no,
-            pr.property_no,
-            pl.property_doro_juso as doro_juso,
-            pl.jibun_juso,
-            pr.formated_price as price,
-            pr.formated_date AS date,
-            pr.property_building_area as property_area,
-            pr.property_addr_floor,
-            pr.building_year,
-            pr.trade_type as contract_type,
-            pr.property_addr_building_name as property_addr_apt_name,
-            pr.property_type,
-            pl.zipcode,
-            pl.x_coordinate,
-            pl.y_coordinate
+        select pl.location_no,
+               pr.property_no,
+               pl.property_doro_juso          as doro_juso,
+               pl.jibun_juso,
+               pr.formated_price              as price,
+               pr.formated_date               AS date,
+               pr.property_building_area      as property_area,
+               pr.property_addr_floor,
+               pr.building_year,
+               pr.property_addr_building_name as property_addr_apt_name,
+               pr.property_type,
+               pl.zipcode,
+               pl.x_coordinate,
+               pl.y_coordinate
         from property_location as pl
-        right outer join property_tbl as pr
-        on pl.location_no = pr.location_no
+                 right outer join property_tbl as pr
+                                  on pl.location_no = pr.location_no
         where pl.location_no = #{id}
     </select>
 
 
     <select id="getAddressListMoveAll" resultType="org.scoula.map.domain.MapVO">
-        SELECT DISTINCT
-            pl.location_no,
-            pl.x_coordinate,
-            pl.y_coordinate,
-            round(pl.formated_price,1) as price
+        SELECT DISTINCT pl.location_no,
+                        pl.x_coordinate,
+                        pl.y_coordinate,
+                        round(pl.formated_price, 1) as price
         FROM property_location pl
                  INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
         WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
           AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-    </select>
-
-    <select id="getAddressListMovePropertyFilter" resultType="org.scoula.map.domain.MapVO">
-        SELECT
-            pl.location_no,
-            pl.x_coordinate,
-            pl.y_coordinate,
-            pr.formated_price as price
-        FROM property_location pl
-                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
-                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
-          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-          AND pr.property_type_code = #{property_type}
-    </select>
-
-    <select id="getAddressListMoveTradeFilter" resultType="org.scoula.map.domain.MapVO">
-        SELECT
-            pl.location_no,
-            pl.x_coordinate,
-            pl.y_coordinate,
-            pr.formated_price as price
-        FROM property_location pl
-                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
-                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
-          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-          AND pr.trade_type_code = #{trade_type}
     </select>
 
     <select id="getAddressListMoveClusterAll" resultType="org.scoula.map.domain.MapClusterVO">
@@ -87,28 +56,6 @@
                  INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
         WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
           AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-        LIMIT #{limit} OFFSET #{offset}
-    </select>
-
-    <select id="getAddressListMoveClusterPropertyFilter" resultType="org.scoula.map.domain.MapClusterVO">
-        SELECT pl.location_no, pl.x_coordinate, pl.y_coordinate
-        FROM property_location pl
-                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
-                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
-          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-          AND pr.property_type_code = #{property_type}
-        LIMIT #{limit} OFFSET #{offset}
-    </select>
-
-    <select id="getAddressListMoveClusterTradeFilter" resultType="org.scoula.map.domain.MapClusterVO">
-        SELECT pl.location_no, pl.x_coordinate, pl.y_coordinate
-        FROM property_location pl
-                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
-                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
-        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
-          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
-          AND pr.trade_type_code = #{trade_type}
         LIMIT #{limit} OFFSET #{offset}
     </select>
 </mapper>

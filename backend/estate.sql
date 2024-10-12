@@ -29,7 +29,6 @@ show global variables like 'local_infile';
 
 # property_tbl 관련 추가!
 DROP TABLE IF EXISTS property_tbl;
-
 CREATE TABLE property_tbl (
                               property_no int PRIMARY KEY AUTO_INCREMENT,
                               property_addr_sigungu_code int not null,
@@ -38,41 +37,29 @@ CREATE TABLE property_tbl (
                               property_addr_bubjung varchar(200) not null,
                               property_addr_bonbun int,
                               property_addr_bubun int,
-                              property_addr_floor int,
                               property_addr_building_name varchar(50),
                               contract_date int,
-                              trade_type varchar(50),
-                              property_building_area float,
-                              deposit int,
-                              rent int,
                               price int,
+                              property_building_area float,
                               property_land_area float,
+                              property_addr_floor int,
                               contract_right_type varchar(50),
-                              contract_type varchar(50),
-                              contract_offce_name varchar(50),
                               building_year int,
                               property_type varchar(50),
-                              contract_period varchar(50),
-                              contract_renewed varchar(50),
-                              contract_renew_used varchar(50),
-                              deposit_previous int,
-                              rent_previous int,
+                              contract_type varchar(50),
+                              contract_offce_name varchar(50),
                               property_jibun_juso varchar(200),
                               location_no int,
                               formated_date date,
-                              formated_price DECIMAL(10,2),
-                              property_type_code int,
-                              trade_type_code int
+                              formated_price DECIMAL(10,2)
 );
 
-select * from property_tbl where property_no = 46948;
 
-LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
+LOAD DATA LOCAL INFILE './property_tbl_final_3.csv'
     INTO TABLE estate.property_tbl
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
-    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+    LINES TERMINATED BY '\n'; -- 행 구분자를 줄바꿈으로 설정
 
 # location 관련 tbl
 DROP TABLE IF EXISTS property_location;
@@ -80,22 +67,19 @@ CREATE TABLE property_location (
                                    location_no int AUTO_INCREMENT PRIMARY KEY,
                                    property_jibun_juso VARCHAR(50) NOT NULL,
                                    property_doro_juso VARCHAR(50),
-                                   zipcode int,
+                                   zipcode VARCHAR(50),
                                    x_coordinate VARCHAR(255),
                                    y_coordinate VARCHAR(255),
                                    formated_price DECIMAL(10,2),
                                    jibun_juso VARCHAR(50)
-
 );
 
-LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
+LOAD DATA LOCAL INFILE './property_location_final_3.csv'
     INTO TABLE estate.property_location
     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\n' -- 행 구분자를 줄바꿈으로 설정
-    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+    LINES TERMINATED BY '\n'; -- 행 구분자를 줄바꿈으로 설정
 SELECT count(*) from property_location;
-
 -- member_report sample
 # desc member_report_tbl;
 # desc report_tbl;
@@ -872,91 +856,91 @@ INSERT INTO zoom_levels (zoom_level, lat_range, lon_range) VALUES
                                                                (1, 0.00089, 0.00243);
 SELECT * FROM zoom_levels;
 
-
-# property 관련 테이블 설정!
-SET GLOBAL local_infile = 1;
-show global variables like 'local_infile';
-
-# property_tbl 삭제
-# ALTER TABLE like_property_tbl DROP FOREIGN KEY like_property_tbl_ibfk_2;
-# ALTER TABLE analysis_tbl DROP FOREIGN KEY analysis_tbl_ibfk_1;
-# property_tbl 관련 추가!
-DROP TABLE IF EXISTS property_tbl_all;
-
-CREATE TABLE property_tbl_all (
-                                  property_no int PRIMARY KEY AUTO_INCREMENT,
-                                  property_addr_sigungu_code int not null,
-                                  property_addr_sigungu varchar(200) not null,
-                                  property_addr_bubjung_code int not null,
-                                  property_addr_bubjung varchar(200) not null,
-                                  property_addr_bonbun int,
-                                  property_addr_bubun int,
-                                  property_addr_floor int,
-                                  property_addr_building_name varchar(50),
-                                  contract_date int,
-                                  trade_type varchar(50),
-                                  property_building_area float,
-                                  deposit int,
-                                  rent int,
-                                  price int,
-                                  property_land_area float,
-                                  contract_right_type varchar(50),
-                                  contract_type varchar(50),
-                                  contract_offce_name varchar(50),
-                                  building_year int,
-                                  property_type varchar(50),
-                                  contract_period varchar(50),
-                                  contract_renewed varchar(50),
-                                  contract_renew_used varchar(50),
-                                  deposit_previous int,
-                                  rent_previous int,
-                                  property_jibun_juso varchar(200),
-                                  location_no int,
-                                  formated_date date,
-                                  formated_price DECIMAL(10,2),
-                                  property_type_code int,
-                                  trade_type_code int
-);
-
-LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
-    INTO TABLE estate.property_tbl_all
-    FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
-    OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
-    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
-
-
-SELECT * FROM property_tbl_all;
-
-
-# location 관련 tbl
-DROP TABLE IF EXISTS property_location;
-CREATE TABLE property_location (
-                                   location_no int AUTO_INCREMENT PRIMARY KEY,
-                                   property_jibun_juso VARCHAR(50) NOT NULL,
-                                   property_doro_juso VARCHAR(50),
-                                   zipcode int,
-                                   x_coordinate VARCHAR(255),
-                                   y_coordinate VARCHAR(255),
-                                   formated_price DECIMAL(10,2),
-                                   jibun_juso VARCHAR(50)
-
-);
-
-
-LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
-    INTO TABLE estate.property_location
-    FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
-    OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
-    LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
-    IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
-
-UPDATE estate.property_location
-SET jibun_juso = LPAD(jibun_juso, CHAR_LENGTH(jibun_juso) + 1, '0')
-WHERE CHAR_LENGTH(jibun_juso) < 5;
-
-SELECT * FROM property_location;
-SELECT count(*) from property_location;
+#
+# # property 관련 테이블 설정!
+# SET GLOBAL local_infile = 1;
+# show global variables like 'local_infile';
+#
+# # property_tbl 삭제
+# # ALTER TABLE like_property_tbl DROP FOREIGN KEY like_property_tbl_ibfk_2;
+# # ALTER TABLE analysis_tbl DROP FOREIGN KEY analysis_tbl_ibfk_1;
+# # property_tbl 관련 추가!
+# DROP TABLE IF EXISTS property_tbl_all;
+#
+# CREATE TABLE property_tbl_all (
+#                                   property_no int PRIMARY KEY AUTO_INCREMENT,
+#                                   property_addr_sigungu_code int not null,
+#                                   property_addr_sigungu varchar(200) not null,
+#                                   property_addr_bubjung_code int not null,
+#                                   property_addr_bubjung varchar(200) not null,
+#                                   property_addr_bonbun int,
+#                                   property_addr_bubun int,
+#                                   property_addr_floor int,
+#                                   property_addr_building_name varchar(50),
+#                                   contract_date int,
+#                                   trade_type varchar(50),
+#                                   property_building_area float,
+#                                   deposit int,
+#                                   rent int,
+#                                   price int,
+#                                   property_land_area float,
+#                                   contract_right_type varchar(50),
+#                                   contract_type varchar(50),
+#                                   contract_offce_name varchar(50),
+#                                   building_year int,
+#                                   property_type varchar(50),
+#                                   contract_period varchar(50),
+#                                   contract_renewed varchar(50),
+#                                   contract_renew_used varchar(50),
+#                                   deposit_previous int,
+#                                   rent_previous int,
+#                                   property_jibun_juso varchar(200),
+#                                   location_no int,
+#                                   formated_date date,
+#                                   formated_price DECIMAL(10,2),
+#                                   property_type_code int,
+#                                   trade_type_code int
+# );
+#
+# LOAD DATA LOCAL INFILE './estate_property_tbl_all_final.csv'
+#     INTO TABLE estate.property_tbl_all
+#     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
+#     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
+#     LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
+#     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+#
+#
+# SELECT * FROM property_tbl_all;
+#
+#
+# # location 관련 tbl
+# DROP TABLE IF EXISTS property_location;
+# CREATE TABLE property_location (
+#                                    location_no int AUTO_INCREMENT PRIMARY KEY,
+#                                    property_jibun_juso VARCHAR(50) NOT NULL,
+#                                    property_doro_juso VARCHAR(50),
+#                                    zipcode varchar(50),
+#                                    x_coordinate VARCHAR(255),
+#                                    y_coordinate VARCHAR(255),
+#                                    formated_price DECIMAL(10,2),
+#                                    jibun_juso VARCHAR(50)
+#
+# );
+#
+#
+# LOAD DATA LOCAL INFILE './estate_property_location_final.csv'
+#     INTO TABLE estate.property_location
+#     FIELDS TERMINATED BY ',' -- 필드 구분자를 콤마로 설정
+#     OPTIONALLY ENCLOSED BY '"' -- 필드가 큰따옴표로 감싸져 있는 경우 처리
+#     LINES TERMINATED BY '\r\n' -- 윈도우 형식의 줄바꿈 (\r\n)
+#     IGNORE 1 ROWS; -- 첫 번째 헤더 행을 무시
+#
+# UPDATE estate.property_location
+# SET jibun_juso = LPAD(jibun_juso, CHAR_LENGTH(jibun_juso) + 1, '0')
+# WHERE CHAR_LENGTH(jibun_juso) < 5;
+#
+# SELECT * FROM property_location;
+# SELECT count(*) from property_location;
 
 
 # report_tbl 샘플 데이터
@@ -1003,21 +987,33 @@ select * from analysis_tbl;
 desc analysis_tbl;
 select * from property_location;
 select * from dictionary_tbl;
-desc property_tbl;
-desc report_tbl;
-select * from report_tbl;
-select * from member_report_tbl;
-update member_report_tbl set report_no = 2 where member_report_no = 3;
-delete from member_report_tbl where member_report_no = 2;
-insert into member_report_tbl (member_no, report_no) values (1, 1);
-select * from member_tbl;
 
-# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
-# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (2, 3186, 6, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
-# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (3, 3186, 7, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
-# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (4, 3186, 8, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES (3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
+#
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES (3186, 6, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
+#
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES (3186, 7, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
+#
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES (3186, 8, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '결과값이 없습니다.');
+#
+# # 오피스텔
+# INSERT INTO estate.cor_tbl (analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+#                     VALUES (3, 21.3945, '박민서 (소유자)', '단독소유', 6, 0);
+# INSERT INTO estate.bml_tbl (analysis_no, violation_structure, use_type)
+#                     VALUES (3, 0, '업무시설(오피스텔)');
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES (889, 3, '서울특별시 강남구 역삼동 832-16', 0, 0, null, null, null, null, 0, null, 6, 0, '단독소유', 21.3945, '업무시설(오피스텔)');
 
-# 오피스텔
-# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (8, 3, 21.3945, '박민서 (소유자)', '단독소유', 6, 0);
-# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (8, 3, 0, '업무시설(오피스텔)');
-# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (2, 889, 3, '서울특별시 강남구 역삼동 832-16', 0, 0, null, null, null, null, 0, null, 6, 0, '단독소유', 21.3945, '업무시설(오피스텔)');
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (1, 2, 0, '아파트');
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 2, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 15566, 2, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
+
+# SAMPLE DATA 2024.10.12
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (1, 1, 0, '아파트');
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
+# INSERT INTO estate.analysis_tbl (analysis_no, property_no) VALUES (1, 15566);
