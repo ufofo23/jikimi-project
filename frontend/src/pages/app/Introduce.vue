@@ -36,98 +36,93 @@
     </section>
 
     <section class="contact">
-      <h2>Chat with ASK.Q</h2>
+      <h2>Chat with Bugi-Bot</h2>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       <button class="chat-button">Start Chat</button>
     </section>
   </div>
 </template>
-//고재성 박지현 이석진 전채영 정안용 정홍관
-<script>
-export default {
-  name: 'AboutUs',
-  data() {
-    return {
-      teamMembers: [
-        {
-          id: 1,
-          name: '재성',
-          role: 'Leader / BE',
-          description:
-            '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
-          image: 'src/assets/members/js.png',
-        },
-        {
-          id: 2,
-          name: '지현',
-          role: 'UI / FE',
-          description:
-            '안녕하세요! 지키미의 UI 담당자입니다. 저 또한 지키미로 안전한 집에서 잘 지내고 있습니다. 여러분도 한번 이용해보세요!',
-          image: 'src/assets/members/zh.png',
-        },
-        {
-          id: 3,
-          name: '석진',
-          role: 'COO',
-          description:
-            '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
-          image: 'src/assets/members/seokjin.png',
-        },
-        {
-          id: 1,
-          name: '채영',
-          role: 'UX/ FE',
-          description:
-            '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
-          image: 'src/assets/members/chaeyoung.png',
-        },
-        {
-          id: 2,
-          name: '안용',
-          role: 'CTO',
-          description:
-            '최신 기술을 활용하여 법률 서비스의 혁신을 주도합니다. AI와 빅데이터를 활용한 법률 분석 시스템 개발에 주력하고 있으며, 사용자 경험을 개선하기 위해 끊임없이 노력합니다.',
-          image: 'src/assets/members/anyong.png',
-        },
-        {
-          id: 3,
-          name: '홍관',
-          role: 'COO',
-          description:
-            '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
-          image: 'src/assets/members/honggwan.png',
-        },
-      ],
-      features: [
-        {
-          id: 1,
-          title: '신뢰성',
-          description: '정확한 법률 정보 제공',
-          icon: '/path/to/icon1.svg',
-        },
-        {
-          id: 2,
-          title: '효율성',
-          description: '빠른 법률 서비스',
-          icon: '/path/to/icon2.svg',
-        },
-        {
-          id: 3,
-          title: '접근성',
-          description: '쉬운 법률 상담',
-          icon: '/path/to/icon3.svg',
-        },
-      ],
-    };
+
+<script setup>
+import QuickChat from '@/components/QuickChat.vue';
+const teamMembers = [
+  {
+    id: 1,
+    name: '재성',
+    role: 'Leader / BE',
+    description:
+      '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+    image: 'src/assets/members/js.png',
   },
-};
+  {
+    id: 2,
+    name: '지현',
+    role: 'UI / FE',
+    description:
+      '안녕하세요! 지키미의 UI 담당자입니다. 저 또한 지키미로 안전한 집에서 잘 지내고 있습니다. 여러분도 한번 이용해보세요!',
+    image: 'src/assets/members/zh.png',
+  },
+  {
+    id: 3,
+    name: '석진',
+    role: 'COO',
+    description:
+      '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+    image: 'src/assets/members/seokjin.png',
+  },
+  {
+    id: 4,
+    name: '채영',
+    role: 'UX / FE',
+    description:
+      '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+    image: 'src/assets/members/chaeyoung.png',
+  },
+  {
+    id: 5,
+    name: '안용',
+    role: 'CTO',
+    description:
+      '최신 기술을 활용하여 법률 서비스의 혁신을 주도합니다. AI와 빅데이터를 활용한 법률 분석 시스템 개발에 주력하고 있으며, 사용자 경험을 개선하기 위해 끊임없이 노력합니다.',
+    image: 'src/assets/members/anyong.png',
+  },
+  {
+    id: 6,
+    name: '홍관',
+    role: 'COO',
+    description:
+      '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+    image: 'src/assets/members/honggwan.png',
+  },
+];
+
+const features = [
+  {
+    id: 1,
+    title: '신뢰성',
+    description: '정확한 법률 정보 제공',
+    icon: '/path/to/icon1.svg',
+  },
+  {
+    id: 2,
+    title: '효율성',
+    description: '빠른 법률 서비스',
+    icon: '/path/to/icon2.svg',
+  },
+  {
+    id: 3,
+    title: '접근성',
+    description: '쉬운 법률 상담',
+    icon: '/path/to/icon3.svg',
+  },
+];
 </script>
 
 <style scoped>
 .about-us {
   font-family: 'Arial', sans-serif;
   color: #333;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -190,7 +185,7 @@ export default {
   background-color: #f8f8f8;
   border-radius: 15px;
   padding: 3rem;
-  max-width: 90%;
+  max-width: 75%;
   min-height: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
