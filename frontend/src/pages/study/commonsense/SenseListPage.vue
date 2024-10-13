@@ -24,6 +24,19 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal for Detail Page -->
+    <div v-if="showModal" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ selectedArticle?.pieceSense }}</h2>
+        <!-- 선택한 기사의 제목 -->
+        <div class="detail-content">
+          {{ selectedArticle?.commonSenseContent }}
+        </div>
+        <!-- 선택한 기사의 내용 -->
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,13 +50,23 @@ const router = useRouter();
 const articles = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref('');
+const showModal = ref(false); // 모달 상태 관리
+const selectedArticle = ref(null); // 선택한 기사 상태
 
-// 게시글 상세 보기
+// 게시글 상세 보기 (모달로 열기)
 const detail = (no) => {
-  router.push({
-    name: 'senseDetailPage',
-    params: { no: no },
-  });
+  const article = articles.value.find((item) => item.commonSenseNo === no);
+  if (article) {
+    selectedArticle.value = article; // 선택한 기사 저장
+    console.log('Selected Article:', selectedArticle.value); // 선택한 기사 확인
+    showModal.value = true; // 모달 열기
+  }
+};
+
+// 모달 닫기
+const closeModal = () => {
+  showModal.value = false;
+  selectedArticle.value = null; // 선택한 기사 초기화
 };
 
 // 데이터 로드 함수
@@ -131,6 +154,71 @@ onMounted(() => {
   -webkit-box-orient: vertical;
 }
 
+/* Modal styles */
+/* Modal styles */
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white; /* 배경색을 흰색으로 */
+  width: 30rem; /* 카드 너비 설정 */
+  padding: 1.5rem; /* 내부 패딩 추가 */
+  border-radius: 0.5rem; /* 카드 모서리 둥글게 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  transition: all 0.15s ease-out; /* 전환 효과 */
+  position: relative; /* 상대 위치 지정 */
+}
+
+.modal-content:hover {
+  margin-top: -0.5rem; /* hover 시 카드 위로 이동 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* hover 시 그림자 강화 */
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5rem; /* 제목 폰트 크기 증가 */
+  font-weight: bold;
+  margin-bottom: 1rem; /* 제목과 내용 간격 조정 */
+}
+
+.detail-content {
+  white-space: pre-line;
+  font-size: 1rem; /* 내용 폰트 크기 */
+  line-height: 1.6; /* 줄 간격 조정 */
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
 @media (max-width: 768px) {
   .sense-grid {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
