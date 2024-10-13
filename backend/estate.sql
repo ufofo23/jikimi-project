@@ -1017,3 +1017,7 @@ select * from dictionary_tbl;
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
 # INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type) VALUES (1, 15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
 # INSERT INTO estate.analysis_tbl (analysis_no, property_no) VALUES (1, 15566);
+
+
+select * from property_location;
+select * from property_tbl;
