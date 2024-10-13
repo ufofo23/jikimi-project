@@ -81,7 +81,7 @@
               <tbody>
                 <tr v-for="(property, index) in selectedProperty" :key="index">
                   <td>{{ property.date }}</td>
-                  <td>{{ property.price }}억 원</td>
+                  <td>{{ property.price }} 억</td>
                   <td>{{ property.propertyArea }} m²</td>
                   <td>{{ property.propertyAddrFloor }}</td>
                 </tr>
@@ -396,11 +396,12 @@ onMounted(() => {
 .table-container {
   margin: 20px 0;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .property-table {
   width: 100%;
+
   border-collapse: separate;
   border-spacing: 0;
   background: white;
@@ -472,7 +473,36 @@ onMounted(() => {
 @media (max-width: 768px) {
   .left-panel {
     width: 100%;
+    max-width: none;
     height: auto;
+    padding: 16px;
+  }
+
+  .section-header {
+    padding: 12px 16px;
+  }
+
+  .header-text {
+    font-size: 16px;
+  }
+
+  .apart-name {
+    font-size: 20px;
+  }
+
+  .address {
+    font-size: 12px;
+  }
+
+  .property-table th,
+  .property-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .analyze-button {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
 </style>

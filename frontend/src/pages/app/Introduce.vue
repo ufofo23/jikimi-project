@@ -1,11 +1,5 @@
 <template>
   <div class="about-us">
-    <header class="header">
-      <h1>You are in Charge</h1>
-      <p>Junior Legal Expert</p>
-      <button class="cta-button">Get Started</button>
-    </header>
-
     <section class="team-section">
       <h2>Our Exceptional Team</h2>
       <div class="team-members">
@@ -25,20 +19,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="features">
-      <div class="feature" v-for="feature in features" :key="feature.id">
-        <img :src="feature.icon" :alt="feature.title" class="feature-icon" />
-        <h3>{{ feature.title }}</h3>
-        <p>{{ feature.description }}</p>
-      </div>
-    </section>
-
-    <section class="contact">
-      <h2>Chat with Bugi-Bot</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      <button class="chat-button">Start Chat</button>
     </section>
   </div>
 </template>
