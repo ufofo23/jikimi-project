@@ -31,4 +31,6 @@ public class ReportVO {
     private String contractName; // 계약자 성명
     private String ownership; // 소유자 성명
     private int price;
+    private String analysisDate; // 분석 날짜
+
 }
