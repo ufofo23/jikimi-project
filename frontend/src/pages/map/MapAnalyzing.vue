@@ -180,12 +180,12 @@
     </div>
   </div>
   <div v-if="isLoadingCORS" class="loading-overlay">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <p>안전진단 보고서를 생성하고 있습니다...</p>
-        <p>잠시만 기다려주세요.</p>
-      </div>
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>안전진단 보고서를 생성하고 있습니다...</p>
+      <p>잠시만 기다려주세요.</p>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -296,7 +296,8 @@ const generatePayload = (uniqueCode) => {
   const jibunAddressParts = selectedAddress.value.jibunJuso.split(' ');
   const addr_sido = jibunAddressParts[0].match(/.*[시도]/)[0] || '';
   const addr_dong = jibunAddressParts[1] || '';
-  const addr_lotNumber = jibunAddressParts[jibunAddressParts.length - 1] || '';
+  const addr_lotNumber =
+    jibunAddressParts[jibunAddressParts.length - 1].replace(/\r$/, '') || '';
   const jibunAddressStr = selectedAddress.value.jibunJuso;
   const jibunAddress = jibunAddressStr
     .replace(addr_sido, addr_sido + ' ')
@@ -722,8 +723,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-content p {
