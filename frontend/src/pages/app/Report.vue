@@ -68,17 +68,17 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.totalScore < 50
+                      sampleReportData.totalScore < 70
                         ? 'red'
-                        : sampleReportData.totalScore < 70
+                        : sampleReportData.totalScore < 85
                         ? 'orange'
                         : 'green',
                   }"
                 >
                   {{
-                    sampleReportData.totalScore < 50
+                    sampleReportData.totalScore < 70
                       ? '위험'
-                      : sampleReportData.totalScore < 70
+                      : sampleReportData.totalScore < 85
                       ? '경고'
                       : '안전'
                   }}
@@ -250,9 +250,9 @@
                           ? (sampleReportData.maximumOfBond * 100) /
                               sampleReportData.price <=
                             30
-                            ? 'red'
+                            ? 'green'
                             : 'yellow'
-                          : 'green'
+                          : 'red'
                         : 'black',
                   }"
                 >

@@ -32,9 +32,12 @@
             @click="goToReportDetail(article.reportNo)"
             style="cursor: pointer"
           >
-            <td class="text-center">{{ formatDate(article.contractStartDate) }}</td>
+            <td class="text-center">
+              {{ article.analysisDate }}
+            </td>
             <td class="text-center">{{ article.address }}</td>
             <td class="text-center">{{ article.totalScore }}</td>
+            <td class="text-center">{{ resultLevel(article.totalScore) }}</td>
             <!-- <td class="text-center">{{ article.safetyStatus }}</td> -->
           </tr>
         </tbody>
@@ -52,8 +55,17 @@
               :disabled="currentPage === 1"
             >
               <span class="sr-only">Previous</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </a>
 
@@ -82,18 +94,31 @@
               href="#"
               class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
               @click.prevent="nextPage"
-              :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+              :class="{
+                'opacity-50 cursor-not-allowed': currentPage === totalPages,
+              }"
               :disabled="currentPage === totalPages"
             >
               <span class="sr-only">Next</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </a>
           </div>
         </nav>
 
-        <button class="btn btn-danger ml-4" @click="deleteSelected">삭제</button>
+        <button class="btn btn-danger ml-4" @click="deleteSelected">
+          삭제
+        </button>
       </div>
     </div>
   </div>
@@ -114,14 +139,24 @@ const isLoading = ref(false);
 const errorMessage = ref('');
 const selectedItems = ref([]);
 
-const formatDate = (value) => {
-  if (!value) return '';
-  const date = new Date(value);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+const resultLevel = (totalScore) => {
+  return totalScore !== null
+    ? totalScore < 70
+      ? '위험'
+      : totalScore < 85
+      ? '경고'
+      : '안전'
+    : '판단불가';
 };
+
+// const formatDate = (value) => {
+//   if (!value) return '';
+//   const date = new Date(value);
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, '0');
+//   const day = String(date.getDate()).padStart(2, '0');
+//   return `${year}-${month}-${day}`;
+// };
 
 const pageRequest = reactive({
   page: parseInt(route.query.page) || 1,
@@ -147,7 +182,8 @@ const loadReports = async () => {
     page.totalCount = response.totalCount;
   } catch (error) {
     console.error('보고서 로드 실패:', error);
-    errorMessage.value = '보고서를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+    errorMessage.value =
+      '보고서를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
   } finally {
     isLoading.value = false;
   }

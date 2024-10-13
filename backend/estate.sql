@@ -138,7 +138,8 @@ CREATE TABLE report_tbl (
                             accord_owner tinyint,
                             common_owner varchar(50),
                             owner_state double,
-                            use_type varchar(50)
+                            use_type varchar(50),
+                            analysis_date varchar(50)
 );
 
 DROP TABLE IF EXISTS member_report_tbl;
@@ -987,6 +988,9 @@ select * from analysis_tbl;
 desc analysis_tbl;
 select * from property_location;
 select * from dictionary_tbl;
+
+# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+# VALUES (15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트', '2024. 10. 13.');
 
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
