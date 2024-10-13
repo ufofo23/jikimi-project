@@ -5,16 +5,10 @@
       <h2>{{ userName }}님</h2>
       <ul>
         <li>
-          <router-link to="/myhome">My Home</router-link>
+          <router-link to="/mypage/myreport" exact-active-class="active-link">My Report</router-link>
         </li>
         <li>
-          <router-link to="/myreport">My Report</router-link>
-        </li>
-        <li>
-          <router-link to="/mystudy">My Study</router-link>
-        </li>
-        <li>
-          <button class="info-btn active">회원정보</button>
+          <router-link to="/mypage/myinfo" exact-active-class="active-link">회원 정보</router-link>
         </li>
       </ul>
       <button class="logout-btn" @click="handleLogout">로그아웃</button>
@@ -22,92 +16,22 @@
 
     <!-- Main Content Section -->
     <div class="info-section">
-      <h2>회원정보</h2>
-      <form @submit.prevent="updateUserInfo">
-        <div class="form-group">
-          <label for="name">이름</label>
-          <input type="text" id="name" v-model="userName" disabled />
-        </div>
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input type="email" id="email" v-model="userEmail" disabled />
-        </div>
-
-        <!-- 성별 라디오 버튼 -->
-        <div class="form-group radio-button">
-          <label>성별</label>
-          <div class="radio-group">
-            <div>
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  id="female"
-                  value="0"
-                  v-model="userGender"
-                />
-                <span class="radio"></span> 여성
-              </label>
-            </div>
-
-            <div>
-              <label class="radio-label">
-                <input type="radio" id="male" value="1" v-model="userGender" />
-                <span class="radio"></span> 남성
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- 생일 입력 -->
-        <div class="form-group">
-          <label for="birthday">생년월일</label>
-          <input type="date" id="birthday" v-model="userBirthday" />
-        </div>
-
-        <!-- 전화번호 입력 -->
-        <div class="form-group">
-          <label for="phone">전화번호</label>
-          <input
-            type="text"
-            id="phone"
-            v-model="userPhone"
-            @input="formatPhoneNumber"
-            placeholder="010-0000-0000"
-          />
-        </div>
-
-        <!-- 업데이트 버튼 -->
-        <button type="submit" class="update-btn">정보 업데이트</button>
-      </form>
-
-      <div class="delete-account">
-        <p>탈퇴를 원하시는 경우, 회원 탈퇴 버튼을 눌러 주세요.</p>
-        <button type="submit" class="delete-btn" @click="handleAccountDelete">
-          회원 탈퇴하기
-        </button>
-      </div>
+      <router-view></router-view> <!-- 여기서 메인 컨텐츠가 동적으로 로드됩니다. -->
     </div>
   </div>
 </template>
 
 <script setup>
-// Import necessary functions
-import useAuthStore from '@/stores/auth';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '@/api/authApi'; // API containing getInfo and updateInfo
+import useAuthStore from '@/stores/auth';
+import api from '@/api/authApi';
 
-// Router for navigation
 const router = useRouter();
 const authStore = useAuthStore();
 const userName = ref('');
-const userEmail = ref('');
-const userGender = ref(''); // 성별 변수 추가
-const userBirthday = ref(''); // 생일 변수 추가
-const userPhone = ref(''); // 전화번호 변수 추가
-const errorMessage = ref(''); // Error handling
+// 추가적인 변수들...
 
-// Load user information from API
 const loadUserInfo = async () => {
   try {
     const userInfo = await api.getInfo();
@@ -122,75 +46,25 @@ const loadUserInfo = async () => {
       '사용자 정보를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
   }
 };
-
-// 전화번호 형식화 함수 (입력 시 호출)
-const formatPhoneNumber = () => {
-  let cleaned = userPhone.value.replace(/\D/g, ''); // 숫자만 남기기
-  if (cleaned.length >= 7) {
-    userPhone.value = `${cleaned.slice(0, 3)}-${cleaned.slice(
-      3,
-      7
-    )}-${cleaned.slice(7)}`;
-  } else if (cleaned.length >= 4) {
-    userPhone.value = `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
-  }
-};
-
-// Update user information (PUT request)
-const updateUserInfo = async () => {
-  try {
-    const updatedInfo = {
-      name: userName.value,
-      email: userEmail.value,
-      gender: userGender.value, // 성별 필드 확인
-      birthday: userBirthday.value, // 생일 필드 확인
-      mobileE164: userPhone.value, // E.164 형식으로 전화번호 변환
-    };
-
-    // 전송할 데이터 로그 출력
-    console.log('전송할 데이터:', updatedInfo);
-
-    // 백엔드에 PUT 요청으로 정보 업데이트
-    await api.updateInfo(updatedInfo);
-
-    // 정보 업데이트 후 최신 데이터 다시 로드
-    await loadUserInfo();
-
-    await api.updateInfo(updatedInfo); // 데이터를 전송
-    alert('정보가 성공적으로 업데이트되었습니다.');
-  } catch (error) {
-    console.error('Failed to update user information:', error);
-    errorMessage.value =
-      '정보를 업데이트하는 데 실패했습니다. 다시 시도해 주세요.';
-  }
-};
-
-// Load user info on component mount
-onMounted(() => {
-  loadUserInfo();
-});
-
 // Logout function
 const handleLogout = async () => {
   try {
     authStore.logout();
-    router.push('/login'); // Redirect to login after logout
+    router.push('/login'); 
   } catch (error) {
     console.error('Failed to logout:', error);
     errorMessage.value = '로그아웃에 실패했습니다. 다시 시도해 주세요.';
   }
 };
 
-// Account deletion handler
-const handleAccountDelete = async () => {
-  try {
-    await api.deleteAccount(); // Assume delete account API exists
-    router.push('/login'); // Redirect to login page after deletion
-  } catch (error) {
-    console.error('회원 탈퇴 실패:', error);
-    errorMessage.value = '회원 탈퇴에 실패했습니다. 다시 시도해 주세요.';
+onMounted(async () => {
+  await authStore.checkAuth();
+  if (!authStore.isAuthenticated) {
+    router.push('/login');
+  } else {
+    loadUserInfo();
   }
-};
+});
 </script>
 
 <style scoped>
@@ -226,31 +100,20 @@ const handleAccountDelete = async () => {
   margin-bottom: 10px;
 }
 
+/* 활성화된 링크 스타일 */
+.active-link {
+  background-color: #0066CC; /* 파란색 배경 */
+  color: white; /* 텍스트 색상 변경 */
+  border-radius: 5px; /* 모서리 둥글게 */
+}
+
 .sidebar ul li a {
   text-decoration: none;
   font-size: 16px;
   color: #333;
-  transition: color 0.3s;
-}
-
-.sidebar ul li a:hover {
-  color: #007bff;
-}
-
-.sidebar ul li .info-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
-}
-
-.sidebar ul li .info-btn.active {
-  background-color: #0056b3;
+  display: block; /* 링크를 블록 요소로 설정하여 전체 영역 클릭 가능하게 */
+  padding: 10px; /* 패딩 추가하여 클릭 영역 확대 */
+  transition: background-color 0.3s, color 0.3s; /* 부드러운 효과 추가 */
 }
 
 .logout-btn {

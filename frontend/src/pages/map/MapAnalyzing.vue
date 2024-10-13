@@ -83,7 +83,7 @@
           <form @submit.prevent="submitForm">
             <div class="form-group">
               <label
-                >전세금:<span v-if="Number(jeonsePrice) >= 10000"
+                >전세금: <span v-if="Number(jeonsePrice) >= 10000"
                   >&nbsp;{{ formattedDeposit }}</span
                 >
               </label>
@@ -191,8 +191,8 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
-import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+
 const route = useRoute();
 const router = useRouter();
 
@@ -224,9 +224,13 @@ const formatDeposit = (value) => {
   const millions = Math.floor((numValue % 100000000) / 10000);
 
   if (billions > 0) {
-    return `${billions}억${millions}만원`;
+    if(millions >= 1000){
+      return `${billions}억 ${millions} 만원`;
+    } else{
+      return `${billions} 억원`
+    }
   } else {
-    return `${millions}만원`;
+    return `${millions} 만원`;
   }
 };
 
@@ -296,8 +300,7 @@ const generatePayload = (uniqueCode) => {
   const jibunAddressParts = selectedAddress.value.jibunJuso.split(' ');
   const addr_sido = jibunAddressParts[0].match(/.*[시도]/)[0] || '';
   const addr_dong = jibunAddressParts[1] || '';
-  const addr_lotNumber =
-    jibunAddressParts[jibunAddressParts.length - 1].replace(/\r$/, '') || '';
+  const addr_lotNumber = jibunAddressParts[jibunAddressParts.length - 1].replace(/\r$/, '') || '';
   const jibunAddressStr = selectedAddress.value.jibunJuso;
   const jibunAddress = jibunAddressStr
     .replace(addr_sido, addr_sido + ' ')

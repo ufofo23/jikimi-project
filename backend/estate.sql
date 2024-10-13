@@ -1029,3 +1029,15 @@ select * from dictionary_tbl;
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (9, 6, 47.47, '이수호 (소유자)', '단독소유', 6, 0);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (13, 7, 84.94, '박선미 (공유자)하승희 (공유자)', '공동소유', 2, 144000000);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (16, 8, 84.94, '이해집 (공유자)이해집 (공유자)', '공동소유', 2, 120000000);
+
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.89, '박상덕 (공유자)임종숙 (공유자)', '공동소유', 4, 130000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (2, 2, 59.96, '김남정 (소유자)', '단독소유', 3, 0);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (3, 1001, 59.96, '김남정 (소유자)', '단독소유', 3, 0);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (4, 3, 84.96, '황옥취 (소유자)', '단독소유', 2, 220000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (5, 1005, 84.96, '황옥취 (소유자)', '단독소유', 2, 220000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (6, 1005, 84.96, '황옥취 (소유자)', '단독소유', 2, 220000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (7, 1006, 84.96, '황옥취 (소유자)', '단독소유', 2, 220000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (8, 4, 84.96, '황옥취 (소유자)', '단독소유', 2, 220000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (9, 6, 47.47, '이수호 (소유자)', '단독소유', 6, 0);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (13, 7, 84.94, '박선미 (공유자)하승희 (공유자)', '공동소유', 2, 144000000);
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (16, 8, 84.94, '이해집 (공유자)이해집 (공유자)', '공동소유', 2, 120000000);

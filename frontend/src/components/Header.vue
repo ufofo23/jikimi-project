@@ -116,6 +116,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 // 로그아웃 기능
 const logout = () => {
   authStore.logout();
+  router.push('/login'); 
 };
 
 // 클라이언트 로고 정보

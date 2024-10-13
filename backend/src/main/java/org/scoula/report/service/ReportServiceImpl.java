@@ -91,6 +91,7 @@ public class ReportServiceImpl implements ReportService {
 
         // contractName : null, "" 예외처리 - accordOwner을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         // payload.get("contractName")이 List가 아니면 제외
+
         if(payload.get("contractName") != null && payload.get("contractName") instanceof List<?>) {
             // 공동 소유를 감안하여 리스트에 받음
             List<String> contractNameList = (List<String>) payload.get("contractName");

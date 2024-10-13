@@ -176,6 +176,7 @@ const detail = (no) => {
 const load = async () => {
   isLoading.value = true;
   errorMessage.value = '';
+
   try {
     const response = await api.getList();
     if (Array.isArray(response)) {

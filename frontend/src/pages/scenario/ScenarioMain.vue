@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="checklist-section" v-show="!showResults">
-      <h1 class="title"> 전세 사기 위험 체크리스트 </h1>
+      <h1 class="title">전세 사기 위험 체크리스트</h1>
 
       <form @submit.prevent="submitChecklist" class="checklist-form">
         <div
@@ -14,24 +14,21 @@
             <label
               v-for="option in ['예', '아니오', '모르겠습니다']"
               :key="option"
+              class="radio-label"
+              :class="{ 'checked-label': selectedAnswers[index] === getOptionValue(option) }"
             >
               <input
                 type="radio"
                 :name="'question-' + index"
-                :value="
-                  option === '예'
-                    ? 'yes'
-                    : option === '아니오'
-                    ? 'no'
-                    : 'unknown'
-                "
+                :value="getOptionValue(option)"
                 v-model="selectedAnswers[index]"
               />
-              <span class="radio-label">{{ option }}</span>
+              <span class="radio-custom"></span>
+              <span class="radio-text">{{ option }}</span>
             </label>
           </div>
         </div>
-        <button type="submit" :disabled="loading" class="submit-button">
+        <button type="submit" :disabled="!allQuestionsAnswered || loading" class="submit-button">
           <span v-if="!loading">사기 시나리오 확인하기</span>
           <span v-else class="loading-spinner"></span>
         </button>
@@ -39,7 +36,7 @@
     </div>
 
     <div class="results-section" v-show="showResults">
-      <h1 class="title"> 시나리오가 도착했어요 !</h1>
+      <h1 class="title">시나리오가 도착했어요!</h1>
       <Loading v-if="loading" />
 
       <div v-else>
@@ -110,53 +107,43 @@ export default {
       questions: [
         {
           text: '집 주인과 계약하려는 사람이 같은 사람인가요?',
-          message:
-            'A situation where the person trying to contract is different from the actual owner of the house',
+          message: 'A situation where the person trying to contract is different from the actual owner of the house',
         },
         {
           text: '집 주인이 보증금을 줄여주겠다고 하나요?',
-          message:
-            'A situation where the owner offers a deposit much lower than the market price',
+          message: 'A situation where the owner offers a deposit much lower than the market price',
         },
         {
           text: '집 주인이 집의 소유증명서를 보여주지 않나요?',
-          message:
-            'A situation where the owner does not show or refuses to provide the proof of ownership',
+          message: 'A situation where the owner does not show or refuses to provide the proof of ownership',
         },
         {
           text: '이 집에 다른 세입자가 살고 있나요?',
-          message:
-            'A situation where there are already other tenants living in the house I am trying to contract with',
+          message: 'A situation where there are already other tenants living in the house I am trying to contract with',
         },
         {
           text: '집의 상태나 위치가 설명과 많이 다른가요?',
-          message:
-            'A situation where the information in the advertisement and the actual condition or location of the property is significantly different',
+          message: 'A situation where the information in the advertisement and the actual condition or location of the property is significantly different',
         },
         {
           text: '집 주인이 급하게 계약하자고 하나요?',
-          message:
-            'A situation where the owner is trying to rush the contract and pressuring me to make a quick decision',
+          message: 'A situation where the owner is trying to rush the contract and pressuring me to make a quick decision',
         },
         {
           text: '계약을 갑자기 미루자고 하나요?',
-          message:
-            'A situation where the landlord suddenly tries to postpone the contract and may later become unreachable or vanish',
+          message: 'A situation where the landlord suddenly tries to postpone the contract and may later become unreachable or vanish',
         },
         {
           text: '계약서를 대충 작성하자고 하나요?',
-          message:
-            'A situation where the contract is poorly written and important details are missing',
+          message: 'A situation where the contract is poorly written and important details are missing',
         },
         {
           text: '보증금을 돌려주는 보험 가입을 거부하나요?',
-          message:
-            'A situation where the owner refuses to sign up for insurance that returns the deposit',
+          message: 'A situation where the owner refuses to sign up for insurance that returns the deposit',
         },
         {
           text: '임대인이 세입자의 신분증이나 서류를 지나치게 요구하나요?',
-          message:
-            'A situation where the landlord excessively demands personal information like ID or other documents',
+          message: 'A situation where the landlord excessively demands personal information like ID or other documents',
         },
       ],
       selectedAnswers: Array(10).fill(null),
@@ -166,7 +153,15 @@ export default {
       selectedScenario: null,
     };
   },
+  computed: {
+    allQuestionsAnswered() {
+      return this.selectedAnswers.every(answer => answer !== null);
+    },
+  },
   methods: {
+    getOptionValue(option) {
+      return option === '예' ? 'yes' : option === '아니오' ? 'no' : 'unknown';
+    },
     async submitChecklist() {
       this.loading = true;
       this.showResults = true;
@@ -199,11 +194,9 @@ export default {
         this.loading = false;
       }
     },
-
     toggleSolution(index) {
-    this.selectedScenario = this.selectedScenario === index ? null : index;
+      this.selectedScenario = this.selectedScenario === index ? null : index;
     },
-
     extractScenarios(content) {
       const nameRegex = /\$start-name\$(.*?)\$end-name\$/gs;
       const fraudRegex = /\$start-fraud\$(.*?)\$end-fraud\$/gs;
@@ -220,24 +213,15 @@ export default {
         fraud: frauds[index] || '',
         type: types[index] || '',
         address: addresses[index] || ''
-  }));
+      }));
 
-  return scenarios;
-},
-
-    formatContent(scenario) {
-      return `
-        ${scenario.name}
-        ${scenario.type}
-        ${scenario.fraud}
-        ${scenario.address}
-      `;
+      return scenarios;
     },
-
     resetForm() {
       this.selectedAnswers = Array(10).fill(null);
       this.scenarios = [];
       this.showResults = false;
+      this.selectedScenario = null;
     },
   },
 };
@@ -301,10 +285,10 @@ export default {
   gap: 1.5rem;
 }
 
-.radio-group label {
+.radio-label {
   flex: 1;
+  position: relative;
   padding: 1.25rem;
-  margin: 0;
   background: #f0f7ff;
   border: 2px solid #bae7ff;
   border-radius: 15px;
@@ -313,26 +297,40 @@ export default {
   text-align: center;
 }
 
-.radio-group label:hover {
-  background: #e6f7ff;
-  border-color: #69c0ff;
+.radio-label.checked-label {
+  background: #1890ff; /* 체크된 상태의 배경색 */
+  border-color: #0050b3; /* 체크된 상태의 테두리 색상 */
+  color: white; /* 체크된 상태의 글자 색상 */
 }
 
 .radio-group input[type='radio'] {
-  display: none;
+  position: absolute;
+  opacity: 0;
 }
 
-.radio-group input[type='radio']:checked + .radio-label {
-  background-color: #1890ff;
-  color: white;
-  font-weight: bold;
-  border-color: #1890ff;
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
-}
-
-.radio-label {
+.radio-text {
   font-size: 1.1rem;
   font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.radio-group input[type='radio']:checked + .radio-text {
+  color: white;
+  font-weight: bold;
+}
+
+.radio-group input[type='radio']:checked + .radio-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #1890ff;
+  border-color: #1890ff;
+  border-radius: 13px;
+  z-index: -1;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
 }
 
 .submit-button,
@@ -430,7 +428,6 @@ export default {
 }
 
 .scenario-title h2 {
-  
   font-size: 1.5rem;
   color: #003a8c;
   margin: 0;
@@ -444,25 +441,23 @@ export default {
 .fraud-badge {
   align-self: flex-start;
   margin-top: 0.5rem;
-  background: rgba(24, 144, 255, 0.1); /* 일관된 배경색 */
-  color: #0050b3; /* 일관된 텍스트 색상 */
-  padding: 0.5rem 1.5rem; 
-  border-radius: 20px; /* 라운딩 처리 */
-  font-size: 0.875rem; /* 폰트 크기 일정 유지 */
+  background: rgba(24, 144, 255, 0.1);
+  color: #0050b3;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-
 
 .fraud-type {
   color: #0078d4;
-  padding: 0.5rem 2rem; /* 패딩을 줄이고 가로 패딩을 늘림 */
+  padding: 0.5rem 2rem;
   border-radius: 24px;
-  font-size: 1.1rem; 
+  font-size: 1.1rem;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-
 
 .scenario-content {
   color: #262626;
@@ -575,10 +570,13 @@ export default {
     padding: 1.5rem;
   }
 
-  
   .radio-group {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .radio-label {
+    width: 100%;
   }
 
   .scenario-header {
