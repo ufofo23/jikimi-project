@@ -180,12 +180,12 @@
     </div>
   </div>
   <div v-if="isLoadingCORS" class="loading-overlay">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <p>안전진단 보고서를 생성하고 있습니다...</p>
-        <p>잠시만 기다려주세요.</p>
-      </div>
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>안전진단 보고서를 생성하고 있습니다...</p>
+      <p>잠시만 기다려주세요.</p>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -726,8 +726,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-content p {
