@@ -74,9 +74,35 @@
         <label>jeonsePrice(전세금):</label>
         <input type="text" v-model="jeonsePrice" class="form-control" />
       </div>
+
       <div class="form-group">
-        <label>contractName(계약자명):</label>
-        <input type="text" v-model="contractName" class="form-control" />
+        <label>집주인 성명:</label>
+        <div
+          v-for="(name, index) in names"
+          :key="index"
+          class="name-input-container"
+        >
+          <input
+            type="text"
+            v-model="names[index]"
+            required
+            class="form-control"
+            placeholder="집주인 성명"
+          />
+          <div class="button-group">
+            <button @click="addName(index)" type="button" class="add-button">
+              +
+            </button>
+            <button
+              v-if="index !== 0"
+              @click="removeName(index)"
+              type="button"
+              class="remove-button"
+            >
+              -
+            </button>
+          </div>
+        </div>
       </div>
       <div class="form-group">
         <label>jibunAddress(지번주소):</label>
@@ -107,10 +133,22 @@ const ownership = ref('');
 const commonOwner = ref('');
 const changeOwnerCount = ref('');
 const maximumOfBond = ref('');
+const names = ref(['']);
 
 // bml
 const resViolationStatus = ref('');
 const resContents = ref('');
+
+const addName = () => {
+  names.value.push('');
+};
+
+// 계약자 제거 함수
+const removeName = (index) => {
+  if (names.value.length > 1) {
+    names.value.splice(index, 1);
+  }
+};
 
 // payload
 const addr_sido = ref('');
@@ -174,7 +212,7 @@ const test = async () => {
     ho: emptyToNull(ho.value),
     zipcode: emptyToNull(zipcode.value),
     jeonsePrice: emptyToNull(jeonsePrice.value),
-    contractName: checkEmpty ? '' : namesList,
+    contractName: names.value.length ? names.value : null,
     jibunAddress: emptyToNull(jibunAddress.value),
     price: emptyToNull(String(price.value)),
   };
