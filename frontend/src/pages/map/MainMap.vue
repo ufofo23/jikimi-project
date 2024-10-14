@@ -579,7 +579,6 @@ body {
 .right-panel-full {
   width: 100%;
   position: relative;
-  height: 90vh;
 }
 
 /* 수정 1: 지도 좌측 상단에 추가된 버튼 스타일 */

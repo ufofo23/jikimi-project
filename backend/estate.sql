@@ -997,8 +997,7 @@ desc analysis_tbl;
 select * from property_location;
 select * from dictionary_tbl;
 
-# INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
-# VALUES (15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트', '2024. 10. 13.');
+
 
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
@@ -1053,3 +1052,15 @@ select * from dictionary_tbl;
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (9, 6, 47.47, '이수호 (소유자)', '단독소유', 6, 0);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (13, 7, 84.94, '박선미 (공유자)하승희 (공유자)', '공동소유', 2, 144000000);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (16, 8, 84.94, '이해집 (공유자)이해집 (공유자)', '공동소유', 2, 120000000);
+
+
+###############################################################################
+# 샘플 레포트 넣는 방법 #
+# 1. 밑의 코드를 주석하지 않은 상태로 전체 SQL 한 번 돌리기 #
+INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+VALUES (15566, 1, '서울특별시 마포구 공덕동 457', 0, 85, null, null, 1000000000, null, 554400000, null, 2, null, '공동소유', 84.98, '아파트', '2024. 10. 16.');
+# 2. 로그인 한 뒤에 밑에 코드 실행해서 본인 아이디가 member_no 1로 들어와 있는지 확인
+# SELECT * FROM member_tbl;
+# 3. 밑에 코드 돌리기
+# INSERT INTO member_report_tbl (member_no, report_no) values (1, 1);
+# 4. myReport 페이지에서 목록 확인 후 레포트 조회
