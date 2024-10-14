@@ -143,7 +143,7 @@ public class ExtractUnicodeService {
             }
         } else {
             Map<String, String> noResultsMap = new HashMap<>();
-            noResultsMap.put("resState", "검색 결과가 없습니다. 검색어에 잘못된 철자가 없는지, 정확한 주소인지 다시 한번 확인해 주세요.");
+            noResultsMap.put("resState", "-1");
             extractedValues.add(noResultsMap);
         }
         return extractedValues;
