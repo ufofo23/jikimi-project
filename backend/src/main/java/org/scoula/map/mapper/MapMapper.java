@@ -11,6 +11,7 @@ public interface MapMapper {
     List<MapVO> getAddressList();
 
     List<MapDetailDTO> getAddressDetails(Long id);
+    List<MapDetailDTO> getReportAddressDetails(Long id);
 
     List<MapVO> getAddressListMoveAll(@Param("lat") double lat, @Param("lon") double lon, @Param("zoomLevel") int zoomLevel);
 
