@@ -1049,3 +1049,7 @@ select * from property_tbl;
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (9, 6, 47.47, '이수호 (소유자)', '단독소유', 6, 0);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (13, 7, 84.94, '박선미 (공유자)하승희 (공유자)', '공동소유', 2, 144000000);
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (16, 8, 84.94, '이해집 (공유자)이해집 (공유자)', '공동소유', 2, 120000000);
+
+select  * from cor_tbl;
+select * from member_report_tbl;
+select  * from report_tbl;

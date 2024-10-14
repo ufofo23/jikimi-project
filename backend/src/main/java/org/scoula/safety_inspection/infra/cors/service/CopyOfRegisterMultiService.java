@@ -90,7 +90,7 @@ public class CopyOfRegisterMultiService {
         ResRegisterEntriesList firstEntry = obj.getData().getResRegisterEntriesList()[0];
 
         String ownerStateStr = getOwnerState(firstEntry);
-        String cleanedInput = ownerStateStr.replace("&", "");
+        String cleanedInput = (ownerStateStr != null) ? ownerStateStr.replace("&", "") : "";
         Double ownerState = Double.parseDouble(cleanedInput);
         List<String> ownershipList = getOwnership(firstEntry);
         String ownership = String.join("", ownershipList);
@@ -119,8 +119,11 @@ public class CopyOfRegisterMultiService {
     }
 
     private static String extractOwnerState(ResRegistrationList registration) {
-        return registration.getResContentsList()[1].getResDetailList()[3].getResContents()
-                .split("㎡")[0].replaceAll(".*?\\s+", "");
+        String content = registration.getResContentsList()[1].getResDetailList()[3].getResContents();
+        content = content.replaceAll("\\s+", "");
+        String beforeSquareMeter = content.split("㎡")[0];
+        String result = beforeSquareMeter.replaceAll(".*?\\s+", "").replaceAll("[^0-9.]", "");
+        return result;
     }
 
     private static List<String> getOwnership(ResRegisterEntriesList entry) {
