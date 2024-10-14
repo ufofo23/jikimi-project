@@ -1,6 +1,20 @@
 <template>
   <div class="container mt-4">
-    <h1 class="text-center my-4 card-title">토막 상식 목록</h1>
+    <!-- ====== Page Title Section Start -->
+    <section class="dark:bg-dark bg-white py-[100px]">
+      <div class="mx-0 px-0 sm:container">
+        <div class="border-primary border-l-[5px] pl-5">
+          <h4 class="text-dark mb-2 text-4xl font-semibold dark:text-white">
+            부동산 토막 상식
+          </h4>
+          <p class="text-body-color dark:text-dark-6 text-xl font-medium">
+            반드시 알아야 할 상식들을 준비했어요! 상식 학습을 통해 안전 거래를
+            진행하세요!
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- ====== Page Title Section End -->
     <!-- 로딩 상태 -->
     <div v-if="isLoading" class="text-center my-4">
       <div class="spinner-border" role="status">
@@ -98,12 +112,16 @@ onMounted(() => {
   margin-bottom: 40px;
 }
 
+/* 전체 섹션의 좌측 여백 통일 */
 .container {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
+.section-container {
+  padding-left: 20px; /* 타이틀과 다른 컨텐츠의 시작점을 통일 */
+}
 .sense-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -112,10 +130,12 @@ onMounted(() => {
 }
 
 .sense-item {
-  background-color: #b8d8ff;
+  background-color: white;
+  border: 2px solid #b8d8ff; /* 보더 너비와 스타일 추가 */
   border-radius: 25px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
   cursor: pointer;
   aspect-ratio: 1 / 1;
   padding: 10px; /* 패딩 추가 */
@@ -124,7 +144,7 @@ onMounted(() => {
 
 .sense-item:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background-color: #f0f7ff; /* Sky blue color on hover */
 }
 
 .sense-content {
@@ -175,14 +195,12 @@ onMounted(() => {
   width: 30rem; /* 카드 너비 설정 */
   padding: 1.5rem; /* 내부 패딩 추가 */
   border-radius: 0.5rem; /* 카드 모서리 둥글게 */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-  transition: all 0.15s ease-out; /* 전환 효과 */
+
   position: relative; /* 상대 위치 지정 */
 }
 
 .modal-content:hover {
   margin-top: -0.5rem; /* hover 시 카드 위로 이동 */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* hover 시 그림자 강화 */
 }
 
 .close {

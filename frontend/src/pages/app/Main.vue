@@ -197,6 +197,7 @@ onUnmounted(() => {
   stopAutoScroll();
 });
 </script>
+
 <style scoped>
 /* 네비게이션 바의 선 제거 */
 .container,
@@ -242,9 +243,7 @@ img {
 .rounded-md {
   border: none !important;
 }
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+
 /* 메뉴 토글 버튼 (모바일용) */
 .menu-toggle {
   display: none;
@@ -259,10 +258,6 @@ body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .map-container {
@@ -521,7 +516,7 @@ body {
 }
 
 .map-image {
-  max-width: 85%;
+  max-width: 100%;
   margin-bottom: 1rem;
 }
 

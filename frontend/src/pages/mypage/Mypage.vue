@@ -35,8 +35,9 @@ import api from '@/api/authApi';
 const router = useRouter();
 const authStore = useAuthStore();
 const userName = ref('');
-// 추가적인 변수들...
+const errorMessage = ref('');
 
+// 사용자 정보를 불러오는 함수
 const loadUserInfo = async () => {
   try {
     const userInfo = await api.getInfo();
@@ -47,7 +48,8 @@ const loadUserInfo = async () => {
       '사용자 정보를 불러오는 데 실패했습니다. 다시 시도해 주세요.';
   }
 };
-// Logout function
+
+// 로그아웃 함수
 const handleLogout = async () => {
   try {
     authStore.logout();
@@ -69,16 +71,18 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 메인 컨테이너 스타일 */
+/* 메인 컨테이너 */
 .mypage-container {
   display: flex;
-  height: 100vh;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 40px; /* 좌우 여백 추가 */
   background-color: #f7f9fc;
-  align-items: stretch; /* 좌우 섹션의 높이를 동일하게 설정 */
+  align-items: stretch;
+  justify-content: center; /* 가운데 정렬 */
+  margin: 0 auto; /* 페이지 가운데 정렬 */
 }
 
-/* 사이드바 스타일 */
+/* 사이드바 */
 .sidebar {
   width: 20%;
   background-color: #f0f4f8;
@@ -91,6 +95,7 @@ onMounted(async () => {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 20px;
+  color: #030f1d;
 }
 
 .sidebar ul {
@@ -102,20 +107,24 @@ onMounted(async () => {
   margin-bottom: 10px;
 }
 
-/* 활성화된 링크 스타일 */
 .active-link {
-  background-color: #0066cc; /* 파란색 배경 */
-  color: white; /* 텍스트 색상 변경 */
-  border-radius: 5px; /* 모서리 둥글게 */
+  background-color: #1e32e8; /* 클릭 시 파란색 */
+  color: white !important; /* 클릭 시 흰색 텍스트 */
+  border-radius: 5px;
 }
 
 .sidebar ul li a {
   text-decoration: none;
   font-size: 16px;
-  color: #333;
-  display: block; /* 링크를 블록 요소로 설정하여 전체 영역 클릭 가능하게 */
-  padding: 10px; /* 패딩 추가하여 클릭 영역 확대 */
-  transition: background-color 0.3s, color 0.3s; /* 부드러운 효과 추가 */
+  color: #000000;
+  display: block;
+  padding: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar ul li a:hover {
+  background-color: #1e32e8;
+  color: white;
 }
 
 .logout-btn {
@@ -127,11 +136,12 @@ onMounted(async () => {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  color: #030f1d;
 }
 
-/* 메인 정보 영역 스타일 */
+/* 정보 섹션 */
 .info-section {
-  width: 80%;
+  width: 60%; /* 페이지를 가운데로 몰기 위해 */
   background-color: white;
   padding: 40px;
   border-radius: 10px;
@@ -139,8 +149,9 @@ onMounted(async () => {
 }
 
 .info-section h2 {
-  font-size: 22px;
+  font-size: 24px; /* 제목 크기 증가 */
   margin-bottom: 20px;
+  color: #1e32e8; /* 파란색으로 변경 */
 }
 
 .info-section p {
@@ -167,61 +178,34 @@ onMounted(async () => {
   font-size: 16px;
 }
 
-/* 라디오 버튼 스타일 */
+/* 라디오 버튼 그룹 */
 .radio-group {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
+}
+
+.radio-button {
+  display: flex;
 }
 
 .radio-button input[type='radio'] {
-  position: absolute;
-  opacity: 0;
+  margin-right: 5px;
 }
 
-.radio {
-  position: relative;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-}
-
-.radio::before {
-  position: absolute;
-  content: '';
-  width: 10px;
-  height: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background-color: #fff;
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
-}
-
-.radio-button input[type='radio']:checked + .radio {
-  border-color: #28a745;
-  background-color: #fff;
-  box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.6),
-    0px 0px 20px rgba(40, 167, 69, 0.4);
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.radio-button input[type='radio']:checked + .radio::before {
-  background-color: #28a745;
-  opacity: 1;
-  box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.8);
+/* 버튼 스타일 */
+.update-btn {
+  background-color: #1e32e8; /* 지정된 색상으로 변경 */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
 .delete-account {
   margin-top: 40px;
-  text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
+  text-align: right;
 }
 
 .delete-btn {
@@ -231,9 +215,9 @@ onMounted(async () => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  display: inline-block; /* 버튼을 오른쪽에 고정 */
 }
 
+/* 반응형 스타일 */
 @media (max-width: 768px) {
   .mypage-container {
     flex-direction: column;

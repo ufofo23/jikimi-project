@@ -47,9 +47,7 @@ async function getCoordinates(address) {
 
     const response = await axios.get(url, {
       headers: {
-        Authorization: `KakaoAK ${
-          import.meta.env.VITE_DAUM_API_KEY
-        }`,
+        Authorization: `KakaoAK ${import.meta.env.VITE_DAUM_API_KEY}`,
       },
       params: {
         query: address,
@@ -64,10 +62,7 @@ async function getCoordinates(address) {
       return null;
     }
   } catch (error) {
-    console.error(
-      `Failed to fetch coordinates for address: ${address}`,
-      error
-    );
+    console.error(`Failed to fetch coordinates for address: ${address}`, error);
     return null;
   }
 }
@@ -90,9 +85,7 @@ const openDaumPostcode = () => {
         apartment: data.apartment,
       };
 
-      const coordinates = await getCoordinates(
-        data.roadAddress
-      );
+      const coordinates = await getCoordinates(data.roadAddress);
       if (coordinates) {
         x.value = coordinates.x;
         y.value = coordinates.y;
@@ -114,20 +107,39 @@ const openDaumPostcode = () => {
 
 <style scoped>
 .search-input {
-  width: 90%; /* 너비 설정 */
-  height: 60px; /* 높이 조정 */
-  border-radius: 10px; /* 둥글게 */
-  border: 1px solid #ccc; /* 테두리 설정 */
-  padding: 0 15px; /* 여백 추가 */
-  font-size: 16px; /* 글자 크기 */
+  width: 360px; /* 기본 너비 */
+  height: 60px; /* 기본 높이 */
+  border-radius: 10px; /* 둥근 테두리 */
+  border: 1px solid #ccc; /* 테두리 색상 */
+  padding: 0 15px; /* 내부 여백 */
+  font-size: 16px; /* 기본 글자 크기 */
+  transition: all 0.3s ease; /* 애니메이션 적용 */
 }
 
 .search-input:focus {
-  border-color: rgb(0, 181, 0); /* 포커스 시 색상 변경 */
+  border-color: rgb(0, 181, 0); /* 포커스 시 테두리 색상 변경 */
   outline: none; /* 기본 아웃라인 제거 */
 }
 
 .search-output {
   text-align: center;
+  margin-top: 20px;
+}
+
+/* 반응형 디자인 적용 */
+@media (max-width: 768px) {
+  .search-input {
+    width: 100%; /* 작은 화면에서는 100% 너비 */
+    height: 50px; /* 높이를 줄임 */
+    font-size: 14px; /* 글자 크기 축소 */
+  }
+}
+
+@media (max-width: 480px) {
+  .search-input {
+    width: 100%; /* 모바일에서는 전체 너비 */
+    height: 45px; /* 높이를 더 줄임 */
+    font-size: 12px; /* 모바일 글자 크기 */
+  }
 }
 </style>

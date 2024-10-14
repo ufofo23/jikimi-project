@@ -1,110 +1,132 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">
-      <i class="fa-solid fa-paste"></i> 부동산 용어 사전
-    </h1>
-
-    <div class="alphabet-nav mb-4">
-      <a
-        v-for="consonant in koreanConsonants"
-        :key="consonant"
-        :href="'#' + consonant"
-        class="btn btn-outline-primary mx-1"
-      >
-        {{ consonant }}
-      </a>
-    </div>
-
-    <div class="filter-container mb-4">
-      <div class="filter-buttons">
-        <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
-          모두 보기
-        </button>
-        <button class="btn btn-outline-warning mx-1" @click="viewFavorites">
-          즐겨찾기
-        </button>
-      </div>
-      <div class="new-search">
-        <input
-          type="text"
-          class="form-control"
-          v-model="searchTerm"
-          placeholder="검색할 단어를 입력하세요"
-          @input="filterBySearch"
-        />
-        <span class="search-icon">🔍</span>
+  <div class="container mx-auto px-4 py-8">
+    <div class="banner-container mb-8">
+      <div class="banner-content">
+        <div class="text-content">
+          <h1 class="banner-title">부동산 용어 사전</h1>
+          <p class="banner-description">
+            쉽고 빠르게 부동산 용어를 검색하세요!
+          </p>
+        </div>
+        <img src="@/assets/jip.png" alt="hero" class="jip-image" />
       </div>
     </div>
 
-    <!-- 로딩 상태 -->
-    <div v-if="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">로딩 중...</span>
+    <div class="flex flex-col space-y-4 mb-6">
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <div class="filter-buttons flex space-x-2">
+          <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
+            모두 보기
+          </button>
+          <button class="btn btn-outline-warning mx-1" @click="viewFavorites">
+            즐겨찾기
+          </button>
+        </div>
+
+        <div class="relative flex-grow max-w-md">
+          <input
+            type="text"
+            v-model="searchTerm"
+            placeholder="검색할 단어를 입력하세요"
+            @input="filterBySearch"
+            class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
+            >🔍</span
+          >
+        </div>
+      </div>
+
+      <div class="consonant-nav overflow-x-auto w-full">
+        <div class="flex space-x-2">
+          <a
+            v-for="consonant in koreanConsonants"
+            :key="consonant"
+            :href="'#' + consonant"
+            class="flex-1 px-3 py-2 text-sm bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors duration-200 whitespace-nowrap text-center"
+          >
+            {{ consonant }}
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- 에러 메시지 -->
-    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+      <div
+        class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"
+      ></div>
+    </div>
+
+    <div
+      v-else-if="errorMessage"
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+      role="alert"
+    >
       {{ errorMessage }}
     </div>
 
-    <!-- 게시글 목록 그리드 -->
     <div v-else>
-      <div
-        v-for="consonant in sortedConsonants"
-        :key="consonant"
-        class="consonant-section"
-      >
-        <h2 :id="consonant" class="consonant-title">{{ consonant }}</h2>
-        <div class="grid-container">
+      <div v-for="consonant in sortedConsonants" :key="consonant" class="mb-8">
+        <h2 :id="consonant" class="text-2xl font-bold mb-4 pt-16 -mt-16">
+          {{ consonant }}
+        </h2>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+        >
           <div
             v-for="article in getArticlesByConsonant(consonant)"
             :key="article.dictionaryNo"
-            class="grid-item"
+            class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:bg-secondary"
           >
-            <div class="card" @click="openDetailModal(article.dictionaryNo)">
-              <div class="card-body text-center">
-                <font-awesome-icon
-                  :icon="[
-                    clickedIcons[article.dictionaryNo] ? 'fas' : 'far',
-                    'star',
-                  ]"
-                  @click.stop="toggleIcon(article.dictionaryNo)"
-                  class="star-icon"
-                  :style="{
-                    color: clickedIcons[article.dictionaryNo] ? '#FFD43B' : '',
-                  }"
-                />
-                <h3 class="card-title d-inline-block ml-2">
-                  {{ article.dictionaryTitle }}
-                </h3>
-              </div>
+            <div
+              class="p-4 flex justify-between items-start"
+              @click="openDetailModal(article.dictionaryNo)"
+            >
+              <h3 class="text-lg font-semibold">
+                {{ article.dictionaryTitle }}
+              </h3>
+              <button
+                @click.stop="toggleIcon(article.dictionaryNo)"
+                class="text-2xl focus:outline-none"
+                :class="{
+                  'text-yellow-500': clickedIcons[article.dictionaryNo],
+                }"
+              >
+                {{ clickedIcons[article.dictionaryNo] ? '★' : '☆' }}
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal for Detail Page -->
-    <div v-if="showModal" class="modal" @click.self="closeModal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ detailArticle.dictionaryTitle }}</h2>
-        <div class="detail-content">{{ detailArticle.dictionaryContent }}</div>
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4"
+      @click.self="closeModal"
+    >
+      <div class="bg-white rounded-lg p-6 max-w-lg w-full">
+        <button
+          @click="closeModal"
+          class="float-right text-gray-600 hover:text-gray-800"
+        >
+          &times;
+        </button>
+        <h2 class="text-2xl font-bold mb-4">
+          {{ detailArticle.dictionaryTitle }}
+        </h2>
+        <div class="whitespace-pre-line">
+          {{ detailArticle.dictionaryContent }}
+        </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import api from '@/api/dictionaryApi';
 import likeApi from '@/api/like/likeDictionaryApi';
 
-const route = useRoute();
-const router = useRouter();
 const isLoading = ref(true);
 const errorMessage = ref('');
 const page = ref({ list: [], totalCount: 0 });
@@ -150,16 +172,10 @@ const consonantRanges = {
 
 const getConsonant = (char) => {
   const code = char.charCodeAt(0);
-  if (code >= 'A'.charCodeAt(0) && code <= 'Z'.charCodeAt(0)) {
-    return 'A-Z';
-  }
-  if (code >= '0'.charCodeAt(0) && code <= '9'.charCodeAt(0)) {
-    return '0-9';
-  }
+  if (code >= 'A'.charCodeAt(0) && code <= 'Z'.charCodeAt(0)) return 'A-Z';
+  if (code >= '0'.charCodeAt(0) && code <= '9'.charCodeAt(0)) return '0-9';
   for (const [consonant, [start, end]] of Object.entries(consonantRanges)) {
-    if (code >= start && code <= end) {
-      return consonant;
-    }
+    if (code >= start && code <= end) return consonant;
   }
   return 'ㄱ-ㅎ';
 };
@@ -177,13 +193,11 @@ const sortedConsonants = computed(() => {
 
 const filteredArticles = computed(() => {
   let result = page.value.list;
-
   if (isFavoritesView.value) {
     result = result.filter(
       (article) => clickedIcons.value[article.dictionaryNo]
     );
   }
-
   if (searchTerm.value) {
     result = result.filter((article) =>
       article.dictionaryTitle
@@ -191,7 +205,6 @@ const filteredArticles = computed(() => {
         .includes(searchTerm.value.toLowerCase())
     );
   }
-
   return result.sort((a, b) =>
     a.dictionaryTitle.localeCompare(b.dictionaryTitle, 'ko-KR')
   );
@@ -280,27 +293,70 @@ onMounted(() => {
 </script>
 
 <style scoped>
+h2 {
+  scroll-margin-top: 300px;
+}
+
 .container {
   max-width: 1600px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-.alphabet-nav {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  background-color: #f8f9fa;
-  padding: 10px 0;
+/* 검색 버튼 크기 조절 */
+.relative {
+  max-width: 450px; /* 너비 조정 */
 }
 
-.alphabet-nav a {
-  margin: 5px;
-  padding: 5px 10px;
-  text-decoration: none;
-  color: #007bff;
+.banner-container {
+  background: linear-gradient(to right, #f0f7ff, #87c0ff);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px; /* 배너 높이 증가 */
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
+  margin-top: 5px;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 내용물을 양쪽으로 분산 */
+  width: 100%;
+  max-width: 800px; /* 최대 너비 설정 */
+  height: 100%;
+}
+
+.text-content {
+  text-align: center;
+  flex-grow: 1; /* 텍스트 영역이 남는 공간을 차지하도록 */
+}
+
+.jip-image {
+  height: 180px; /* 이미지 크기 증가 */
+  width: auto;
+  margin-left: 10px; /* 이미지와 텍스트 사이 간격 */
+}
+
+.banner-title {
+  font-size: 48px; /* 글자 크기 증가 */
   font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 10px;
+}
+
+.banner-description {
+  font-size: 22px; /* 설명 글자 크기 증가 */
+  color: #333;
+}
+
+.star-icon {
+  cursor: pointer;
+  font-size: 20px;
+  margin-right: 8px;
 }
 
 .filter-container {
@@ -321,144 +377,45 @@ onMounted(() => {
   padding: 3px 10px;
 }
 
-.new-search {
-  position: relative;
-  padding-left: 20px;
+/* New styles for hover effect */
+.hover\:bg-secondary:hover {
+  background-color: #f0f7ff;
 }
 
-.new-search input {
-  width: 300px;
-  height: 40px;
-  line-height: 40px;
-  padding: 0 10px;
-  border-radius: 5px;
-  margin-left: 10px;
-  text-align: center;
-}
+/* Responsive adjustments for smaller screens */
+@media (max-width: 640px) {
+  .banner-content {
+    flex-direction: column;
+  }
 
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
+  .text-content {
+    text-align: center;
+    margin-right: 20px;
+  }
 
-.consonant-section {
-  margin-bottom: 30px;
-}
+  .jip-image {
+    height: 120px; /* 이미지 크기 증가 */
+    width: auto;
+  }
 
-.consonant-title {
-  text-align: left;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-  padding-top: 180px;
-  margin-top: -180px;
-}
+  .banner-title {
+    font-size: 48px; /* 글자 크기 증가 */
+    font-weight: bold;
+    color: #1a73e8;
+    margin-bottom: 10px;
+  }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 20px;
-}
+  .banner-description {
+    font-size: 22px; /* 설명 글자 크기 증가 */
+    color: #333;
+  }
 
-.grid-item .card {
-  width: 100%;
-  height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  transition: transform 0.2s ease-in-out;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .flex-wrap {
+    flex-direction: column;
+  }
 
-.grid-item .card:hover {
-  transform: scale(1.05);
-}
-
-.card-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.star-icon {
-  cursor: pointer;
-  font-size: 20px;
-  margin-right: 8px;
-}
-
-.card-title {
-  font-size: 1.2rem;
-  margin: 0;
-}
-
-/* Modal styles */
-/* Modal styles */
-.modal {
-  display: flex;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white; /* 배경색을 흰색으로 */
-  width: 30rem; /* 카드 너비 설정 */
-  padding: 1.5rem; /* 내부 패딩 추가 */
-  border-radius: 0.5rem; /* 카드 모서리 둥글게 */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-  transition: all 0.15s ease-out; /* 전환 효과 */
-  position: relative; /* 상대 위치 지정 */
-}
-
-.modal-content:hover {
-  margin-top: -0.5rem; /* hover 시 카드 위로 이동 */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* hover 시 그림자 강화 */
-}
-
-.close {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-h2 {
-  margin: 0;
-  font-size: 1.5rem; /* 제목 폰트 크기 증가 */
-  font-weight: bold;
-  margin-bottom: 1rem; /* 제목과 내용 간격 조정 */
-}
-
-.detail-content {
-  white-space: pre-line;
-  font-size: 1rem; /* 내용 폰트 크기 */
-  line-height: 1.6; /* 줄 간격 조정 */
-  margin-bottom: 1rem;
-}
-
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 20px;
+  .w-full {
+    width: 100%;
+  }
 }
 </style>
