@@ -41,15 +41,13 @@
           placeholder="010-0000-0000"
         />
       </div>
-      <button type="submit" class="update-btn">정보 업데이트</button>
+      <div class="delete-account">
+        <button type="submit" class="update-btn">정보 업데이트</button>
+        <button type="submit" class="delete-btn" @click="handleAccountDelete">
+          회원 탈퇴하기
+        </button>
+      </div>
     </form>
-
-    <div class="delete-account">
-      <p>탈퇴를 원하시는 경우, 회원 탈퇴 버튼을 눌러 주세요.</p>
-      <button type="submit" class="delete-btn" @click="handleAccountDelete">
-        회원 탈퇴하기
-      </button>
-    </div>
   </div>
 </template>
 <script setup>
@@ -153,7 +151,6 @@ const handleAccountDelete = async () => {
 /* 메인 컨테이너 스타일 */
 .mypage-container {
   display: flex;
-  height: 100vh;
   padding: 20px;
   background-color: #f7f9fc;
 }
@@ -251,7 +248,6 @@ const handleAccountDelete = async () => {
 }
 
 .form-group input {
-  width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -322,8 +318,9 @@ const handleAccountDelete = async () => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  display: inline-block; /* 버튼을 오른쪽에 고정 */
+  display: inline; /* 버튼을 오른쪽에 고정 */
   align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
+  margin-right: 20px;
 }
 
 .form {

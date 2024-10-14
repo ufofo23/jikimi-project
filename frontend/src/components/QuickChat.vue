@@ -1,8 +1,7 @@
 <template>
   <div class="quick-chat">
     <button @click="toggleChat" class="chat-bot-button">
-      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" />
-      Bugi Bot
+      <img src="@/assets/boogiChat.png" alt="Turtle Icon" class="turtle-icon" />
     </button>
 
     <div v-if="chatVisible" class="chat-box">
@@ -191,7 +190,7 @@ h3 {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0062ff 0%, #0051d3 100%);
+  background: linear-gradient(135deg, #1173D6 0%, #0051d3 100%);
   box-shadow: 0 8px 16px rgba(0, 98, 255, 0.2);
   border: none;
   cursor: pointer;
@@ -204,9 +203,8 @@ h3 {
 }
 
 .turtle-icon {
-  width: 45px;
-  height: 45px;
-  filter: brightness(0) invert(1);
+  width: 75px;
+  height: 75px;
 }
 
 .chat-box {
@@ -227,7 +225,7 @@ h3 {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background: #0062ff;
+  background: #1173D6;
   color: white;
 }
 
@@ -280,7 +278,7 @@ h3 {
 
 .user-message {
   align-self: flex-end;
-  background: #0062ff;
+  background: #1173D6;
   color: white;
   border-radius: 18px 18px 4px 18px;
   padding: 12px 16px;
@@ -330,11 +328,11 @@ h3 {
 
 .message-input:focus {
   outline: none;
-  border-color: #0062ff;
+  border-color: #1173D6;
 }
 
 .send-button {
-  background: #0062ff;
+  background: #1173D6;
   color: white;
   border: none;
   border-radius: 25px;

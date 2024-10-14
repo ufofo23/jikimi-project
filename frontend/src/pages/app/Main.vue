@@ -48,18 +48,17 @@
     </div>
 
     <div class="right-section">
-      <div class="map-container">
-        <img src="@/assets/map.png" alt="hero" class="map-image" />
-        <p class="map-description">
-          지도를 통해 원하시는 지역의 시세를 확인하고,<br />
-          등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
-        </p>
-        <router-link :to="{ name: 'map' }" class="button-primary right-button"
-          >안전 진단 받기</router-link
-        >
-      </div>
+      <img src="@/assets/map.png" alt="hero" class="map-image" />
+      <p class="map-description">
+        지도를 통해 원하시는 지역의 시세를 확인하고,<br />
+        등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
+      </p>
+      <router-link :to="{ name: 'map' }" class="button-primary right-button"
+        >안전 진단 받기</router-link
+      >
     </div>
   </div>
+
   <Footer></Footer>
 </template>
 
@@ -396,7 +395,7 @@ body {
 /* Hero 섹션 스타일 */
 .hero-section {
   display: flex;
-  min-height: 100vh;
+  max-height: 100vh;
   padding-top: 0; /* 헤더 높이 + 여백 */
   padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
   align-items: stretch; /* 좌우 섹션의 높이를 동일하게 설정 */
@@ -436,7 +435,6 @@ body {
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  height: 85vh;
 }
 
 .left-section {
@@ -445,7 +443,7 @@ body {
   width: 50%; /* 전체 화면의 50% */
   overflow: hidden; /* 내부 요소가 섹션을 넘지 않도록 설정 */
   justify-content: space-between; /* 내용을 위아래로 분산 */
-  min-height: 100vh; /* 화면의 높이를 100%로 설정 */
+  /* min-height: 100vh; /* 화면의 높이를 100%로 설정 */
 }
 .right-section {
   background-color: transparent;

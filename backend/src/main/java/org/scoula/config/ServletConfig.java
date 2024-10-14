@@ -1,7 +1,6 @@
 package org.scoula.config;
 
 import org.scoula.oauth.controller.OauthServerTypeConverter;
-import org.scoula.oauth.controller.OauthServerTypeConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.Ordered;
@@ -24,7 +23,8 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.scoula.report.controller",
         "org.scoula.like.report.controller",
         "org.scoula.like.property.controller",
-        "org.scoula.test.controller"
+        "org.scoula.test.controller",
+        "org.scoula.naver_api.controller"
 })
 // Spring MVC용 컴포넌트 등록을 위한 스캔 페키지
 public class ServletConfig implements WebMvcConfigurer {

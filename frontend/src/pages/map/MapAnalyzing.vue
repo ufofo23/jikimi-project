@@ -439,17 +439,18 @@ onMounted(() => {
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
 .address-search-container {
-  max-width: 800px;
+  max-width: 30%;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 50vh;
 }
 
 .form-section {
-  background-color: #ffffff;
+  background-color: #F0F7FF;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
