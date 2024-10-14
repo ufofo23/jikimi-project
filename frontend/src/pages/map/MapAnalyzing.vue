@@ -83,7 +83,8 @@
           <form @submit.prevent="submitForm">
             <div class="form-group">
               <label
-                >전세금:<span v-if="Number(jeonsePrice) >= 10000"
+                >전세금:
+                <span v-if="Number(jeonsePrice) >= 10000"
                   >&nbsp;{{ formattedDeposit }}</span
                 >
               </label>
@@ -180,19 +181,19 @@
     </div>
   </div>
   <div v-if="isLoadingCORS" class="loading-overlay">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <p>안전진단 보고서를 생성하고 있습니다...</p>
-        <p>잠시만 기다려주세요.</p>
-      </div>
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>안전진단 보고서를 생성하고 있습니다...</p>
+      <p>잠시만 기다려주세요.</p>
     </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import axiosInstance from '@/axiosInstance'; // axiosInstance 가져오기
-import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+
 const route = useRoute();
 const router = useRouter();
 
@@ -224,9 +225,13 @@ const formatDeposit = (value) => {
   const millions = Math.floor((numValue % 100000000) / 10000);
 
   if (billions > 0) {
-    return `${billions}억${millions}만원`;
+    if (millions >= 1000) {
+      return `${billions}억 ${millions} 만원`;
+    } else {
+      return `${billions} 억원`;
+    }
   } else {
-    return `${millions}만원`;
+    return `${millions} 만원`;
   }
 };
 
@@ -296,12 +301,14 @@ const generatePayload = (uniqueCode) => {
   const jibunAddressParts = selectedAddress.value.jibunJuso.split(' ');
   const addr_sido = jibunAddressParts[0].match(/.*[시도]/)[0] || '';
   const addr_dong = jibunAddressParts[1] || '';
-  const addr_lotNumber = jibunAddressParts[jibunAddressParts.length - 1] || '';
+  const addr_lotNumber =
+    jibunAddressParts[jibunAddressParts.length - 1].replace(/\r$/, '') || '';
   const jibunAddressStr = selectedAddress.value.jibunJuso;
   const jibunAddress = jibunAddressStr
     .replace(addr_sido, addr_sido + ' ')
     .trim();
   const price = String(Math.round(selectedAddress.value.price * 100000000));
+  const analysisDate = String(new Date().toLocaleDateString('kr'));
 
   let zipCode = '';
   if (selectedAddress.value.zipcode < 10000) {
@@ -324,6 +331,7 @@ const generatePayload = (uniqueCode) => {
     uniqueCode,
     propertyNo: selectedAddress.value.propertyNo,
     price,
+    analysisDate,
   };
 
   return payload;
@@ -722,8 +730,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-content p {

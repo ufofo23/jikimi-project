@@ -73,6 +73,9 @@ public class ReportServiceImpl implements ReportService {
         report.setPropertyNo(Integer.parseInt(propertyNo));
         report.setAddress(payload.get("jibunAddress").toString());
 
+        // 날짜
+        report.setAnalysisDate(payload.get("analysisDate").toString());
+
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         if (payload.get("jeonsePrice") != null && payload.get("jeonsePrice") != "") {
             Long jeonsePrice = Long.parseLong(payload.get("jeonsePrice").toString());
@@ -91,14 +94,26 @@ public class ReportServiceImpl implements ReportService {
 
         // contractName : null, "" 예외처리 - accordOwner을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         // payload.get("contractName")이 List가 아니면 제외
+
         if(payload.get("contractName") != null && payload.get("contractName") instanceof List<?>) {
             // 공동 소유를 감안하여 리스트에 받음
             List<String> contractNameList = (List<String>) payload.get("contractName");
+            log.info("contractNameList : " + contractNameList);
+            log.info("Empty : " + contractNameList.isEmpty());
+            log.info("contractNameList size : " + contractNameList.size());
+
+            for (int i = 0; i < contractNameList.size(); ++i) {
+                if(contractNameList.get(i).trim().isEmpty()) {
+                    log.info("비어있는 이름 지움");
+                    contractNameList.remove(i);
+                }
+            }
 
             if(contractNameList.isEmpty()) {
-                log.info("계약자가 비어있음");
+                log.info("계약자 리스트가 비어있음");
                 report.setAccordOwner(null);
             } else {
+
                 String ownership = cor.getOwnership();
 
                 report.setOwnership(ownership);
@@ -112,12 +127,12 @@ public class ReportServiceImpl implements ReportService {
                 // 매칭되는 이름을 찾기
                 while (matcher.find()) {
                     if(matcher.group(1).isEmpty()) {
-                        log.info("문자열이 비어있는 \"\"");
+                        log.info("소유자 문자열이 비어있을 때");
                         report.setAccordOwner(null);
                     }
                     ownershipList.add(matcher.group(1)); // 첫 번째 그룹이 이름
                 }
-
+                log.info("contractNameList : " + contractNameList);
                 report.setAccordOwner(
                         isAccordOwner(contractNameList, ownershipList)
                 );

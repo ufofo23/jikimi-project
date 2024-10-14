@@ -640,15 +640,27 @@ onMounted(() => {
 </template>
 
 <style scoped>
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .container {
   width: 100%;
   display: flex;
   height: 80vh;
+  max-width: 100vw;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 
+.container div {
+  border-bottom: none;
+}
+
 .left-panel {
-  width: 30%;
+  width: 25%;
   padding: 20px;
   background-color: white;
   /* position: relative; */
@@ -658,7 +670,7 @@ onMounted(() => {
 }
 
 .right-panel {
-  width: 70%;
+  width: 75%;
   position: relative;
   height: 90vh;
 }
@@ -666,7 +678,6 @@ onMounted(() => {
 .right-panel-full {
   width: 100%;
   position: relative;
-  height: 90vh;
 }
 
 /* 수정 1: 지도 좌측 상단에 추가된 버튼 스타일 */
@@ -729,8 +740,8 @@ onMounted(() => {
 
 .location-btn {
   position: absolute;
-  bottom: 17%;
-  right: 2%; /* 원하는 위치로 조정 가능 */
+  bottom: 15%;
+  right: 8%; /* 원하는 위치로 조정 가능 */
   z-index: 1000;
   background-color: #007bff;
   opacity: 0.3;

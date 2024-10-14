@@ -491,11 +491,12 @@ onMounted(() => {
 .table-container {
   margin: 20px 0;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .property-table {
   width: 100%;
+
   border-collapse: separate;
   border-spacing: 0;
   background: white;
@@ -529,7 +530,7 @@ onMounted(() => {
 
 .analyze-button-container {
   flex: 1;
-  max-height: 10%;
+  max-height: 8%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -573,7 +574,36 @@ onMounted(() => {
 @media (max-width: 768px) {
   .left-panel {
     width: 100%;
+    max-width: none;
     height: auto;
+    padding: 16px;
+  }
+
+  .section-header {
+    padding: 12px 16px;
+  }
+
+  .header-text {
+    font-size: 16px;
+  }
+
+  .apart-name {
+    font-size: 20px;
+  }
+
+  .address {
+    font-size: 12px;
+  }
+
+  .property-table th,
+  .property-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .analyze-button {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
 </style>

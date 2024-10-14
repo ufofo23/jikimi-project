@@ -1,92 +1,57 @@
 <template>
-  <div class="mypage-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>{{ userName }}님</h2>
-      <ul>
-        <li>
-          <router-link to="/myhome">My Home</router-link>
-        </li>
-        <li>
-          <router-link to="/mystudy">My Study</router-link>
-        </li>
-        <li>
-          <button class="info-btn active">회원정보</button>
-        </li>
-      </ul>
-      <button class="logout-btn" @click="handleLogout">로그아웃</button>
-    </div>
-
-    <!-- Main Content Section -->
-    <div class="info-section">
-      <h2>회원정보</h2>
-      <form @submit.prevent="updateUserInfo">
-        <div class="form-group">
-          <label for="name">이름</label>
-          <input type="text" id="name" v-model="userName" disabled />
-        </div>
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input type="email" id="email" v-model="userEmail" disabled />
-        </div>
-
-        <!-- 성별 라디오 버튼 -->
-        <div class="form-group radio-button">
-          <label>성별</label>
-          <div class="radio-group">
-            <div>
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  id="female"
-                  value="0"
-                  v-model="userGender"
-                />
-                <span class="radio"></span> 여성
-              </label>
-            </div>
-
-            <div>
-              <label class="radio-label">
-                <input type="radio" id="male" value="1" v-model="userGender" />
-                <span class="radio"></span> 남성
-              </label>
-            </div>
+  <div>
+    <h2>회원정보</h2>
+    <form @submit.prevent="updateUserInfo" class="form">
+      <div class="form-group">
+        <label for="name">이름</label>
+        <input type="text" id="name" v-model="userName" disabled />
+      </div>
+      <div class="form-group">
+        <label for="email">이메일</label>
+        <input type="email" id="email" v-model="userEmail" disabled />
+      </div>
+      <div class="form-group radio-button">
+        <label>성별</label>
+        <div class="radio-group">
+          <div>
+            <label class="radio-label">
+              <input type="radio" id="female" value="0" v-model="userGender" />
+              <span class="radio"></span> 여성
+            </label>
+          </div>
+          <div>
+            <label class="radio-label">
+              <input type="radio" id="male" value="1" v-model="userGender" />
+              <span class="radio"></span> 남성
+            </label>
           </div>
         </div>
-
-        <!-- 생일 입력 -->
-        <div class="form-group">
-          <label for="birthday">생년월일</label>
-          <input type="date" id="birthday" v-model="userBirthday" />
-        </div>
-
-        <!-- 전화번호 입력 -->
-        <div class="form-group">
-          <label for="phone">전화번호</label>
-          <input
-            type="text"
-            id="phone"
-            v-model="userPhone"
-            @input="formatPhoneNumber"
-            placeholder="010-0000-0000"
-          />
-        </div>
-
-        <!-- 업데이트 버튼 -->
-        <button type="submit" class="update-btn">정보 업데이트</button>
-      </form>
-
-      <div class="delete-account">
-        <p>탈퇴를 원하시는 경우, 회원 탈퇴 버튼을 눌러 주세요.</p>
-        <button type="submit" class="delete-btn" @click="handleAccountDelete">
-          회원 탈퇴하기
-        </button>
       </div>
+      <div class="form-group">
+        <label for="birthday">생년월일</label>
+        <input type="date" id="birthday" v-model="userBirthday" />
+      </div>
+      <div class="form-group">
+        <label for="phone">전화번호</label>
+        <input
+          type="text"
+          id="phone"
+          v-model="userPhone"
+          @input="formatPhoneNumber"
+          placeholder="010-0000-0000"
+        />
+      </div>
+      <button type="submit" class="update-btn">정보 업데이트</button>
+    </form>
+
+    <div class="delete-account">
+      <p>탈퇴를 원하시는 경우, 회원 탈퇴 버튼을 눌러 주세요.</p>
+      <button type="submit" class="delete-btn" @click="handleAccountDelete">
+        회원 탈퇴하기
+      </button>
     </div>
   </div>
 </template>
-
 <script setup>
 // Import necessary functions
 import useAuthStore from '@/stores/auth';
@@ -163,20 +128,14 @@ const updateUserInfo = async () => {
 };
 
 // Load user info on component mount
-onMounted(() => {
-  loadUserInfo();
-});
-
-// Logout function
-const handleLogout = async () => {
-  try {
-    authStore.logout();
-    router.push('/login'); // Redirect to login after logout
-  } catch (error) {
-    console.error('Failed to logout:', error);
-    errorMessage.value = '로그아웃에 실패했습니다. 다시 시도해 주세요.';
+onMounted(async () => {
+  await authStore.checkAuth();
+  if (!authStore.isAuthenticated) {
+    router.push('/login');
+  } else {
+    loadUserInfo();
   }
-};
+});
 
 // Account deletion handler
 const handleAccountDelete = async () => {
@@ -354,6 +313,22 @@ const handleAccountDelete = async () => {
 .delete-account {
   margin-top: 40px;
   text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
+}
+
+.update-btn {
+  background-color: #374d6f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-block; /* 버튼을 오른쪽에 고정 */
+  align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
 }
 
 .delete-btn {

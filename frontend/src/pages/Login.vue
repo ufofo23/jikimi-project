@@ -73,7 +73,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 80vh;
   background-color: #f7f9fc;
 }
 
@@ -84,8 +84,8 @@ export default {
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 400px;
-  min-height: 300px; /* 최소 높이를 크게 설정 */
+  width: 600px;
+  min-height: 400px; /* 최소 높이를 크게 설정 */
 }
 
 /* 로그인 제목 크기 */

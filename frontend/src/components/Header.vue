@@ -6,7 +6,7 @@
         <div class="logo">
           <!-- 로고 부분 유지 -->
           <router-link :to="{ name: 'main' }">
-            <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
+            <img src="@/assets/jikimi.png" alt="logo" />
           </router-link>
         </div>
 
@@ -116,6 +116,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated);
 // 로그아웃 기능
 const logout = () => {
   authStore.logout();
+  router.push('/login'); 
 };
 
 // 클라이언트 로고 정보

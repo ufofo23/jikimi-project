@@ -4,34 +4,37 @@
       <i class="fa-solid fa-paste"></i> 부동산 용어 사전
     </h1>
 
+    <div class="alphabet-nav mb-4">
+      <a
+        v-for="consonant in koreanConsonants"
+        :key="consonant"
+        :href="'#' + consonant"
+        class="btn btn-outline-primary mx-1"
+      >
+        {{ consonant }}
+      </a>
+    </div>
+
     <div class="filter-container mb-4">
-  <div class="filter-buttons">
-    <button
-      v-for="letter in letters"
-      :key="letter"
-      class="btn btn-outline-primary mx-1"
-      @click="filterArticles(letter)"
-    >
-      {{ letter }}
-    </button>
-    <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
-      모두 보기
-    </button>
-    <button class="btn btn-outline-warning mx-1" @click="viewFavorites">
-      즐겨찾기
-    </button>
-  </div>
-  <div class="new-search">
-    <input
-      type="text"
-      class="form-control"
-      v-model="searchTerm"
-      placeholder="검색할 단어를 입력하세요"
-      @input="filterBySearch"
-    />
-    <span class="search-icon">🔍</span>
-  </div>
-</div>
+      <div class="filter-buttons">
+        <button class="btn btn-outline-secondary mx-1" @click="clearFilter">
+          모두 보기
+        </button>
+        <button class="btn btn-outline-warning mx-1" @click="viewFavorites">
+          즐겨찾기
+        </button>
+      </div>
+      <div class="new-search">
+        <input
+          type="text"
+          class="form-control"
+          v-model="searchTerm"
+          placeholder="검색할 단어를 입력하세요"
+          @input="filterBySearch"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
 
     <!-- 로딩 상태 -->
     <div v-if="isLoading" class="text-center my-4">
@@ -46,24 +49,48 @@
     </div>
 
     <!-- 게시글 목록 그리드 -->
-    <div v-else class="grid-container">
+    <div v-else>
       <div
-        v-for="article in filteredArticles"
-        :key="article.dictionaryNo"
-        class="grid-item"
+        v-for="consonant in sortedConsonants"
+        :key="consonant"
+        class="consonant-section"
       >
-        <div class="card" @click="detail(article.dictionaryNo)">
-          <div class="card-body text-center">
-            <!-- 아이콘 클릭 이벤트에 stopPropagation() 적용 -->
-            <font-awesome-icon
-              :icon="[clickedIcons[article.dictionaryNo] ? 'fas' : 'far', 'star']"
-              @click.stop="toggleIcon(article.dictionaryNo)"
-              class="star-icon"
-              :style="{ color: clickedIcons[article.dictionaryNo] ? '#FFD43B' : '' }"
-            />
-            <h3 class="card-title d-inline-block ml-2">{{ article.dictionaryTitle }}</h3>
+        <h2 :id="consonant" class="consonant-title">{{ consonant }}</h2>
+        <div class="grid-container">
+          <div
+            v-for="article in getArticlesByConsonant(consonant)"
+            :key="article.dictionaryNo"
+            class="grid-item"
+          >
+            <div class="card" @click="openDetailModal(article.dictionaryNo)">
+              <div class="card-body text-center">
+                <font-awesome-icon
+                  :icon="[
+                    clickedIcons[article.dictionaryNo] ? 'fas' : 'far',
+                    'star',
+                  ]"
+                  @click.stop="toggleIcon(article.dictionaryNo)"
+                  class="star-icon"
+                  :style="{
+                    color: clickedIcons[article.dictionaryNo] ? '#FFD43B' : '',
+                  }"
+                />
+                <h3 class="card-title d-inline-block ml-2">
+                  {{ article.dictionaryTitle }}
+                </h3>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal for Detail Page -->
+    <div v-if="showModal" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ detailArticle.dictionaryTitle }}</h2>
+        <div class="detail-content">{{ detailArticle.dictionaryContent }}</div>
       </div>
     </div>
   </div>
@@ -72,107 +99,127 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'; // Font Awesome 아이콘 사용
-
-import api from '@/api/dictionaryApi'; // API 모듈
-import { getInitial } from 'hangul-js'; // hangul-js 라이브러리 임포트
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import api from '@/api/dictionaryApi';
 import likeApi from '@/api/like/likeDictionaryApi';
 
-const cr = useRoute();
+const route = useRoute();
 const router = useRouter();
 const isLoading = ref(true);
 const errorMessage = ref('');
 const page = ref({ list: [], totalCount: 0 });
-const filterLetter = ref('');
-const searchTerm = ref(''); // 검색어 추가
-const letters = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ'.split(''); // 한글 자음만 남김
-const isFavoritesView = ref(false); // 즐겨찾기 모드 추가
-// 자음에 해당하는 유니코드 범위를 정의
+const searchTerm = ref('');
+const isFavoritesView = ref(false);
+const clickedIcons = ref({});
+const showModal = ref(false);
+const detailArticle = ref({});
+
+const koreanConsonants = [
+  'ㄱ',
+  'ㄴ',
+  'ㄷ',
+  'ㄹ',
+  'ㅁ',
+  'ㅂ',
+  'ㅅ',
+  'ㅇ',
+  'ㅈ',
+  'ㅊ',
+  'ㅋ',
+  'ㅌ',
+  'ㅍ',
+  'ㅎ',
+];
+
 const consonantRanges = {
-  'ㄱ': ['가'.charCodeAt(0), '깋'.charCodeAt(0)],
-  'ㄴ': ['나'.charCodeAt(0), '닣'.charCodeAt(0)],
-  'ㄷ': ['다'.charCodeAt(0), '딯'.charCodeAt(0)],
-  'ㄹ': ['라'.charCodeAt(0), '맇'.charCodeAt(0)],
-  'ㅁ': ['마'.charCodeAt(0), '밓'.charCodeAt(0)],
-  'ㅂ': ['바'.charCodeAt(0), '빟'.charCodeAt(0)],
-  'ㅅ': ['사'.charCodeAt(0), '싷'.charCodeAt(0)],
-  'ㅇ': ['아'.charCodeAt(0), '잏'.charCodeAt(0)],
-  'ㅈ': ['자'.charCodeAt(0), '짛'.charCodeAt(0)],
-  'ㅊ': ['차'.charCodeAt(0), '칳'.charCodeAt(0)],
-  'ㅋ': ['카'.charCodeAt(0), '킿'.charCodeAt(0)],
-  'ㅌ': ['타'.charCodeAt(0), '팋'.charCodeAt(0)],
-  'ㅍ': ['파'.charCodeAt(0), '핗'.charCodeAt(0)],
-  'ㅎ': ['하'.charCodeAt(0), '힣'.charCodeAt(0)],
+  ㄱ: ['가'.charCodeAt(0), '깋'.charCodeAt(0)],
+  ㄴ: ['나'.charCodeAt(0), '닣'.charCodeAt(0)],
+  ㄷ: ['다'.charCodeAt(0), '딯'.charCodeAt(0)],
+  ㄹ: ['라'.charCodeAt(0), '맇'.charCodeAt(0)],
+  ㅁ: ['마'.charCodeAt(0), '밓'.charCodeAt(0)],
+  ㅂ: ['바'.charCodeAt(0), '빟'.charCodeAt(0)],
+  ㅅ: ['사'.charCodeAt(0), '싷'.charCodeAt(0)],
+  ㅇ: ['아'.charCodeAt(0), '잏'.charCodeAt(0)],
+  ㅈ: ['자'.charCodeAt(0), '짛'.charCodeAt(0)],
+  ㅊ: ['차'.charCodeAt(0), '칳'.charCodeAt(0)],
+  ㅋ: ['카'.charCodeAt(0), '킿'.charCodeAt(0)],
+  ㅌ: ['타'.charCodeAt(0), '팋'.charCodeAt(0)],
+  ㅍ: ['파'.charCodeAt(0), '핗'.charCodeAt(0)],
+  ㅎ: ['하'.charCodeAt(0), '힣'.charCodeAt(0)],
 };
 
-const clickedIcons = ref({}); // 각 article의 아이콘 상태를 저장하는 객체
-
-// 아이콘 클릭 시 상태 변경 함수
-const toggleIcon = async (dictionaryNo) => {
-  if (clickedIcons.value[dictionaryNo]){
-    try{
-      const response = await likeApi.delete(dictionaryNo);
-    } catch(error){
-      console.error(error);
-    }
-  } else {
-    try{
-      const response = await likeApi.create(dictionaryNo);
-    } catch(error){
-      console.error(error);
+const getConsonant = (char) => {
+  const code = char.charCodeAt(0);
+  if (code >= 'A'.charCodeAt(0) && code <= 'Z'.charCodeAt(0)) {
+    return 'A-Z';
+  }
+  if (code >= '0'.charCodeAt(0) && code <= '9'.charCodeAt(0)) {
+    return '0-9';
+  }
+  for (const [consonant, [start, end]] of Object.entries(consonantRanges)) {
+    if (code >= start && code <= end) {
+      return consonant;
     }
   }
-  clickedIcons.value[dictionaryNo] = !clickedIcons.value[dictionaryNo];
+  return 'ㄱ-ㅎ';
 };
 
-// 즐겨찾기 보기 함수
-const viewFavorites = () => {
-  isFavoritesView.value = !isFavoritesView.value; // 즐겨찾기 모드 토글
-  console.log(isFavoritesView);
-};
+const sortedConsonants = computed(() => {
+  const consonants = new Set(
+    filteredArticles.value.map((article) =>
+      getConsonant(article.dictionaryTitle[0])
+    )
+  );
+  return ['A-Z', ...koreanConsonants, '0-9'].filter((consonant) =>
+    consonants.has(consonant)
+  );
+});
 
-// 검색어에 따라 필터링
 const filteredArticles = computed(() => {
   let result = page.value.list;
 
-  // 즐겨찾기 모드일 때 필터링
   if (isFavoritesView.value) {
-    result = result.filter(article => clickedIcons.value[article.dictionaryNo]);
-  }
-
-  // 자음 필터링 적용
-  if (filterLetter.value) {
-    const range = consonantRanges[filterLetter.value];
-    
-    if (range) {
-      result = result.filter(article => {
-        const firstChar = article.dictionaryTitle[0]; // 단어의 첫 글자
-        const charCode = firstChar.charCodeAt(0);
-        return charCode >= range[0] && charCode <= range[1];
-      });
-    }
-  }
-
-  // 검색어 필터링 적용
-  if (searchTerm.value) {
-    result = result.filter(article =>
-      article.dictionaryTitle.includes(searchTerm.value)
+    result = result.filter(
+      (article) => clickedIcons.value[article.dictionaryNo]
     );
   }
 
-  return result;
+  if (searchTerm.value) {
+    result = result.filter((article) =>
+      article.dictionaryTitle
+        .toLowerCase()
+        .includes(searchTerm.value.toLowerCase())
+    );
+  }
+
+  return result.sort((a, b) =>
+    a.dictionaryTitle.localeCompare(b.dictionaryTitle, 'ko-KR')
+  );
 });
 
-const detail = (no) => {
-  router.push({
-    name: 'dictionaryDetailPage',
-    params: { no: no },
-    query: cr.query,
-  });
+const getArticlesByConsonant = (consonant) => {
+  return filteredArticles.value
+    .filter((article) => getConsonant(article.dictionaryTitle[0]) === consonant)
+    .sort((a, b) =>
+      a.dictionaryTitle.localeCompare(b.dictionaryTitle, 'ko-KR')
+    );
 };
 
-// 데이터 로드 함수
+const openDetailModal = async (no) => {
+  try {
+    detailArticle.value = await api.get(no);
+    showModal.value = true;
+  } catch (error) {
+    console.error('Failed to load article:', error);
+    errorMessage.value =
+      '게시물을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+  }
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
 const load = async () => {
   isLoading.value = true;
   errorMessage.value = '';
@@ -183,66 +230,90 @@ const load = async () => {
     } else {
       console.warn('응답이 배열이 아닙니다:', response);
     }
-    
+
     const likeDics = await likeApi.getList();
-    for(let likeDic of likeDics){
+    for (let likeDic of likeDics) {
       clickedIcons.value[likeDic.dictionaryNo] = true;
     }
   } catch (error) {
     console.error('게시글 로드 실패:', error);
-    errorMessage.value = '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+    errorMessage.value =
+      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
   } finally {
     isLoading.value = false;
   }
 };
 
-// 자음 필터링 함수
-const filterArticles = (letter) => {
-  filterLetter.value = letter;
-  searchTerm.value = ''; // 자음을 누르면 검색어 초기화
+const toggleIcon = async (dictionaryNo) => {
+  if (clickedIcons.value[dictionaryNo]) {
+    try {
+      await likeApi.delete(dictionaryNo);
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    try {
+      await likeApi.create(dictionaryNo);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  clickedIcons.value[dictionaryNo] = !clickedIcons.value[dictionaryNo];
+};
+
+const viewFavorites = () => {
+  isFavoritesView.value = !isFavoritesView.value;
 };
 
 const clearFilter = () => {
-  filterLetter.value = '';
-  searchTerm.value = ''; // 검색어도 초기화
-  isFavoritesView.value = false; // 즐겨찾기 모드 해제
+  searchTerm.value = '';
+  isFavoritesView.value = false;
 };
 
-// 검색어에 따라 필터링하는 함수
 const filterBySearch = () => {
-  filterLetter.value = ''; // 검색 시 자음 필터 초기화
-  isFavoritesView.value = false; // 모든 필터 해제 시 즐겨찾기 모드도 해제
+  isFavoritesView.value = false;
 };
 
-// 컴포넌트가 마운트될 때 데이터 로드
 onMounted(() => {
   load();
 });
 </script>
 
 <style scoped>
-/* 컨테이너 스타일 */
 .container {
-  max-width: 1600px; /* 최대 너비 설정 */
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* 필터 버튼 스타일 */
+.alphabet-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  padding: 10px 0;
+}
+
+.alphabet-nav a {
+  margin: 5px;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
 .filter-buttons {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  border-bottom: none;
-}
-
-/* 자음 버튼 스타일 */
-
-.filter-container {
-  display: flex;
-  align-items: center; /* 수직 정렬을 위해 추가 */
-  justify-content: center; /* 수평 정렬 */
-  border-bottom: none;
 }
 
 .filter-buttons button {
@@ -250,82 +321,144 @@ onMounted(() => {
   padding: 3px 10px;
 }
 
-/* 카드 크기 수정 */
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  border-bottom: none;
+.new-search {
+  position: relative;
+  padding-left: 20px;
 }
 
-.grid-item {
-  border-bottom: none;
+.new-search input {
+  width: 300px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+  text-align: center;
 }
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.consonant-section {
+  margin-bottom: 30px;
+}
+
+.consonant-title {
+  text-align: left;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-top: 180px;
+  margin-top: -180px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
+}
+
 .grid-item .card {
   width: 100%;
-  max-width: 250px;
-  margin: auto;
+  height: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
   transition: transform 0.2s ease-in-out;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .grid-item .card:hover {
   transform: scale(1.05);
 }
 
-.btn {
-  height: 1cm;
-}
-
-.btn-outline-primary mx-1 {
-  width: 1cm;
-  height: 1cm;
-}
-
-.btn-outline-secondary .btn-outline-warning {
-  width: 3cm; 
-  height: 1cm;
-}
-.new-search{
-  position: relative; 
-  padding-left: 20px;
-  border-bottom: none;
-}
-
-.new-search input {
-  width: 300px; /* 원하는 너비로 조정 */
-  height: 40px; /* 버튼과 높이를 맞추기 위해 40px로 조정 */
-  line-height: 40px; /* 텍스트가 중앙에 위치하도록 조정 */
-  padding: 0 10px; /* 여백 조정 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  margin-left: 10px; /* 버튼과의 간격 */
-  text-align: center;
-}
-
-.search-icon {
-  position: absolute;
-  right: 10px; /* 오른쪽 여백 설정 */
-  top: 50%; /* 세로 중앙 정렬 */
-  transform: translateY(-50%); /* 세로 중앙 정렬을 위한 변환 */
-}
-
-/* 아이콘 및 제목 중앙 정렬 */
 .card-body {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: none;
-}
-
-.card-title {
-  border-bottom: none;
+  padding: 20px;
 }
 
 .star-icon {
   cursor: pointer;
   font-size: 20px;
-  margin-right: 8px; /* 간격 조절 */
+  margin-right: 8px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+/* Modal styles */
+/* Modal styles */
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white; /* 배경색을 흰색으로 */
+  width: 30rem; /* 카드 너비 설정 */
+  padding: 1.5rem; /* 내부 패딩 추가 */
+  border-radius: 0.5rem; /* 카드 모서리 둥글게 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  transition: all 0.15s ease-out; /* 전환 효과 */
+  position: relative; /* 상대 위치 지정 */
+}
+
+.modal-content:hover {
+  margin-top: -0.5rem; /* hover 시 카드 위로 이동 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* hover 시 그림자 강화 */
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5rem; /* 제목 폰트 크기 증가 */
+  font-weight: bold;
+  margin-bottom: 1rem; /* 제목과 내용 간격 조정 */
+}
+
+.detail-content {
+  white-space: pre-line;
+  font-size: 1rem; /* 내용 폰트 크기 */
+  line-height: 1.6; /* 줄 간격 조정 */
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
 }
 </style>

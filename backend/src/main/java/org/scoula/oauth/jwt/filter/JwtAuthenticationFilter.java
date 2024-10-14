@@ -50,7 +50,6 @@ public class JwtAuthenticationFilter implements Filter {
             if (jwtUtil.validateToken(jwtToken)) { // 유효한 토큰인 경우
                 String userId = jwtUtil.getUserIdFromToken(jwtToken);
                 UserDetails userDetails = new User(userId, "", Collections.emptyList());
-                System.out.println("userDetails = " + userDetails);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);

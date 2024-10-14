@@ -21,17 +21,38 @@ import MapAnalyzing from '@/pages/map/MapAnalyzing.vue';
 import MyReport from '@/pages/mypage/MyReport.vue';
 import Report from '@/pages/app/Report.vue';
 import Test from '@/pages/Test.vue';
+import MyInfo from '@/pages/mypage/MyInfo.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/mypage', name: 'mypage', component: MyPage },
-
-    {
-      path: '/myreport',
-      name: 'myreport',
-      component: MyReport,
+    { path: '/mypage', 
+      name: 'mypage', 
+      component: MyPage,
+      children: [
+        {
+        name: 'mypage',
+        path: '',
+        component: MyInfo,
+        },
+        {
+          path: 'myreport',
+          component: MyReport,
+        },
+        {
+          path: 'myinfo',
+          component: MyInfo, 
+        },
+      ], 
+      meta: { requiresAuth: true },
     },
+
+    // {
+    //   path: '/myreport',
+    //   name: 'myreport',
+    //   component: MyReport,
+    //   meta: { requiresAuth: true },
+    // },
     {
       path: '/analyzing',
       name: 'analyzing',
@@ -39,7 +60,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
 
-    { path: '/faq', name: 'faq', component: FAQ },
+    { 
+      path: '/faq', 
+      name: 'faq', 
+      component: FAQ 
+    },
     {
       path: '/introduce',
       name: 'introduce',
@@ -51,6 +76,7 @@ const router = createRouter({
       path: '/scenario',
       name: 'ScenarioMain',
       component: ScenarioMain,
+      meta: { requiresAuth: true },
     },
     // {
     //   path: '/scenario/result',
@@ -82,11 +108,13 @@ const router = createRouter({
       path: '/study/dictionary/list',
       name: 'dictionaryList',
       component: DictionaryListPage,
+      meta: { requiresAuth: true },
     },
     {
       path: '/study/dictionary/detail/:no',
       name: 'dictionaryDetailPage',
       component: DictionaryDetailPage,
+      meta: { requiresAuth: true },
     },
     {
       path: '/map',
@@ -107,11 +135,13 @@ const router = createRouter({
       path: '/map/analyzing',
       name: 'mapAnalyzing',
       component: MapAnalyzing,
+      meta: { requiresAuth: true },
     },
     {
       path: '/report/:no',
       name: 'report',
       component: Report,
+      meta: { requiresAuth: true },
     },
     {
       path: '/test',
@@ -121,11 +151,11 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
-  authStore.checkAuth(); // 인증 체크
+  await authStore.checkAuth(); // 인증 체크
 
   if (requiresAuth && !authStore.isAuthenticated) {
     next('/login'); // 인증이 필요하지만 인증되지 않은 경우 로그인 페이지로 리다이렉트
