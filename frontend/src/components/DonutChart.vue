@@ -146,8 +146,8 @@ const chartOptions = {
     textCenterPlugin,
   },
   animation: {
-    duration: 2000, // 애니메이션 지속 시간
-    easing: 'easeInOutBounce', // 애니메이션 이펙트
+    // duration: 2000, // 애니메이션 지속 시간
+    // easing: 'easeInOutBounce', // 애니메이션 이펙트
   },
 };
 </script>

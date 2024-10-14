@@ -5,10 +5,17 @@
     >
       <!-- 리포트 제목 -->
       <div class="mx-auto max-w-3xl text-center">
-        <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">REPORT</h2>
+        <h2
+          class="text-3xl font-bold text-gray-900 sm:text-4xl"
+        >
+          REPORT
+        </h2>
 
         <p class="mt-4 text-gray-500 sm:text-xl"></p>
-        <p>{{ sampleReportData.address }}에 대한 리포트가 도착했어요!</p>
+        <p>
+          {{ sampleReportData.address }}에 대한 리포트가
+          도착했어요!
+        </p>
       </div>
 
       <!-- 지도 및 도넛 차트 -->
@@ -16,15 +23,23 @@
         <div
           class="flex flex-col justify-center items-center rounded-lg bg-blue-50 px-4 py-8 text-center flex-grow basis-1/3 min-h-[250px]"
         >
-          <dt class="order-last text-lg font-medium text-gray-500">
+          <dt
+            class="order-last text-lg font-medium text-gray-500"
+          >
             <!-- 지도가 보여지는 지점 현위치 -->
           </dt>
           <div
             id="map"
             ref="mapContainer"
-            style="width: 100%; height: 100%; position: relative"
+            style="
+              width: 100%;
+              height: 100%;
+              position: relative;
+            "
           ></div>
-          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">
+          <dd
+            class="text-4xl font-extrabold text-blue-600 md:text-5xl"
+          >
             <!-- 지도 -->
           </dd>
         </div>
@@ -32,10 +47,16 @@
         <div
           class="flex flex-col justify-center items-center rounded-lg bg-blue-50 px-4 py-8 text-center flex-grow basis-1/3 min-h-[250px]"
         >
-          <dt class="order-last text-lg font-medium text-gray-500"></dt>
-          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">
+          <dt
+            class="order-last text-lg font-medium text-gray-500"
+          ></dt>
+          <dd
+            class="text-4xl font-extrabold text-blue-600 md:text-5xl"
+          >
             <!-- DonutChart에 score prop 전달 -->
-            <DonutChart :score="sampleReportData.totalScore" />
+            <DonutChart
+              :score="sampleReportData.totalScore"
+            />
           </dd>
         </div>
       </div>
@@ -48,7 +69,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(1) }"
+                :class="{
+                  'rotate-180': openPanels.includes(1),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -107,7 +130,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(2) }"
+                :class="{
+                  'rotate-180': openPanels.includes(2),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -170,7 +195,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(3) }"
+                :class="{
+                  'rotate-180': openPanels.includes(3),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -189,7 +216,9 @@
                 <span
                   class="summary"
                   :style="{
-                    color: !sampleReportData.accordOwner ? 'red' : 'green',
+                    color: !sampleReportData.accordOwner
+                      ? 'red'
+                      : 'green',
                   }"
                 >
                   {{
@@ -223,7 +252,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(4) }"
+                :class="{
+                  'rotate-180': openPanels.includes(4),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -243,11 +274,14 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.maximumOfBond !== null
-                        ? (sampleReportData.maximumOfBond * 100) /
+                      sampleReportData.maximumOfBond !==
+                      null
+                        ? (sampleReportData.maximumOfBond *
+                            100) /
                             sampleReportData.price <
                           50
-                          ? (sampleReportData.maximumOfBond * 100) /
+                          ? (sampleReportData.maximumOfBond *
+                              100) /
                               sampleReportData.price <=
                             30
                             ? 'green'
@@ -259,9 +293,12 @@
                   {{
                     sampleReportData.maximumOfBond !== null
                       ? `${Math.floor(
-                          sampleReportData.maximumOfBond / 100000000
+                          sampleReportData.maximumOfBond /
+                            100000000
                         )}억 ${
-                          (sampleReportData.maximumOfBond % 100000000) / 10000
+                          (sampleReportData.maximumOfBond %
+                            100000000) /
+                          10000
                         }만원`
                       : '분석불가'
                   }}
@@ -277,7 +314,8 @@
                       sampleReportData.price <=
                     30
                     ? `근저당권으로 잡힌 채권이 없어 안전합니다.`
-                    : (sampleReportData.maximumOfBond * 100) /
+                    : (sampleReportData.maximumOfBond *
+                        100) /
                         sampleReportData.price <
                       50
                     ? `근저당권 채권 최고액이 주의 수준입니다.`
@@ -294,7 +332,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(5) }"
+                :class="{
+                  'rotate-180': openPanels.includes(5),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -314,24 +354,42 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.useType !== null || undefined
+                      sampleReportData.useType !== null ||
+                      undefined
                         ? sampleReportData.useType &&
-                          (sampleReportData.useType.indexOf('주택') >= 0 ||
-                            sampleReportData.useType.indexOf('아파트') >= 0 ||
-                            sampleReportData.useType.indexOf('주거') >= 0 ||
-                            sampleReportData.useType.indexOf('오피스텔') >= 0)
+                          (sampleReportData.useType.indexOf(
+                            '주택'
+                          ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '아파트'
+                            ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '주거'
+                            ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '오피스텔'
+                            ) >= 0)
                           ? 'green'
                           : 'red'
                         : 'black',
                   }"
                 >
                   {{
-                    sampleReportData.useType !== null || undefined
+                    sampleReportData.useType !== null ||
+                    undefined
                       ? sampleReportData.useType &&
-                        (sampleReportData.useType.indexOf('주택') >= 0 ||
-                          sampleReportData.useType.indexOf('아파트') >= 0 ||
-                          sampleReportData.useType.indexOf('주거') >= 0 ||
-                          sampleReportData.useType.indexOf('오피스텔') >= 0)
+                        (sampleReportData.useType.indexOf(
+                          '주택'
+                        ) >= 0 ||
+                          sampleReportData.useType.indexOf(
+                            '아파트'
+                          ) >= 0 ||
+                          sampleReportData.useType.indexOf(
+                            '주거'
+                          ) >= 0 ||
+                          sampleReportData.useType.indexOf(
+                            '오피스텔'
+                          ) >= 0)
                         ? '안전'
                         : '위험'
                       : '분석불가'
@@ -416,7 +474,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(6) }"
+                :class="{
+                  'rotate-180': openPanels.includes(6),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -437,7 +497,8 @@
                   :style="{
                     color:
                       sampleReportData.commonOwner !== null
-                        ? sampleReportData.commonOwner == '단독소유'
+                        ? sampleReportData.commonOwner ==
+                          '단독소유'
                           ? 'green'
                           : 'orange'
                         : 'black',
@@ -445,7 +506,8 @@
                 >
                   {{
                     sampleReportData.commonOwner !== null
-                      ? sampleReportData.commonOwner == '단독소유'
+                      ? sampleReportData.commonOwner ==
+                        '단독소유'
                         ? '안전'
                         : '주의'
                       : '분석불가'
@@ -458,7 +520,8 @@
             <p>
               {{
                 sampleReportData.commonOwner !== null
-                  ? sampleReportData.commonOwner === '단독소유'
+                  ? sampleReportData.commonOwner ===
+                    '단독소유'
                     ? '해당 물건은 단독 소유입니다.'
                     : '해당 물건은 공동 소유입니다.'
                   : '해당 물건에 대한 데이터 부족합니다.'
@@ -473,7 +536,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(8) }"
+                :class="{
+                  'rotate-180': openPanels.includes(8),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -493,16 +558,20 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.changeOwnerCount !== null
-                        ? sampleReportData.changeOwnerCount < 3
+                      sampleReportData.changeOwnerCount !==
+                      null
+                        ? sampleReportData.changeOwnerCount <
+                          3
                           ? 'green'
                           : 'orange'
                         : 'black',
                   }"
                 >
                   {{
-                    sampleReportData.changeOwnerCount !== null
-                      ? sampleReportData.changeOwnerCount < 3
+                    sampleReportData.changeOwnerCount !==
+                    null
+                      ? sampleReportData.changeOwnerCount <
+                        3
                         ? '안전'
                         : `${sampleReportData.changeOwnerCount}회`
                       : '분석불가'
@@ -530,7 +599,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(9) }"
+                :class="{
+                  'rotate-180': openPanels.includes(9),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -550,7 +621,8 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.violationStructure != null
+                      sampleReportData.violationStructure !=
+                      null
                         ? !sampleReportData.violationStructure
                           ? 'green'
                           : 'red'
@@ -558,7 +630,8 @@
                   }"
                 >
                   {{
-                    sampleReportData.violationStructure != null
+                    sampleReportData.violationStructure !=
+                    null
                       ? !sampleReportData.violationStructure
                         ? '안전'
                         : '위험'
@@ -587,7 +660,9 @@
             <div class="faq-icon">
               <svg
                 class="icon"
-                :class="{ 'rotate-180': openPanels.includes(10) }"
+                :class="{
+                  'rotate-180': openPanels.includes(10),
+                }"
                 width="17"
                 height="10"
                 viewBox="0 0 17 10"
@@ -607,7 +682,9 @@
                   class="summary"
                   :style="{
                     color:
-                      sampleReportData.ownerState != null ? 'blue' : 'black',
+                      sampleReportData.ownerState != null
+                        ? 'blue'
+                        : 'black',
                   }"
                 >
                   {{
@@ -675,7 +752,8 @@ const score = ref(75); // 예: 65점
 
 // 패널을 토글하는 함수 (패널의 인덱스 번호로 제어)
 function togglePanel(panelNumber) {
-  openPanels.value[panelNumber] = !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
+  openPanels.value[panelNumber] =
+    !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
 }
 
 // 3. 소유자와 계약자의 일치 여부
@@ -699,7 +777,10 @@ const fetchReportData = async () => {
   try {
     const data = await reportApi.getReportData(sampleNo);
     sampleReportData.value = data; // 가져온 데이터를 상태에 저장
-    console.log('sampleReportData.value：', sampleReportData.value);
+    console.log(
+      'sampleReportData.value：',
+      sampleReportData.value
+    );
   } catch (error) {
     console.error('Failed to fetch analysis data:', error);
   }
@@ -790,12 +871,16 @@ const toggleDetails = (no) => {
 const moveToSelectedProperty = async () => {
   try {
     const data = await addressApi.getAddressDetails(
-      sampleReportData.value.propertyNo
-      // sampleNo
+      // sampleReportData.value.propertyNo
+      sampleNo
     );
     console.log(sampleReportData.value.reportNo);
 
-    if (data && data[0].xcoordinate && data[0].ycoordinate) {
+    if (
+      data &&
+      data[0].xcoordinate &&
+      data[0].ycoordinate
+    ) {
       // 가져온 좌표로 지도 초기화
       initializeMap(
         data[0].xcoordinate, // x 좌표
@@ -806,7 +891,10 @@ const moveToSelectedProperty = async () => {
       console.error('Invalid coordinates:', data);
     }
   } catch (error) {
-    console.error('Failed to fetch address details:', error);
+    console.error(
+      'Failed to fetch address details:',
+      error
+    );
   }
 };
 
@@ -861,11 +949,11 @@ onMounted(async () => {
   background-color: white;
 }
 
-.container {
+/* .container {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
-}
+} */
 
 /* 헤더 섹션 */
 .heading {
