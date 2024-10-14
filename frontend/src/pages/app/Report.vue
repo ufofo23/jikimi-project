@@ -1,730 +1,628 @@
 <template>
-  <div class="flex justify-center">
-    <div
-      class="mx-auto w-full max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8"
-    >
-      <!-- 리포트 제목 -->
-      <div class="mx-auto max-w-3xl text-center">
-        <h2
-          class="text-3xl font-bold text-gray-900 sm:text-4xl"
-        >
-          REPORT
-        </h2>
+  <div class="report-wrapper">
+    <div class="report-container">
+      <div class="report-content">
+        <!-- 리포트 제목 -->
+        <div class="report-title">
+          <h2>REPORT</h2>
+          <p>
+            <span class="address-text">{{ sampleReportData.address }}</span>
+            <span class="report-text">에 대한 리포트가 도착했어요!</span>
+          </p>
+        </div>
 
-        <p class="mt-4 text-gray-500 sm:text-xl"></p>
-        <p>
-          {{ sampleReportData.address }}에 대한 리포트가
-          도착했어요!
-        </p>
-      </div>
+        <!-- 지도 및 도넛 차트 -->
+        <div class="map-chart-container">
+          <div class="map-container">
+            <div id="map" ref="mapContainer"></div>
+          </div>
+          <div class="chart-container">
+            <DonutChart :score="sampleReportData.totalScore" />
+          </div>
+        </div>
 
-      <!-- 지도 및 도넛 차트 -->
-      <div class="flex justify-center mt-6 sm:mt-8 gap-4">
-        <div
-          class="flex flex-col justify-center items-center rounded-lg bg-blue-50 px-4 py-8 text-center flex-grow basis-1/3 min-h-[250px]"
-        >
-          <dt
-            class="order-last text-lg font-medium text-gray-500"
-          >
-            <!-- 지도가 보여지는 지점 현위치 -->
-          </dt>
+        <!-- 아코디언 메뉴 -->
+        <div class="accordion-menu">
+          <!-- Section 1: 안전진단 점수 - 안전 -->
           <div
-            id="map"
-            ref="mapContainer"
-            style="
-              width: 100%;
-              height: 100%;
-              position: relative;
-            "
-          ></div>
-          <dd
-            class="text-4xl font-extrabold text-blue-600 md:text-5xl"
+            class="faq-card"
+            :class="{
+              'faq-card-danger': sampleReportData.totalScore < 70,
+              'faq-card-warning':
+                sampleReportData.totalScore >= 70 &&
+                sampleReportData.totalScore < 85,
+              'faq-card-success': sampleReportData.totalScore >= 85,
+            }"
           >
-            <!-- 지도 -->
-          </dd>
-        </div>
-
-        <div
-          class="flex flex-col justify-center items-center rounded-lg bg-blue-50 px-4 py-8 text-center flex-grow basis-1/3 min-h-[250px]"
-        >
-          <dt
-            class="order-last text-lg font-medium text-gray-500"
-          ></dt>
-          <dd
-            class="text-4xl font-extrabold text-blue-600 md:text-5xl"
-          >
-            <!-- DonutChart에 score prop 전달 -->
-            <DonutChart
-              :score="sampleReportData.totalScore"
-            />
-          </dd>
-        </div>
-      </div>
-
-      <!-- 아코디언 메뉴 -->
-      <div class="mx-auto max-w-screen-xl mt-8">
-        <!-- Section 1: 안전진단 점수 - 안전 -->
-        <div class="faq-card">
-          <button @click="togglePanel(1)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(1),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                1. 안전진단 점수
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.totalScore < 70
-                        ? 'red'
-                        : sampleReportData.totalScore < 85
-                        ? 'orange'
-                        : 'green',
-                  }"
+            <button @click="togglePanel(1)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{ 'rotate-up': openPanels.includes(1) }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  {{
-                    sampleReportData.totalScore < 70
-                      ? '위험'
-                      : sampleReportData.totalScore < 85
-                      ? '경고'
-                      : '안전'
-                  }}
-                </span>
-              </h4>
-            </div>
-          </button>
-          <div v-show="openPanels[1]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.totalScore !== null
-                  ? sampleReportData.totalScore < 50
-                    ? `안전진단 점수가 ${sampleReportData.totalScore}으로 매우 낮습니다.`
-                    : sampleReportData.totalScore < 70
-                    ? `안전진단 점수가 ${sampleReportData.totalScore}으로 경고 수준입니다.`
-                    : `안전진단 점수가 ${sampleReportData.totalScore}으로 안전하다고 판단됩니다.`
-                  : '해당 물건에 대한 데이터가 부족합니다.'
-              }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Section 2: 전세가율 -->
-        <div class="faq-card">
-          <button @click="togglePanel(2)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(2),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                2. 전세가율
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.jeonseRate !== null
-                        ? sampleReportData.jeonseRate < 70
-                          ? 'green'
-                          : sampleReportData.jeonseRate < 90
+                  <path
+                    d="M7.28687 8.43257L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.54184 8.41052L15.7631 2.70784C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393C0.69687 1.79355 1.0545 2.69659L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  1. 안전진단 점수
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.totalScore < 70
+                          ? 'red'
+                          : sampleReportData.totalScore < 85
                           ? 'orange'
-                          : 'red'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.jeonseRate !== null
-                      ? sampleReportData.jeonseRate < 60
-                        ? '안전'
-                        : sampleReportData.jeonseRate < 80
+                          : 'green',
+                    }"
+                  >
+                    {{
+                      sampleReportData.totalScore < 70
+                        ? '위험'
+                        : sampleReportData.totalScore < 85
                         ? '경고'
-                        : '위험'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                        : '안전'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[1]" class="faq-answer">
+              <span
+                v-html="formatTotalScoreMessage(sampleReportData.totalScore)"
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[2]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.jeonseRate !== null
-                  ? sampleReportData.jeonseRate < 60
-                    ? `전세가율이 ${sampleReportData.jeonseRate}%로 안전합니다.`
-                    : sampleReportData.jeonseRate < 80
-                    ? `전세가율이 ${sampleReportData.jeonseRate}%로 경고 수준입니다.`
-                    : `전세가율이 ${sampleReportData.jeonseRate}%로 매우 위험합니다.`
-                  : '해당 물건에 대한 데이터 부족합니다.'
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 3: 소유자 = 계약자 여부 -->
-        <div class="faq-card">
-          <button @click="togglePanel(3)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(3),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                3. 소유자와 계약자의 일치 여부
-                <span
-                  class="summary"
-                  :style="{
-                    color: !sampleReportData.accordOwner
-                      ? 'red'
-                      : 'green',
+          <!-- Section 2: 전세가율 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-null': sampleReportData.jeonseRate === null,
+              'faq-card-danger':
+                sampleReportData.jeonseRate !== null &&
+                sampleReportData.jeonseRate > 90,
+              'faq-card-warning':
+                sampleReportData.jeonseRate !== null &&
+                sampleReportData.jeonseRate > 80 &&
+                sampleReportData.jeonseRate <= 90,
+              'faq-card-success':
+                sampleReportData.jeonseRate !== null &&
+                sampleReportData.jeonseRate <= 80,
+            }"
+          >
+            <button @click="togglePanel(2)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(2),
                   }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  {{
-                    sampleReportData.accordOwner !== null
-                      ? sampleReportData.accordOwner
-                        ? '동일'
-                        : '다름'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
-            </div>
-          </button>
-          <div v-show="openPanels[3]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.accordOwner !== null
-                  ? sampleReportData.accordOwner != null &&
-                    !sampleReportData.accordOwner
-                    ? `소유자와 계약자가 일치하지 않습니다.`
-                    : `소유자와 계약자가 일치합니다.`
-                  : '해당 물건에 대한 데이터 부족합니다.'
-              }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Section 4: 근저당권 채권 최고액 -->
-        <div class="faq-card">
-          <button @click="togglePanel(4)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(4),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                4. 근저당권 채권 최고액
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.maximumOfBond !==
-                      null
-                        ? (sampleReportData.maximumOfBond *
-                            100) /
-                            sampleReportData.price <
-                          50
-                          ? (sampleReportData.maximumOfBond *
-                              100) /
-                              sampleReportData.price <=
-                            30
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  2. 전세가율
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.jeonseRate !== null
+                          ? sampleReportData.jeonseRate < 70
                             ? 'green'
-                            : 'yellow'
-                          : 'red'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.maximumOfBond !== null
-                      ? `${Math.floor(
-                          sampleReportData.maximumOfBond /
-                            100000000
-                        )}억 ${
-                          (sampleReportData.maximumOfBond %
-                            100000000) /
-                          10000
-                        }만원`
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                            : sampleReportData.jeonseRate < 90
+                            ? 'orange'
+                            : 'red'
+                          : 'black',
+                    }"
+                  >
+                    {{
+                      sampleReportData.jeonseRate !== null
+                        ? sampleReportData.jeonseRate < 60
+                          ? '안전'
+                          : sampleReportData.jeonseRate < 80
+                          ? '경고'
+                          : '위험'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[2]" class="faq-answer">
+              <span
+                v-html="formatJeonseRateMessage(sampleReportData.jeonseRate)"
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[4]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.maximumOfBond !== null
-                  ? (sampleReportData.maximumOfBond * 100) /
-                      sampleReportData.price <=
-                    30
-                    ? `근저당권으로 잡힌 채권이 없어 안전합니다.`
-                    : (sampleReportData.maximumOfBond *
-                        100) /
-                        sampleReportData.price <
-                      50
-                    ? `근저당권 채권 최고액이 주의 수준입니다.`
-                    : `근저당권 채권 최고액이 위험 수준입니다.`
-                  : `해당 물건에 대한 데이터를 불러올 수 없습니다.`
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 5: 건물의 주용도 -->
-        <div class="faq-card">
-          <button @click="togglePanel(5)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(5),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
+          <!-- Section 3: 소유자 = 계약자 여부 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-danger': sampleReportData.accordOwner === false,
+              'faq-card-success': sampleReportData.accordOwner === true,
+            }"
+          >
+            <button @click="togglePanel(3)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(3),
+                  }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  3. 소유자와 계약자의 일치 여부
+                  <span
+                    class="summary"
+                    :style="{
+                      color: !sampleReportData.accordOwner ? 'red' : 'green',
+                    }"
+                  >
+                    {{
+                      sampleReportData.accordOwner !== null
+                        ? sampleReportData.accordOwner
+                          ? '동일'
+                          : '다름'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[3]" class="faq-answer">
+              <span
+                v-html="formatAccordOwnerMessage(sampleReportData.accordOwner)"
+              ></span>
             </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                5. 건물의 주용도
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.useType !== null ||
-                      undefined
+          </div>
+
+          <!-- Section 4: 근저당권 채권 최고액 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-null': sampleReportData.maximumOfBond === null,
+              'faq-card-danger':
+                sampleReportData.maximumOfBond !== null &&
+                (sampleReportData.maximumOfBond * 100) /
+                  sampleReportData.price >=
+                  50,
+              'faq-card-warning':
+                sampleReportData.maximumOfBond !== null &&
+                (sampleReportData.maximumOfBond * 100) /
+                  sampleReportData.price <
+                  50 &&
+                (sampleReportData.maximumOfBond * 100) /
+                  sampleReportData.price >
+                  30,
+              'faq-card-success':
+                sampleReportData.maximumOfBond !== null &&
+                (sampleReportData.maximumOfBond * 100) /
+                  sampleReportData.price <=
+                  30,
+            }"
+          >
+            <button @click="togglePanel(4)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(4),
+                  }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  4. 근저당권 채권 최고액
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.maximumOfBond !== null
+                          ? (sampleReportData.maximumOfBond * 100) /
+                              sampleReportData.price <
+                            50
+                            ? (sampleReportData.maximumOfBond * 100) /
+                                sampleReportData.price <=
+                              30
+                              ? 'green'
+                              : 'yellow'
+                            : 'red'
+                          : 'black',
+                    }"
+                  >
+                    {{
+                      sampleReportData.maximumOfBond !== null
+                        ? `${Math.floor(
+                            sampleReportData.maximumOfBond / 100000000
+                          )}억 ${
+                            (sampleReportData.maximumOfBond % 100000000) / 10000
+                          }만원`
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[4]" class="faq-answer">
+              <span
+                v-html="
+                  formatMaximumOfBondMessage(
+                    sampleReportData.maximumOfBond,
+                    sampleReportData.price
+                  )
+                "
+              ></span>
+            </div>
+          </div>
+
+          <!-- Section 5: 건물의 주용도 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-success':
+                sampleReportData.useType &&
+                (sampleReportData.useType.includes('주택') ||
+                  sampleReportData.useType.includes('아파트') ||
+                  sampleReportData.useType.includes('주거') ||
+                  sampleReportData.useType.includes('오피스텔')),
+              'faq-card-danger': sampleReportData.useType == null,
+            }"
+          >
+            <button @click="togglePanel(5)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(5),
+                  }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  5. 건물의 주용도
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.useType !== null || undefined
+                          ? sampleReportData.useType &&
+                            (sampleReportData.useType.indexOf('주택') >= 0 ||
+                              sampleReportData.useType.indexOf('아파트') >= 0 ||
+                              sampleReportData.useType.indexOf('주거') >= 0 ||
+                              sampleReportData.useType.indexOf('오피스텔') >= 0)
+                            ? 'green'
+                            : 'red'
+                          : 'black',
+                    }"
+                  >
+                    {{
+                      sampleReportData.useType !== null || undefined
                         ? sampleReportData.useType &&
-                          (sampleReportData.useType.indexOf(
-                            '주택'
-                          ) >= 0 ||
-                            sampleReportData.useType.indexOf(
-                              '아파트'
-                            ) >= 0 ||
-                            sampleReportData.useType.indexOf(
-                              '주거'
-                            ) >= 0 ||
-                            sampleReportData.useType.indexOf(
-                              '오피스텔'
-                            ) >= 0)
-                          ? 'green'
-                          : 'red'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.useType !== null ||
-                    undefined
-                      ? sampleReportData.useType &&
-                        (sampleReportData.useType.indexOf(
-                          '주택'
-                        ) >= 0 ||
-                          sampleReportData.useType.indexOf(
-                            '아파트'
-                          ) >= 0 ||
-                          sampleReportData.useType.indexOf(
-                            '주거'
-                          ) >= 0 ||
-                          sampleReportData.useType.indexOf(
-                            '오피스텔'
-                          ) >= 0)
-                        ? '안전'
-                        : '위험'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                          (sampleReportData.useType.indexOf('주택') >= 0 ||
+                            sampleReportData.useType.indexOf('아파트') >= 0 ||
+                            sampleReportData.useType.indexOf('주거') >= 0 ||
+                            sampleReportData.useType.indexOf('오피스텔') >= 0)
+                          ? '안전'
+                          : '위험'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[5]" class="faq-answer">
+              <span
+                v-html="formatUseTypeMessage(sampleReportData.useType)"
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[5]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.useType !== null
-                  ? sampleReportData.useType == '주거'
-                    ? '해당 건물은 주거용 건물입니다.'
-                    : `해당 건물은 ${sampleReportData.useType}용 건물입니다.`
-                  : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 6: 대지권등기 -->
-        <!--<div class="faq-card">
-          <button @click="togglePanel(6)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{ 'rotate-180': openPanels.includes(6) }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                6. 대지권등기
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.kindOfLandrights !== null
-                        ? sampleReportData.kindOfLandrights == '주거'
-                          ? 'green'
-                          : 'orange'
-                        : 'black',
+          <!-- Section 6: 공동소유/ 단독소유 여부 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-warning': sampleReportData.commonOwner === '공동소유',
+              'faq-card-success': sampleReportData.commonOwner === '단독소유',
+            }"
+          >
+            <button @click="togglePanel(6)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(6),
                   }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  {{
-                    sampleReportData.kindOfLandrights !== null
-                      ? sampleReportData.kindOfLandrights > 0
-                        ? '안전'
-                        : '주의'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
-            </div>
-          </button>
-          <div v-show="openPanels[6]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.kindOfLandrights !== null
-                  ? sampleReportData.kindOfLandrights > 0
-                    ? `해당 물건에 대한 대지권은 ${sampleReportData.kindOfLandrights}㎡ 입니다.`
-                    : '해당 물건은 대지에 대한 권리가 없습니다.'
-                  : '해당 물건에 대한 데이터를 불러올 수 없습니다.'
-              }}
-            </p>
-          </div>
-        </div> -->
-
-        <!-- Section 6: 공동소유/ 단독소유 여부 -->
-        <div class="faq-card">
-          <button @click="togglePanel(6)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(6),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                6. 공동소유 단독소유 여부
-                <span
-                  class="summary"
-                  :style="{
-                    color:
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  6. 공동소유/ 단독소유 여부
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.commonOwner !== null
+                          ? sampleReportData.commonOwner == '단독소유'
+                            ? 'green'
+                            : 'orange'
+                          : 'black',
+                    }"
+                  >
+                    {{
                       sampleReportData.commonOwner !== null
-                        ? sampleReportData.commonOwner ==
-                          '단독소유'
-                          ? 'green'
-                          : 'orange'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.commonOwner !== null
-                      ? sampleReportData.commonOwner ==
-                        '단독소유'
-                        ? '안전'
-                        : '주의'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                        ? sampleReportData.commonOwner == '단독소유'
+                          ? '안전'
+                          : '주의'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[6]" class="faq-answer">
+              <span
+                v-html="formatCommonOwnerMessage(sampleReportData.commonOwner)"
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[6]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.commonOwner !== null
-                  ? sampleReportData.commonOwner ===
-                    '단독소유'
-                    ? '해당 물건은 단독 소유입니다.'
-                    : '해당 물건은 공동 소유입니다.'
-                  : '해당 물건에 대한 데이터 부족합니다.'
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 8: 소유권 변경 횟수 -->
-        <div class="faq-card">
-          <button @click="togglePanel(8)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(8),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                8. 소유권 변경 횟수
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.changeOwnerCount !==
-                      null
-                        ? sampleReportData.changeOwnerCount <
-                          3
-                          ? 'green'
-                          : 'orange'
-                        : 'black',
+          <!-- Section 7: 소유권 변경 횟수 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-null': sampleReportData.changeOwnerCount === null,
+              'faq-card-danger': sampleReportData.changeOwnerCount > 5,
+              'faq-card-warning':
+                sampleReportData.changeOwnerCount >= 3 &&
+                sampleReportData.changeOwnerCount < 5,
+              'faq-card-success': sampleReportData.changeOwnerCount < 3,
+            }"
+          >
+            <button @click="togglePanel(7)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(7),
                   }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  {{
-                    sampleReportData.changeOwnerCount !==
-                    null
-                      ? sampleReportData.changeOwnerCount <
-                        3
-                        ? '안전'
-                        : `${sampleReportData.changeOwnerCount}회`
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  7. 소유권 변경 횟수
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.changeOwnerCount !== null
+                          ? sampleReportData.changeOwnerCount < 3
+                            ? 'green'
+                            : sampleReportData.changeOwnerCount >= 3 &&
+                              sampleReportData.changeOwnerCount < 5
+                            ? 'orange'
+                            : 'red'
+                          : 'black',
+                    }"
+                  >
+                    {{
+                      sampleReportData.changeOwnerCount !== null
+                        ? sampleReportData.changeOwnerCount < 3
+                          ? '안전'
+                          : sampleReportData.changeOwnerCount < 5
+                          ? '주의'
+                          : '위험'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[7]" class="faq-answer">
+              <span
+                v-html="
+                  formatChangeOwnerCountMessage(
+                    sampleReportData.changeOwnerCount
+                  )
+                "
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[8]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.changeOwnerCount !== null
-                  ? sampleReportData.changeOwnerCount < 3
-                    ? `해당 물건은 총 ${sampleReportData.changeOwnerCount} 회 소유자가 변경되었습니다.`
-                    : `해당 물건은 총 ${sampleReportData.changeOwnerCount} 회 소유자가 변경되었습니다.`
-                  : '해당 물건에 대한 데이터가 부족합니다.'
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 9: 위반건축물 여부 -->
-        <div class="faq-card">
-          <button @click="togglePanel(9)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(9),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                9. 위반건축물 여부
-                <span
-                  class="summary"
-                  :style="{
-                    color:
-                      sampleReportData.violationStructure !=
-                      null
+          <!-- Section 8: 위반건축물 여부 -->
+          <div
+            class="faq-card"
+            :class="{
+              'faq-card-null': sampleReportData.violationStructure === null,
+              'faq-card-danger': sampleReportData.violationStructure === true,
+              'faq-card-success': sampleReportData.violationStructure === false,
+            }"
+          >
+            <button @click="togglePanel(8)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(8),
+                  }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  8. 위반건축물 여부
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.violationStructure != null
+                          ? !sampleReportData.violationStructure
+                            ? 'green'
+                            : 'red'
+                          : 'black',
+                    }"
+                  >
+                    {{
+                      sampleReportData.violationStructure != null
                         ? !sampleReportData.violationStructure
-                          ? 'green'
-                          : 'red'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.violationStructure !=
-                    null
-                      ? !sampleReportData.violationStructure
-                        ? '안전'
-                        : '위험'
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                          ? '안전'
+                          : '위험'
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[8]" class="faq-answer">
+              <span
+                v-html="
+                  formatViolationStructureMessage(
+                    sampleReportData.violationStructure
+                  )
+                "
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[9]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.violationStructure != null
-                  ? !sampleReportData.violationStructure
-                    ? '해당 건물은 위반 건축물이 아닙니다.'
-                    : '해당 건물은 위반 건축물입니다.'
-                  : '해당 물건에 대한 데이터가 부족합니다.'
-              }}
-            </p>
           </div>
-        </div>
 
-        <!-- Section 10: 전유 부분 (건물 소유 면적) -->
-        <div class="faq-card">
-          <button @click="togglePanel(10)" class="faq-btn">
-            <div class="faq-icon">
-              <svg
-                class="icon"
-                :class="{
-                  'rotate-180': openPanels.includes(10),
-                }"
-                width="17"
-                height="10"
-                viewBox="0 0 17 10"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
-                  fill=""
-                  stroke=""
-                />
-              </svg>
-            </div>
-            <div class="faq-content">
-              <h4 class="faq-title">
-                10. 전유 부분 (건물 소유 면적)
-                <span
-                  class="summary"
-                  :style="{
-                    color:
+          <!-- Section 9: 전유 부분 (건물 소유 면적) -->
+          <div class="faq-card" :class="'faq-card-null'">
+            <button @click="togglePanel(9)" class="faq-btn">
+              <div class="faq-icon">
+                <svg
+                  class="icon"
+                  :class="{
+                    'rotate-180': openPanels.includes(9),
+                  }"
+                  width="17"
+                  height="10"
+                  viewBox="0 0 17 10"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+                    fill=""
+                    stroke=""
+                  />
+                </svg>
+              </div>
+              <div class="faq-content">
+                <h4 class="faq-title">
+                  9. 전유 부분 (건물 소유 면적)
+                  <span
+                    class="summary"
+                    :style="{
+                      color:
+                        sampleReportData.ownerState != null ? 'blue' : 'black',
+                    }"
+                  >
+                    {{
                       sampleReportData.ownerState != null
-                        ? 'blue'
-                        : 'black',
-                  }"
-                >
-                  {{
-                    sampleReportData.ownerState != null
-                      ? `${sampleReportData.ownerState}㎡`
-                      : '분석불가'
-                  }}
-                </span>
-              </h4>
+                        ? `${sampleReportData.ownerState}㎡`
+                        : '분석불가'
+                    }}
+                  </span>
+                </h4>
+              </div>
+            </button>
+            <div v-show="openPanels[9]" class="faq-answer">
+              <span
+                v-html="formatOwnerStateMessage(sampleReportData.ownerState)"
+              ></span>
             </div>
-          </button>
-          <div v-show="openPanels[10]" class="faq-answer">
-            <p>
-              {{
-                sampleReportData.ownerState != null
-                  ? `해당 물건에서 전유 부분의 건물 소유에 대한 면적은 총 ${sampleReportData.ownerState}㎡ 입니다.`
-                  : '해당 물건에 대한 데이터가 부족합니다.'
-              }}
-            </p>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="d-flex justify-content-end mt-3">
-        <button
-          class="btn btn-danger p-3 px-4"
-          style="font: 20px bold"
-          @click="deleteSelected(sampleNo)"
-        >
-          삭제
-        </button>
+    <div class="button-container">
+      <button class="btn btn-danger" @click="deleteSelected(sampleNo)">
+        <i class="fas fa-trash-alt"></i> 삭제
+      </button>
 
-        <button
-          class="btn btn-primary ml-4 p-3 px-4"
-          style="font: 20px bold"
-          @click="back"
-        >
-          목록
-        </button>
-      </div>
+      <button class="btn btn-primary" @click="back">
+        <i class="fas fa-list-ul"></i> 목록
+      </button>
     </div>
   </div>
 </template>
@@ -752,11 +650,103 @@ const score = ref(75); // 예: 65점
 
 // 패널을 토글하는 함수 (패널의 인덱스 번호로 제어)
 function togglePanel(panelNumber) {
-  openPanels.value[panelNumber] =
-    !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
+  openPanels.value[panelNumber] = !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
 }
 
-// 3. 소유자와 계약자의 일치 여부
+//1-9
+
+const formatTotalScoreMessage = (score) => {
+  if (score === null) {
+    return '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.';
+  }
+  if (score < 50) {
+    return `안전진단 점수가 <strong>${score}</strong>점으로 매우 <strong>낮습니다.</strong>`;
+  } else if (score < 70) {
+    return `안전진단 점수가 <strong>${score}</strong>점으로 <strong>경고</strong> 수준입니다.`;
+  } else {
+    return `안전진단 점수가 <strong>${score}</strong>점으로 <strong>안전</strong>하다고 판단됩니다.`;
+  }
+};
+
+const formatJeonseRateMessage = (rate) => {
+  if (rate === null) {
+    return '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.';
+  }
+  if (rate < 60) {
+    return `전세가율이 <strong>${rate}%</strong>로 안전합니다.`;
+  } else if (rate < 80) {
+    return `전세가율이 <strong>${rate}%</strong>로 경고 수준입니다.`;
+  } else {
+    return `전세가율이 <strong>${rate}%</strong>로 매우 위험합니다.`;
+  }
+};
+
+const formatAccordOwnerMessage = (accordOwner) => {
+  return accordOwner === null
+    ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
+    : accordOwner
+    ? '소유자와 계약자가 <strong>일치합니다</strong>.'
+    : '소유자와 계약자가 <strong>일치하지 않습니다.</strong>';
+};
+
+const formatMaximumOfBondMessage = (bond, price) => {
+  if (bond === null) {
+    return '해당 물건에 대한 데이터를 불러올 수 <strong>없습니다.</strong>';
+  }
+  const bondRatio = (bond * 100) / price;
+  return bondRatio <= 30
+    ? '근저당권으로 잡힌 채권이 <strong>없어</strong> 안전합니다.'
+    : bondRatio < 50
+    ? `근저당권 채권 최고액이 <strong>${Math.floor(bond / 100000000)}억 ${(
+        (bond % 100000000) /
+        10000
+      ).toFixed(0)}만원</strong>으로 주의 수준입니다.`
+    : `근저당권 채권 최고액이 <strong>${Math.floor(bond / 100000000)}억 ${(
+        (bond % 100000000) /
+        10000
+      ).toFixed(0)}만원</strong>으로 위험 수준입니다.`;
+};
+
+const formatUseTypeMessage = (useType) => {
+  if (!useType) {
+    // useType이 null 또는 undefined일 경우
+    return '해당 물건에 대한 데이터를 불러올 수 <strong>없습니다</strong>.';
+  }
+  return useType.includes('주거') ||
+    useType.includes('아파트') ||
+    useType.includes('주택') ||
+    useType.includes('오피스텔')
+    ? '해당 건물은 <strong>주거용</strong> 건물입니다.'
+    : `해당 건물은 <strong>${useType}</strong>용 건물입니다.`;
+};
+
+const formatCommonOwnerMessage = (commonOwner) => {
+  return commonOwner === null
+    ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
+    : commonOwner === '단독소유'
+    ? '해당 물건은 <strong>단독 소유</strong>입니다.'
+    : '해당 물건은 <strong>공동 소유</strong>입니다.';
+};
+
+const formatChangeOwnerCountMessage = (changeOwnerCount) => {
+  return changeOwnerCount === null
+    ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
+    : `해당 물건은 총 <strong>${changeOwnerCount}</strong>회 소유자가 <strong>변경</strong>되었습니다.`;
+};
+
+const formatViolationStructureMessage = (violationStructure) => {
+  return violationStructure === null
+    ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
+    : violationStructure
+    ? '해당 건물은 <strong>위반 건축물</strong>입니다.'
+    : '해당 건물은 위반 건축물이 <strong>아닙니다</strong>.';
+};
+
+const formatOwnerStateMessage = (ownerState) => {
+  return ownerState === null
+    ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
+    : `해당 물건에서 전유 부분의 건물 소유에 대한 면적은 총 <strong>${ownerState}㎡</strong> 입니다.`;
+};
 
 //  서버에서 데이터 가져오는 함수
 // 상태 관리
@@ -777,10 +767,7 @@ const fetchReportData = async () => {
   try {
     const data = await reportApi.getReportData(sampleNo);
     sampleReportData.value = data; // 가져온 데이터를 상태에 저장
-    console.log(
-      'sampleReportData.value：',
-      sampleReportData.value
-    );
+    console.log('sampleReportData.value：', sampleReportData.value);
   } catch (error) {
     console.error('Failed to fetch analysis data:', error);
   }
@@ -808,7 +795,7 @@ const deleteSelected = async (sampleNo) => {
 
 // 목록으로 돌아 가기
 const back = () => {
-  router.push('/myreport');
+  router.push('/mypage/myreport');
 };
 
 // 지도 관련된 함수
@@ -835,14 +822,18 @@ const initializeMap = (x, y, doroJuso) => {
   });
   const overlayContent = document.createElement('div');
   overlayContent.className = 'customoverlay';
-  overlayContent.innerHTML = `<div class="overlayContent"
-                                     style="position:relative;
+  overlayContent.innerHTML = `
+    <div
+      class="overlayContent"
+      style="position:relative;
                                             font-size: 18px;
                                             font-weight: bold;
                                             bottom:15px;
                                             background-color:white;"
-                                    >${doroJuso}
-                                </div>`;
+    >
+      ${doroJuso}
+    </div>
+  `;
   // 커스텀 오버레이 생성
   const customOverlay = new kakao.maps.CustomOverlay({
     position: coords,
@@ -871,16 +862,11 @@ const toggleDetails = (no) => {
 const moveToSelectedProperty = async () => {
   try {
     const data = await addressApi.getAddressDetails(
-      // sampleReportData.value.propertyNo
-      sampleNo
+      sampleReportData.value.propertyNo
     );
     console.log(sampleReportData.value.reportNo);
 
-    if (
-      data &&
-      data[0].xcoordinate &&
-      data[0].ycoordinate
-    ) {
+    if (data && data[0].xcoordinate && data[0].ycoordinate) {
       // 가져온 좌표로 지도 초기화
       initializeMap(
         data[0].xcoordinate, // x 좌표
@@ -891,10 +877,7 @@ const moveToSelectedProperty = async () => {
       console.error('Invalid coordinates:', data);
     }
   } catch (error) {
-    console.error(
-      'Failed to fetch address details:',
-      error
-    );
+    console.error('Failed to fetch address details:', error);
   }
 };
 
@@ -906,152 +889,220 @@ onMounted(async () => {
 </script>
 
 <style>
-.sec {
-  text-align: left;
-  padding: 24px; /* 패딩을 크게 */
-  font-weight: 900; /* font-black */
-  font-size: 1.25rem; /* 글씨 크기 키움 */
-  background-color: #e4fdf7; /* Tailwind's gray-100 */
-  border-radius: 0.25rem; /* 테두리 살짝 더 둥글게 */
-  width: 100%; /* w-full */
-  transition: background-color 0.3s ease;
-  border: 2px solid #cdcecd; /* 연한 회색 테두리 (사진의 색상) */
-}
-
-.sec:hover {
-  background-color: #93c5fd; /* Tailwind's blue-300 */
-}
-
-.sec:focus {
-  background-color: #fde047; /* Tailwind's yellow-300 */
-}
-
-.panel {
-  overflow: hidden;
-}
-
-.summary {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #2563eb; /* Tailwind's blue-600 */
-}
-/* .button {
-  margin-top: 10px;
-  position: absolute;
-  left: 46%;
-} */
-
-/* 전체 섹션 스타일 */
-.faq-section {
-  position: relative;
-  padding-top: 120px;
-  padding-bottom: 90px;
-  background-color: white;
-}
-
-/* .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-} */
-
-/* 헤더 섹션 */
-.heading {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.subheading {
-  display: block;
-  font-size: 18px;
-  font-weight: 600;
-  color: #007bff;
-  margin-bottom: 20px;
-}
-
-.title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #007bff;
-  margin-bottom: 20px;
-}
-
-.description {
-  font-size: 16px;
+.faq-answer {
+  padding: 0 20px 20px;
+  font-size: 28px; /* 글자 크기를 더 크게 키움 */
   color: #666;
 }
 
-/* FAQ 카드 */
-.faq-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2열로 설정 */
-  gap: 40px; /* 카드 간 간격을 넓혀줌 */
+body {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.report-wrapper {
+  background-color: #f0f0f0;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.report-container {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 30px;
+}
+
+.report-content {
+  padding: 40px;
+}
+.address-text {
+  font-size: 40px; /* 글씨 크기를 원하는 크기로 설정 */
+  color: blue; /* 파란색으로 설정 */
+  font-weight: bold; /* 글씨를 굵게 하고 싶다면 추가 */
+}
+
+.report-text {
+  font-size: 30px; /* 이 부분도 크기를 키움 */
+  color: #333; /* 원하는 색상으로 변경 가능 */
+}
+
+.report-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.report-title h2 {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.report-title p {
+  font-size: 24px;
+  color: #666;
+}
+
+.map-chart-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.map-chart-container,
+.accordion-menu {
+  width: 100%;
+}
+
+.map-container,
+.chart-container {
+  flex-basis: 48%;
+}
+/* 지도와 도넛 차트 컨테이너 스타일 수정 */
+.map-container,
+.chart-container {
+  flex-basis: 45%;
+  min-height: 300px;
+  background-color: #e6f2ff; /* 연한 파랑색 배경 */
+  border-radius: 10px;
+  padding: 20px;
+  justify-content: center;
+  display: flex;
+  border: 2px solid #b3d9ff; /* 테두리 추가 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 추가 */
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .faq-card {
-  padding: 30px; /* 카드 크기 증가 */
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0px 20px 95px rgba(201, 203, 204, 0.3);
-  text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .faq-btn {
   display: flex;
   align-items: center;
   width: 100%;
-  text-align: left;
-  cursor: pointer;
+  padding: 20px;
   background: none;
   border: none;
-  outline: none;
-  padding: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
 .faq-icon {
   margin-right: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: #e7f3ff;
-  border-radius: 50%;
-}
-
-.icon {
-  transition: transform 0.3s ease;
-}
-
-.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.faq-content {
-  flex-grow: 1;
 }
 
 .faq-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 28px; /* 글자 크기를 더 크게 키움 */
+  font-weight: bold;
   color: #333;
 }
 
-.faq-answer {
-  padding-top: 15px;
-  font-size: 16px;
-  color: #666;
-  line-height: 1.6;
-}
-
 .summary {
-  margin-left: 50px;
+  margin-left: 20px;
+  font-size: 24px; /* 글자 크기를 더 크게 키움 */
+  font-weight: bold;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .faq-grid {
-    grid-template-columns: 1fr; /* 태블릿 이하에서 1열로 변경 */
+.faq-answer {
+  padding: 0 20px 20px;
+  font-size: 28px; /* 글자 크기를 더 크게 키움 */
+  color: #666;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* 위험, 경고, 안전 등급에 따른 스타일 */
+.faq-card-danger {
+  background-color: #ffebeb;
+  border-left: 5px solid red;
+}
+
+.faq-card-null {
+  background-color: #f7f7f7; /* 매우 연한 회색 배경 */
+  border-left: 5px solid #d9d9d9; /* 밝은 회색 테두리 */
+}
+
+.faq-card-warning {
+  background-color: #fff4e5;
+  border-left: 5px solid orange;
+}
+
+.faq-card-success {
+  background-color: #e6f7ff;
+  border-left: 5px solid green;
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* 버튼 디자인 및 아이콘 스타일링 */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn i {
+  margin-right: 8px;
+}
+
+.btn-danger {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #e63946;
+}
+
+.btn-primary {
+  background-color: #4d79ff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #3a66cc;
+}
+
+@media (max-width: 768px) {
+  .map-chart-container {
+    flex-direction: column;
+  }
+
+  .map-container,
+  .chart-container {
+    flex-basis: 100%;
   }
 }
 </style>
