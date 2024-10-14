@@ -777,10 +777,6 @@ const fetchReportData = async () => {
   try {
     const data = await reportApi.getReportData(sampleNo);
     sampleReportData.value = data; // 가져온 데이터를 상태에 저장
-    console.log(
-      'sampleReportData.value：',
-      sampleReportData.value
-    );
   } catch (error) {
     console.error('Failed to fetch analysis data:', error);
   }

@@ -1,118 +1,54 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-center mb-4">
-      <i class="fa-solid fa-paste"></i> 계약 전 체크 사항
-    </h1>
+  <div class="min-h-screen bg-gradient-to-br from-[#F0F7FF] to-[#F0F7FF] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl font-bold text-center mb-8" style="color: #1173D6;">
+        <i class="fas fa-search mr-2"></i> 계약 전, 꼭 확인해보세요.
+      </h1>
 
-    <!-- 로딩 상태 -->
-    <div v-if="isLoading" class="text-center my-4">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">로딩 중...</span>
+      <div v-if="isLoading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600"></div>
       </div>
-    </div>
 
-    <!-- 에러 메시지 -->
-    <div v-else-if="errorMessage" class="alert alert-danger" role="alert">
-      {{ errorMessage }}
-    </div>
+      <div v-else-if="errorMessage" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6" role="alert">
+        <p class="font-bold">오류</p>
+        <p>{{ errorMessage }}</p>
+      </div>
 
-    <!-- 게시글 목록 테이블 -->
-    <div v-else>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th style="width: 80px">번호</th>
-            <th>제목</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="article in articles" :key="article.preventionNo">
-            <td @click="detail(article.preventionNo)">
-              {{ article.preventionNo }}
-            </td>
-            <td @click="detail(article.preventionNo)">
-              {{ article.preventionTitle }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- 페이지 네이션 -->
-      <div class="d-flex justify-center mt-4">
-        <nav
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-          aria-label="Pagination"
-        >
-          <!-- Previous 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page - 1)"
-            :class="{ 'opacity-50 cursor-not-allowed': pageRequest.page === 1 }"
-            :disabled="pageRequest.page === 1"
-          >
-            <span class="sr-only">Previous</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                clip-rule="evenodd"
-              />
-            </svg>
+      <div v-else class="space-y-6">
+        <article v-for="article in articles" :key="article.link" 
+                 class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
+          <a :href="article.link" target="_blank" rel="noopener noreferrer" class="block p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2 line-clamp-2">{{ article.title }}</h2>
+            <p class="text-gray-600 mb-4 line-clamp-3">{{ article.description }}</p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span class="flex items-center">
+                <i class="far fa-calendar-alt mr-2"></i>
+                {{ formatDate(article.postdate) }}
+              </span>
+              <span class="flex items-center">
+                <i class="far fa-user mr-2"></i>
+                {{ article.bloggername }}
+              </span>
+            </div>
           </a>
+        </article>
+      </div>
 
-          <!-- 페이지 번호 버튼들 -->
-          <a
-            v-for="pageNum in totalPages"
-            :key="pageNum"
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            :class="{
-              'bg-indigo-600 text-white z-10': pageRequest.page === pageNum,
-              'hover:bg-gray-50': pageRequest.page !== pageNum,
-            }"
-            @click.prevent="handlePageChange(pageNum)"
-          >
-            {{ pageNum }}
-          </a>
-
-          <!-- 점으로 표시된 부분 -->
-          <span
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-            v-if="totalPages > 5 && pageRequest.page + 2 < totalPages"
-          >
-            ...
+      <div class="mt-10 flex justify-center">
+        <nav class="flex items-center bg-white px-4 py-3 rounded-lg shadow-md">
+          <button @click="handlePageChange(currentPage - 1)" 
+                  :disabled="currentPage === 1"
+                  class="mr-2 px-4 py-2 text-sm font-medium text-[#1173D6] bg-[#D6E8FA] rounded-md hover:bg-[#B0D5F6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1173D6] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+            <i class="fas fa-chevron-left mr-1"></i> 이전
+          </button>
+          <span class="px-4 py-2 rounded-md text-sm font-semibold bg-[#1173D6] text-white">
+            {{ currentPage }}
           </span>
-
-          <!-- Next 버튼 -->
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click.prevent="handlePageChange(pageRequest.page + 1)"
-            :class="{
-              'opacity-50 cursor-not-allowed': pageRequest.page === totalPages,
-            }"
-            :disabled="pageRequest.page === totalPages"
-          >
-            <span class="sr-only">Next</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
+          <button @click="handlePageChange(currentPage + 1)"
+                  :disabled="!hasMorePages"
+                  class="ml-2 px-4 py-2 text-sm font-medium text-[#1173D6] bg-[#D6E8FA] rounded-md hover:bg-[#B0D5F6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1173D6] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200">
+            다음 <i class="fas fa-chevron-right ml-1"></i>
+          </button>
         </nav>
       </div>
     </div>
@@ -120,118 +56,76 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import '@fortawesome/fontawesome-free/css/all.css';
-import api from '@/api/preventionApi'; // API 모듈
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-const route = useRoute();
-const router = useRouter();
+const articles = ref([]);
 const isLoading = ref(true);
 const errorMessage = ref('');
+const currentPage = ref(1);
+const hasMorePages = ref(true);
+const itemsPerPage = 10;
 
-// 게시글 상세 보기
-const detail = (no) => {
-  router.push({
-    name: 'preventionDetail',
-    params: { no: no },
-    query: router.query,
-  });
+const decodeHtmlEntities = (text) => {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
 };
 
-// 페이지 상태
-const page = reactive({
-  list: [],
-  totalCount: 0,
-});
-
-// 페이지 요청 상태
-const pageRequest = reactive({
-  page: parseInt(route.query.page) || 1,
-  amount: parseInt(route.query.amount) || 10,
-});
-
-// 총 페이지 계산 속성
-const totalPages = computed(() => {
-  return Math.ceil(page.totalCount / pageRequest.amount);
-});
-
-// 게시글 목록 계산 속성
-const articles = computed(() => page.list);
-
-// 페이지 변경 핸들러
-const handlePageChange = async (pageNum) => {
-  if (pageNum < 1 || pageNum > totalPages.value) return;
-  router.push({
-    query: { page: pageNum, amount: pageRequest.amount },
-  });
+const stripHtmlTags = (text) => {
+  return text.replace(/<[^>]*>/g, '');
 };
 
-// 데이터 로드 함수
-const load = async () => {
+const fetchBlogs = async (page) => {
   isLoading.value = true;
   errorMessage.value = '';
   try {
-    const response = await api.getList({
-      page: pageRequest.page,
-      amount: pageRequest.amount,
+    const response = await axios.get('/api/blog', {
+      params: {
+        query: '전세사기',
+        display: itemsPerPage,
+        start: (page - 1) * itemsPerPage + 1
+      }
     });
-    page.list = response.list;
-    page.totalCount = response.totalCount;
+
+    articles.value = response.data.items.map(item => ({
+      title: decodeHtmlEntities(stripHtmlTags(item.title)),
+      link: item.link,
+      description: decodeHtmlEntities(stripHtmlTags(item.description)),
+      bloggername: item.bloggername,
+      bloggerlink: item.bloggerlink,
+      postdate: item.postdate 
+    }));
+
+    hasMorePages.value = response.data.total > page * itemsPerPage;
   } catch (error) {
-    console.error('게시글 로드 실패:', error);
-    errorMessage.value =
-      '게시글을 불러오는 데 실패했습니다. 다시 시도해 주세요.';
+    console.error('블로그를 불러오는데 실패했습니다:', error);
+    errorMessage.value = '블로그를 불러오는데 실패했습니다. 다시 시도해 주세요.';
   } finally {
     isLoading.value = false;
   }
 };
 
-// query 파라미터 변경 감지
-watch(
-  () => route.query,
-  async (newQuery) => {
-    pageRequest.page = parseInt(newQuery.page) || 1;
-    pageRequest.amount = parseInt(newQuery.amount) || 10;
-    await load();
-  }
-);
+const handlePageChange = (newPage) => {
+  if (newPage < 1 || (newPage > currentPage.value && !hasMorePages.value)) return;
+  currentPage.value = newPage;
+  fetchBlogs(newPage);
+};
 
-// 컴포넌트가 마운트될 때 데이터 로드
+const formatDate = (dateStr) => {
+  if (!dateStr || dateStr.length < 8) return ''; 
+  return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6)}`;
+};
+
 onMounted(() => {
-  load();
+  fetchBlogs(1);
 });
 </script>
 
-<style scoped>
-.container {
-  max-width: 800px; /* 최대 너비 설정 */
-  margin: 0 auto; /* 중앙 정렬 */
-  padding: 0 15px; /* 좌우 패딩 추가 */
-}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
-.table-hover tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
-.text-decoration-none {
-  color: inherit;
-}
-
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  .table th,
-  .table td {
-    font-size: 0.85rem;
-    padding: 0.75rem;
-  }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
 }
 </style>

@@ -74,7 +74,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 80vh;
-  background-color: #f7f9fc;
+  background-color: #F0F7FF;
 }
 
 /* 로그인 박스 크기 */
@@ -161,4 +161,5 @@ export default {
     width: 90%;
   }
 }
+
 </style>

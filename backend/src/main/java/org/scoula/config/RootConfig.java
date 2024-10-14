@@ -19,7 +19,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 
 @Configuration
@@ -50,7 +49,8 @@ import javax.sql.DataSource;
         "org.scoula.report.service",
         "org.scoula.like.report.service",
         "org.scoula.like.property.service",
-        "org.scoula.test.service"
+        "org.scoula.test.service",
+        "org.scoula.naver_api.service"
 })
 @Slf4j
 @EnableTransactionManagement
