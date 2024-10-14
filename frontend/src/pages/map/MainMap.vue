@@ -712,7 +712,23 @@ body {
 }
 
 /* 지도 아래쪽에 지적편집도, 지형정보, 교통정보 버튼 컨트롤 */
-.custom_maptypecontrol {
+.right-panel-full .custom_maptypecontrol {
+  position: absolute;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  bottom: 3%;
+  left: 44%;
+  width: auto;
+  z-index: 1000;
+  justify-content: space-between;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.right-panel .custom_maptypecontrol {
   position: absolute;
   background-color: white;
   padding: 20px;
@@ -738,10 +754,29 @@ body {
   /* background-color: #fff; */
 }
 
-.location-btn {
+.right-panel .location-btn {
   position: absolute;
   bottom: 15%;
-  right: 8%; /* 원하는 위치로 조정 가능 */
+  right: 8%;
+  z-index: 1000;
+  background-color: #007bff;
+  opacity: 0.3;
+  color: white;
+  border: none;
+  padding: 15px;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right-panel-full .location-btn {
+  position: absolute;
+  bottom: 4.5%;
+  right: 6%;
   z-index: 1000;
   background-color: #007bff;
   opacity: 0.3;
