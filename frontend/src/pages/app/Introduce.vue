@@ -1,3 +1,4 @@
+  
 <template>
   <div class="about-us">
     <section class="team-section">
@@ -21,10 +22,12 @@
       </div>
     </section>
   </div>
+  <Footer></Footer>
 </template>
 
 <script setup>
 import QuickChat from '@/components/QuickChat.vue';
+import Footer from '@/components/Footer.vue';
 const teamMembers = [
   {
     id: 1,

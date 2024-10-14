@@ -112,7 +112,7 @@ onMounted(() => {
 }
 
 .sense-item {
-  background-color: #f0f0f0;
+  background-color: #b8d8ff;
   border-radius: 25px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
