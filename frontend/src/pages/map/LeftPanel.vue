@@ -1,16 +1,13 @@
 <template>
   <div class="left-panel">
     <div class="search">
-      <SearchBar
-        @address-selected="handleAddressSelected"
-      />
+      <SearchBar @address-selected="handleAddressSelected" />
     </div>
 
     <div class="panel-section wishlist-toggle">
       <div class="section-header" @click="toggleWishlist">
         <span class="header-text">즐겨찾기</span>
         <span class="hamburger-menu" :class="{ active: wishlistVisible }">
-
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -28,9 +25,7 @@
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
-              @click.stop="
-                removeFromWishlist(wish.propertyNo)
-              "
+              @click.stop="removeFromWishlist(wish.propertyNo)"
               style="color: #ffd43b"
             />
           </li>
@@ -42,14 +37,16 @@
       <div class="section-header" @click="toggleDetails">
         <span class="header-text">상세보기</span>
         <span class="hamburger-menu" :class="{ active: detailsVisible }">
-
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
       <div v-if="detailsVisible" class="section-content">
-        <div v-if="selectedProperty && selectedProperty.length" class="property-details">
+        <div
+          v-if="selectedProperty && selectedProperty.length"
+          class="property-details"
+        >
           <div class="property-header">
             <h2 class="apart-name">
               {{ selectedProperty[0].propertyAddrAptName }}
@@ -64,7 +61,9 @@
             </h2>
             <h4 class="address">
               {{ selectedProperty[0].doroJuso }}
-              <span class="year">(건축년도: {{ selectedProperty[0].buildingYear }})</span>
+              <span class="year"
+                >(건축년도: {{ selectedProperty[0].buildingYear }})</span
+              >
             </h4>
           </div>
 
@@ -91,7 +90,6 @@
 
           <div class="analyze-button-container">
             <button class="analyze-button" @click="analyzeProperty">
-
               매물 분석하기
             </button>
           </div>
@@ -99,7 +97,7 @@
         <p v-else class="empty-message">매물을 골라주세요.</p>
       </div>
     </div>
-  <div class="panel-section blog-search-toggle">
+    <div class="panel-section blog-search-toggle">
       <div class="section-header" @click="toggleBlogSearch">
         <span class="header-text">관련 블로그</span>
         <span class="hamburger-menu" :class="{ active: blogSearchVisible }">
@@ -114,11 +112,18 @@
         </div>
         <div v-else-if="blogPosts.length" class="blog-posts">
           <div v-for="post in blogPosts" :key="post.link" class="blog-post">
-            <a :href="post.link" target="_blank" rel="noopener noreferrer" class="blog-post-link">
+            <a
+              :href="post.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="blog-post-link"
+            >
               <h3 class="blog-post-title" v-html="post.title"></h3>
               <p class="blog-post-description" v-html="post.description"></p>
               <div class="blog-post-info">
-                <span class="blog-post-date">{{ formatDate(post.postdate) }}</span>
+                <span class="blog-post-date">{{
+                  formatDate(post.postdate)
+                }}</span>
                 <span class="blog-post-blogger">{{ post.bloggername }}</span>
               </div>
             </a>
@@ -141,13 +146,26 @@
           <div class="spinner"></div>
         </div>
         <div v-else-if="localResults.length" class="local-results">
-          <div v-for="result in localResults" :key="result.link" class="local-result">
+          <div
+            v-for="result in localResults"
+            :key="result.link"
+            class="local-result"
+          >
             <h3 class="local-result-title" v-html="result.title"></h3>
             <p class="local-result-category">{{ result.category }}</p>
             <p class="local-result-address" v-html="result.address"></p>
             <p class="local-result-description" v-html="result.description"></p>
-            <p class="local-result-telephone" v-if="result.telephone">{{ result.telephone }}</p>
-            <a v-if="result.link" :href="result.link" target="_blank" rel="noopener noreferrer" class="local-result-link">더 보기</a>
+            <p class="local-result-telephone" v-if="result.telephone">
+              {{ result.telephone }}
+            </p>
+            <a
+              v-if="result.link"
+              :href="result.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="local-result-link"
+              >더 보기</a
+            >
           </div>
         </div>
         <p v-else class="empty-message">주변 정보가 없습니다.</p>
@@ -167,8 +185,17 @@
           <div class="spinner"></div>
         </div>
         <div v-else-if="imageResults.length" class="image-results">
-          <div v-for="image in imageResults" :key="image.link" class="image-result">
-            <img :src="image.thumbnail" :alt="image.title" @error="handleImageError" @click="openImageModal(image) ">
+          <div
+            v-for="image in imageResults"
+            :key="image.link"
+            class="image-result"
+          >
+            <img
+              :src="image.thumbnail"
+              :alt="image.title"
+              @error="handleImageError"
+              @click="openImageModal(image)"
+            />
           </div>
         </div>
         <p v-else class="empty-message">관련 이미지가 없습니다.</p>
@@ -178,7 +205,11 @@
   <!-- Image Modal -->
   <div v-if="selectedImage" class="image-modal" @click="closeImageModal">
     <div class="modal-content" @click.stop>
-      <img :src="selectedImage.link" :alt="selectedImage.title" @error="handleImageError">
+      <img
+        :src="selectedImage.link"
+        :alt="selectedImage.title"
+        @error="handleImageError"
+      />
       <p>{{ selectedImage.title }}</p>
     </div>
   </div>
@@ -273,11 +304,7 @@ const toggleDetails = () => {
 };
 // 즐겨찾기 상태 토글
 const toggleFavorite = async () => {
-  if (
-    !props.selectedProperty ||
-    props.selectedProperty.length === 0
-  )
-    return;
+  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
   if (isFavorite.value) {
     // 즐겨찾기 O -> X
     await api.delete(props.selectedProperty[0].propertyNo);
@@ -292,8 +319,7 @@ const toggleFavorite = async () => {
 // 아파트 선택 함수
 const selectApartment = (propertyAddrAptName) => {
   const selected = props.selectedProperty.find(
-    (prop) =>
-      prop.propertyAddrAptName === propertyAddrAptName
+    (prop) => prop.propertyAddrAptName === propertyAddrAptName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);
@@ -307,14 +333,10 @@ const handleAddressSelected = (coordinates) => {
 };
 const router = useRouter();
 const analyzeProperty = () => {
-  if (
-    props.selectedProperty.length > 0 &&
-    props.selectedProperty[0].doroJuso
-  ) {
+  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName =
-      props.selectedProperty[0].propertyAddrAptName;
+    const buildingName = props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
@@ -341,16 +363,16 @@ const searchBlogs = async (query) => {
     const response = await axiosInstance.get('/api/blog', {
       params: {
         query: query,
-        display: 5,  // 표시할 블로그 포스트 수
-        start:1 
-      }
+        display: 5, // 표시할 블로그 포스트 수
+        start: 1,
+      },
     });
-    blogPosts.value = response.data.items.map(item => ({
+    blogPosts.value = response.data.items.map((item) => ({
       title: decodeHtmlEntities(stripHtmlTags(item.title)),
       link: item.link,
       description: decodeHtmlEntities(stripHtmlTags(item.description)),
       bloggername: item.bloggername,
-      postdate: item.postdate
+      postdate: item.postdate,
     }));
   } catch (error) {
     console.error('블로그 검색 중 오류 발생:', error);
@@ -359,7 +381,7 @@ const searchBlogs = async (query) => {
     isLoading.value = false;
   }
 };
-// 토글 
+// 토글
 const toggleLocalSearch = () => {
   localSearchVisible.value = !localSearchVisible.value;
 };
@@ -374,18 +396,18 @@ const searchLocal = async (query) => {
         query: query,
         display: 5,
         start: 1,
-        sort: 'random'
-      }
+        sort: 'random',
+      },
     });
     console.log('Local search response:', response.data);
-    localResults.value = response.data.items.map(item => ({
+    localResults.value = response.data.items.map((item) => ({
       title: decodeHtmlEntities(item.title || ''),
       category: item.category || '',
       address: decodeHtmlEntities(item.address || ''),
       roadAddress: decodeHtmlEntities(item.roadAddress || ''),
       link: item.link || '',
       mapx: item.mapx || '',
-      mapy: item.mapy || ''
+      mapy: item.mapy || '',
     }));
     console.log('Processed local results:', localResults.value);
   } catch (error) {
@@ -405,13 +427,13 @@ const searchImages = async (query) => {
         display: 9,
         start: 1,
         sort: 'sim',
-        filter: 'large'
-      }
+        filter: 'large',
+      },
     });
-    imageResults.value = response.data.items.map(item => ({
+    imageResults.value = response.data.items.map((item) => ({
       title: decodeHtmlEntities(stripHtmlTags(item.title)),
       link: item.link,
-      thumbnail: item.thumbnail
+      thumbnail: item.thumbnail,
     }));
   } catch (error) {
     console.error('이미지 검색 중 오류 발생:', error);
@@ -421,7 +443,7 @@ const searchImages = async (query) => {
   }
 };
 const handleImageError = (event) => {
-  event.target.src = '@/assets/nonefoundimage.png'; 
+  event.target.src = '@/assets/nonefoundimage.png';
 };
 const openImageModal = (image) => {
   selectedImage.value = image;
@@ -444,39 +466,50 @@ const formatDate = (dateStr) => {
   return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6)}`;
 };
 // selectedProperty 변경 감지 및 블로그 검색 실행
-watch(() => props.selectedProperty, (newValue) => {
-  if (newValue && newValue.length > 0) {
-    const jibunJuso = newValue[0].jibunJuso;
-    searchBlogs(jibunJuso);
-  } else {
-    blogPosts.value = [];
-  }
-}, { immediate: true });
-watch(() => props.selectedProperty, (newValue) => {
-  if (newValue && newValue.length > 0) {
-    const query = newValue[0].jibunJuso;
-    searchImages(query);
-  } else {
-    imageResults.value = [];
-  }
-}, { immediate: true });
-watch(() => props.selectedProperty, (newValue) => {
-  if (newValue && newValue.length > 0) {
-    const jibunJuso = newValue[0].jibunJuso;
-    const jibunAddressParts = jibunJuso.split(' ');
-    const addr_dong = jibunAddressParts[1] || jibunJuso;
-    searchLocal(addr_dong);
-  } else {
-    localResults.value = [];
-  }
-}, { immediate: true });
+watch(
+  () => props.selectedProperty,
+  (newValue) => {
+    if (newValue && newValue.length > 0) {
+      const jibunJuso = newValue[0].jibunJuso;
+      searchBlogs(jibunJuso);
+    } else {
+      blogPosts.value = [];
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => props.selectedProperty,
+  (newValue) => {
+    if (newValue && newValue.length > 0) {
+      const query = newValue[0].jibunJuso;
+      searchImages(query);
+    } else {
+      imageResults.value = [];
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => props.selectedProperty,
+  (newValue) => {
+    if (newValue && newValue.length > 0) {
+      const jibunJuso = newValue[0].jibunJuso;
+      const jibunAddressParts = jibunJuso.split(' ');
+      const addr_dong = jibunAddressParts[1] || jibunJuso;
+      searchLocal(addr_dong);
+    } else {
+      localResults.value = [];
+    }
+  },
+  { immediate: true }
+);
 // 매매전월세 건물유형 관련
 const activeFilter = ref(null); // 필터 toggle 관련
 const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트값
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 const toggleFilter = (filterType) => {
-  activeFilter.value =
-    activeFilter.value === filterType ? null : filterType;
+  activeFilter.value = activeFilter.value === filterType ? null : filterType;
 };
 const selectTransaction = (type) => {
   selectedTransaction.value = type;
@@ -550,16 +583,31 @@ onMounted(() => {
 .hamburger-menu.active .bar:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
   transform: translateY(2px) rotate(140deg); /* 첫 번째 선을 위쪽으로 향하는 대각선으로 변환 */
-  width: 80%; 
+  width: 80%;
 }
 .hamburger-menu.active .bar:nth-child(2) {
   opacity: 0;
-  opacity: 0; 
+  opacity: 0;
 }
 .hamburger-menu.active .bar:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
   transform: translateY(-2px) rotate(-140deg); /* 세 번째 선을 위쪽으로 향하는 반대 대각선으로 변환 */
-  width: 80%; 
+  width: 80%;
+}
+
+.search button {
+  padding: 8px 16px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.search button:hover {
+  background-color: #1557b0;
 }
 .wishlist {
   list-style: none;
@@ -666,7 +714,21 @@ onMounted(() => {
   transform: scale(1.2);
 }
 .search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
+  width: 100%; /* panel-section과 동일한 width 적용 */
+}
+
+/* 반응형을 위한 flex 속성 */
+.search input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 8px;
 }
 .blog-search-toggle {
   margin-top: 24px;
@@ -800,14 +862,35 @@ onMounted(() => {
   text-align: center;
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
+
+/* 검색 영역 반응형 조정 */
 @media (max-width: 768px) {
   .left-panel {
     width: 100%;
     height: auto;
   }
-}
 
+  /* 작은 화면에서는 검색 영역이 줄어들도록 조정 */
+  .search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search input {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .search button {
+    width: 100%;
+  }
+}
 </style>
