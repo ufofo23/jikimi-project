@@ -36,10 +36,6 @@ const loadUserInfo = async () => {
   try {
     const userInfo = await api.getInfo();
     userName.value = userInfo.name;
-    userEmail.value = userInfo.email;
-    userGender.value = userInfo.gender;
-    userBirthday.value = userInfo.birthday;
-    userPhone.value = userInfo.mobileE164;
   } catch (error) {
     console.error('Failed to load user information:', error);
     errorMessage.value =

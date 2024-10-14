@@ -90,6 +90,7 @@
             </table>
           </div>
           
+
           <div class="analyze-button-container">
             <button class="analyze-button" @click="analyzeProperty">
 
@@ -100,6 +101,90 @@
         <p v-else class="empty-message">매물을 골라주세요.</p>
       </div>
     </div>
+  <div class="panel-section blog-search-toggle">
+      <div class="section-header" @click="toggleBlogSearch">
+        <span class="header-text">관련 블로그</span>
+        <span class="hamburger-menu" :class="{ active: blogSearchVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="blogSearchVisible" class="section-content">
+        <div v-if="isLoading" class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <div v-else-if="blogPosts.length" class="blog-posts">
+          <div v-for="post in blogPosts" :key="post.link" class="blog-post">
+            <a :href="post.link" target="_blank" rel="noopener noreferrer" class="blog-post-link">
+              <h3 class="blog-post-title" v-html="post.title"></h3>
+              <p class="blog-post-description" v-html="post.description"></p>
+              <div class="blog-post-info">
+                <span class="blog-post-date">{{ formatDate(post.postdate) }}</span>
+                <span class="blog-post-blogger">{{ post.bloggername }}</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <p v-else class="empty-message">관련 블로그 포스트가 없습니다.</p>
+      </div>
+    </div>
+    <div class="panel-section local-search-toggle">
+      <div class="section-header" @click="toggleLocalSearch">
+        <span class="header-text">주변 정보</span>
+        <span class="hamburger-menu" :class="{ active: localSearchVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="localSearchVisible" class="section-content">
+        <div v-if="isLocalLoading" class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <div v-else-if="localResults.length" class="local-results">
+          <div v-for="result in localResults" :key="result.link" class="local-result">
+            <h3 class="local-result-title" v-html="result.title"></h3>
+            <p class="local-result-category">{{ result.category }}</p>
+            <p class="local-result-address" v-html="result.address"></p>
+            <p class="local-result-description" v-html="result.description"></p>
+            <p class="local-result-telephone" v-if="result.telephone">{{ result.telephone }}</p>
+            <a v-if="result.link" :href="result.link" target="_blank" rel="noopener noreferrer" class="local-result-link">더 보기</a>
+          </div>
+        </div>
+        <p v-else class="empty-message">주변 정보가 없습니다.</p>
+      </div>
+    </div>
+
+    <div class="panel-section image-search-toggle">
+      <div class="section-header" @click="toggleImageSearch">
+        <span class="header-text">관련 이미지</span>
+        <span class="hamburger-menu" :class="{ active: imageSearchVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="imageSearchVisible" class="section-content">
+        <div v-if="isImageLoading" class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <div v-else-if="imageResults.length" class="image-results">
+          <div v-for="image in imageResults" :key="image.link" class="image-result">
+            <img :src="image.thumbnail" :alt="image.title" @error="handleImageError" @click="openImageModal(image) ">
+          </div>
+        </div>
+        <p v-else class="empty-message">관련 이미지가 없습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div v-if="selectedImage" class="image-modal" @click="closeImageModal">
+    <div class="modal-content" @click.stop>
+      <img :src="selectedImage.link" :alt="selectedImage.title" @error="handleImageError">
+      <p>{{ selectedImage.title }}</p>
+    </div>
   </div>
 </template>
 
@@ -109,6 +194,7 @@ import SearchBar from './SearchBar.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useRouter } from 'vue-router';
 import api from '@/api/like/likePropertyApi';
+import axiosInstance from '@/axiosInstance';
 
 const props = defineProps({
   selectedProperty: Array,
@@ -120,6 +206,7 @@ const emit = defineEmits([
   'updateTransactionType',
   'updateBuildingType',
   'favoriteItem',
+  'togglePanel',
 ]);
 
 // 즐겨찾기와 상세보기 토글 상태 관리
@@ -128,6 +215,20 @@ const detailsVisible = ref(true);
 
 // 즐겨찾기 데이터
 const wishlist = ref([]);
+
+// 블로그/지역/이미지
+const blogSearchVisible = ref(true);
+const blogPosts = ref([]);
+const isLoading = ref(false);
+const localSearchVisible = ref(true);
+const imageSearchVisible = ref(true);
+const localResults = ref([]);
+const imageResults = ref([]);
+const isLocalLoading = ref(false);
+const isImageLoading = ref(false);
+const selectedImage = ref(null);
+
+
 
 const reloadWishlist = async () => {
   try {
@@ -243,6 +344,7 @@ const analyzeProperty = () => {
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
 
+
     router.push({
       name: 'mapAnalyzing',
       query: {
@@ -255,6 +357,163 @@ const analyzeProperty = () => {
     });
   }
 };
+
+// 블로그 검색 토글 함수
+const toggleBlogSearch = () => {
+  blogSearchVisible.value = !blogSearchVisible.value;
+};
+
+// 블로그 검색 함수
+const searchBlogs = async (query) => {
+  isLoading.value = true;
+  try {
+    const response = await axiosInstance.get('/api/blog', {
+      params: {
+        query: query,
+        display: 5,  // 표시할 블로그 포스트 수
+        start:1 
+      }
+    });
+    blogPosts.value = response.data.items.map(item => ({
+      title: decodeHtmlEntities(stripHtmlTags(item.title)),
+      link: item.link,
+      description: decodeHtmlEntities(stripHtmlTags(item.description)),
+      bloggername: item.bloggername,
+      postdate: item.postdate
+    }));
+  } catch (error) {
+    console.error('블로그 검색 중 오류 발생:', error);
+    blogPosts.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 토글 
+const toggleLocalSearch = () => {
+  localSearchVisible.value = !localSearchVisible.value;
+};
+
+const toggleImageSearch = () => {
+  imageSearchVisible.value = !imageSearchVisible.value;
+};
+
+const searchLocal = async (query) => {
+  isLocalLoading.value = true;
+
+  try {
+    const response = await axiosInstance.get('/api/local', {
+      params: {
+        query: query,
+        display: 5,
+        start: 1,
+        sort: 'random'
+      }
+    });
+    console.log('Local search response:', response.data);
+    localResults.value = response.data.items.map(item => ({
+      title: decodeHtmlEntities(item.title || ''),
+      category: item.category || '',
+      address: decodeHtmlEntities(item.address || ''),
+      roadAddress: decodeHtmlEntities(item.roadAddress || ''),
+      link: item.link || '',
+      mapx: item.mapx || '',
+      mapy: item.mapy || ''
+    }));
+    console.log('Processed local results:', localResults.value);
+  } catch (error) {
+    console.error('로컬 검색 중 오류 발생:', error);
+    localResults.value = [];
+  } finally {
+    isLocalLoading.value = false;
+  }
+};
+
+// 이미지 검색
+const searchImages = async (query) => {
+  isImageLoading.value = true;
+  try {
+    const response = await axiosInstance.get('/api/image', {
+      params: {
+        query: query,
+        display: 9,
+        start: 1,
+        sort: 'sim',
+        filter: 'large'
+      }
+    });
+    imageResults.value = response.data.items.map(item => ({
+      title: decodeHtmlEntities(stripHtmlTags(item.title)),
+      link: item.link,
+      thumbnail: item.thumbnail
+    }));
+  } catch (error) {
+    console.error('이미지 검색 중 오류 발생:', error);
+    imageResults.value = [];
+  } finally {
+    isImageLoading.value = false;
+  }
+};
+
+const handleImageError = (event) => {
+  event.target.src = '@/assets/nonefoundimage.png'; 
+};
+
+const openImageModal = (image) => {
+  selectedImage.value = image;
+};
+
+const closeImageModal = () => {
+  selectedImage.value = null;
+};
+
+// HTML 엔티티 디코딩 및 태그 제거 함수
+const decodeHtmlEntities = (text) => {
+  const textArea = document.createElement('textarea');
+  textArea.innerHTML = text;
+  return textArea.value;
+};
+
+const stripHtmlTags = (text) => {
+  return text.replace(/<[^>]*>/g, '');
+};
+
+// 날짜 포맷팅 함수
+const formatDate = (dateStr) => {
+  if (!dateStr || dateStr.length < 8) return '';
+  return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6)}`;
+};
+
+// selectedProperty 변경 감지 및 블로그 검색 실행
+watch(() => props.selectedProperty, (newValue) => {
+  if (newValue && newValue.length > 0) {
+    const jibunJuso = newValue[0].jibunJuso;
+    searchBlogs(jibunJuso);
+  } else {
+    blogPosts.value = [];
+  }
+}, { immediate: true });
+
+watch(() => props.selectedProperty, (newValue) => {
+  if (newValue && newValue.length > 0) {
+    const query = newValue[0].jibunJuso;
+    searchImages(query);
+  } else {
+    imageResults.value = [];
+  }
+}, { immediate: true });
+
+watch(() => props.selectedProperty, (newValue) => {
+  if (newValue && newValue.length > 0) {
+    const jibunJuso = newValue[0].jibunJuso;
+    const jibunAddressParts = jibunJuso.split(' ');
+    const addr_dong = jibunAddressParts[1] || jibunJuso;
+    searchLocal(addr_dong);
+  } else {
+    localResults.value = [];
+  }
+}, { immediate: true });
+
 
 // 매매전월세 건물유형 관련
 const activeFilter = ref(null); // 필터 toggle 관련
@@ -345,15 +604,17 @@ onMounted(() => {
 }
 
 .hamburger-menu.active .bar:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
+  transform: translateY(2px) rotate(140deg); /* 첫 번째 선을 위쪽으로 향하는 대각선으로 변환 */
+  width: 80%; 
 }
 
 .hamburger-menu.active .bar:nth-child(2) {
-  opacity: 0;
+  opacity: 0; 
 }
 
 .hamburger-menu.active .bar:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+  transform: translateY(-2px) rotate(-140deg); /* 세 번째 선을 위쪽으로 향하는 반대 대각선으로 변환 */
+  width: 80%; 
 }
 
 .wishlist {
@@ -479,6 +740,164 @@ onMounted(() => {
 
 .search {
   margin-bottom: 24px;
+}
+
+.blog-search-toggle {
+  margin-top: 24px;
+}
+
+.blog-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-post {
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.blog-post:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-link {
+  display: block;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-post-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a73e8;
+  margin-bottom: 8px;
+}
+
+.blog-post-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-post-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1a73e8;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+.local-results,
+.image-results {
+  display: grid;
+  gap: 16px;
+}
+
+.local-result {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.local-result:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.local-result-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a73e8;
+  margin-bottom: 8px;
+}
+
+.local-result-category,
+.local-result-address,
+.local-result-description {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.image-results {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.image-result img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.image-result img:hover {
+  transform: scale(1.05);
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+}
+
+.modal-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.modal-content p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
