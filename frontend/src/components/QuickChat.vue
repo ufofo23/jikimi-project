@@ -1,8 +1,7 @@
 <template>
   <div class="quick-chat">
     <button @click="toggleChat" class="chat-bot-button">
-      <img src="@/assets/turtle.png" alt="Turtle Icon" class="turtle-icon" />
-      Bugi Bot
+      <img src="@/assets/boogiChat.png" alt="Turtle Icon" class="turtle-icon" />
     </button>
 
     <div v-if="chatVisible" class="chat-box">
@@ -204,9 +203,8 @@ h3 {
 }
 
 .turtle-icon {
-  width: 45px;
-  height: 45px;
-  filter: brightness(0) invert(1);
+  width: 75px;
+  height: 75px;
 }
 
 .chat-box {

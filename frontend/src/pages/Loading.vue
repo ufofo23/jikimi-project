@@ -1,36 +1,91 @@
 <template>
-  <div class="loading-page">
-    <!-- 거북이 이미지 -->
-    <h2>로딩 중입니다... ⏳</h2>
-    <img src="@/assets/turtle.png" alt="Turtle" class="turtle" />
+  <div class="loading-container">
+    <div class="loading-content">
+      <div class="loading-icon">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+      </div>
+      <h2 class="loading-text">시나리오 분석중입니다...</h2>
+    </div>
   </div>
 </template>
 
 <script setup>
-// 로딩 화면에서는 특별한 로직이 필요 없으므로, setup 스크립트는 비워두었습니다.
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const dots = ref('...');
+
+const updateDots = () => {
+  dots.value = dots.value.length >= 3 ? '' : dots.value + '.';
+};
+
+let interval;
+
+onMounted(() => {
+  interval = setInterval(updateDots, 500);
+});
+
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 
 <style scoped>
-.loading-page {
+.loading-container {
   display: flex;
-  flex-direction: column; /* 세로 방향으로 정렬 */
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  overflow: hidden; /* 애니메이션이 화면 밖으로 나가지 않도록 */
+  height: 100vh;
+  background-color: #F0F7FF;
+  font-family: 'Arial', sans-serif;
 }
 
-.turtle {
-  width: 200px; /* 적절한 크기로 설정 */
-  animation: moveTurtle 3s ease-in-out infinite; /* 무한 애니메이션 */
+.loading-content {
+  text-align: center;
 }
 
-@keyframes moveTurtle {
-  0% {
-    transform: translateX(-150px); /* 화면 밖에서 시작 */
+.loading-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  background-color: #007BFF;
+  border-radius: 50%;
+  margin: 0 10px;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.circle:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.circle:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.loading-text {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+  animation: fadeInOut 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { 
+    transform: scale(0);
+  } 
+  40% { 
+    transform: scale(1.0);
   }
-  100% {
-    transform: translateX(calc(100% + 150px)); /* 화면 오른쪽 밖으로 이동 */
-  }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 </style>
