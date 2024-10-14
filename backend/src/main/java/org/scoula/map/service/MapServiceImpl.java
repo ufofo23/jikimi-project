@@ -43,4 +43,13 @@ public class MapServiceImpl implements MapService {
         }
         return addressDetails;
     }
+
+    @Override
+    public List<MapDetailDTO> getReportAddressDetails(Long id) { // 반환 타입을 List로 변경
+        List<MapDetailDTO> addressDetails = mapper.getReportAddressDetails(id); // List로 받음
+        if (addressDetails.isEmpty()) {
+            throw new NoSuchElementException("Address not found for id: " + id);
+        }
+        return addressDetails;
+    }
 }

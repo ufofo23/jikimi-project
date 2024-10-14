@@ -1026,16 +1026,7 @@ select * from property_tbl;
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (1 15566, 2, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
 
-# SAMPLE DATA<1> 2024.10.12
-# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
-#                     VALUES ( 1, 0, '아파트');
-# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
-#                     VALUES ( 1, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
-# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
-#                     VALUES ( 15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
-# INSERT INTO estate.analysis_tbl ( property_no)
-#                     VALUES ( 15566);
-# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,1);
+
 
 
 # INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.89, '박상덕 (공유자)임종숙 (공유자)', '공동소유', 4, 130000000);
@@ -1053,3 +1044,58 @@ select * from property_tbl;
 select  * from cor_tbl;
 select * from member_report_tbl;
 select  * from report_tbl;
+# # SAMPLE DATA<1> 2024.10.12
+# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
+#                     VALUES ( 1, 0, '아파트');
+# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+#                     VALUES ( 1, 84.98, '이종훈 (공유자)정유진 (공유자)', '공동소유', 2, 554400000);
+# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
+#                     VALUES ( 15566, 1, '서울특별시 마포구 공덕동 457', 0, 0, null, null, null, null, 554400000, null, 2, 0, '공동소유', 84.98, '아파트');
+# INSERT INTO estate.analysis_tbl ( property_no) VALUES ( 15566);
+# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,1);
+#
+# # SAMPLE DATA <2> 2024.10.14
+# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
+#             VALUES ( 2, 0, '공동주택(아파트)');
+# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+#             VALUES ( 2, 59.97, '권진아 (소유자)', '단독소유', 2, 0);
+# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+#             VALUES ( 423, 2, '서울특별시 성북구 길음동 1288', 0, 100, null, null, 1100000000, null, 0, null, 2, null, '단독소유', 59.97, '공동주택(아파트)', null);
+# INSERT INTO estate.analysis_tbl ( property_no) VALUES ( 423);
+# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,2);
+#
+# # SAMPLE DATA <3> 2024.10.14
+# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
+#             VALUES ( 3, 0, '주택(1세대)');
+# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+# VALUES ( 3, 77.24, '황서현 (소유자)', '단독소유', 3, 0);
+# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+# VALUES ( 7089, 3, '서울특별시 용산구 청파동1가 1-18', 0, 100, null, null, 850000000, null, 0, null, 3, null, '단독소유', 77.24, '주택(1세대)', null);
+# INSERT INTO estate.analysis_tbl ( property_no) VALUES ( 7089);
+# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,3);
+#
+# # SAMPLE DATA <4> 2024.10.14
+# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
+#             VALUES ( 4, null, null);
+# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+# VALUES ( 4, 0, '전상돈 (공유자)전상일 (공유자)전영미 (공유자)전영숙 (공유자)최인순 (공유자)', '공동소유', 1, 0);
+# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+# VALUES ( 191, 4, '서울특별시 마포구 노고산동 107-36', null, 0, null, null, 270000000, null, 0, null, 1, null, '공동소유', 0, null, null);
+# INSERT INTO estate.analysis_tbl ( property_no)
+# VALUES ( 191);
+# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,4);
+#
+# # SAMPLE DATA <5> 2024.10.14
+# INSERT INTO estate.bml_tbl ( analysis_no, violation_structure, use_type)
+#             VALUES ( 5, null, null);
+# INSERT INTO estate.cor_tbl ( analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+#             VALUES ( 5, 0, '이춘형 (소유자)', '단독소유', 1, 0);
+# INSERT INTO estate.report_tbl ( property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date)
+#             VALUES ( 789, 5, '서울특별시 마포구 도화동 357', null, 0, null, null, 1070000000, null, 0, null, 1, null, '단독소유', 0, null, null);
+# INSERT INTO estate.analysis_tbl ( property_no)
+#             VALUES ( 789);
+# INSERT INTO estate.member_report_tbl (member_no, report_no) VALUES (1,5);
+#
+# update report_tbl set analysis_date = (CURRENT_TIMESTAMP) WHERE analysis_date is NULL;
+
+

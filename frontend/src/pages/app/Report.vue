@@ -6,8 +6,12 @@
         <div class="report-title">
           <h2>REPORT</h2>
           <p>
-            <span class="address-text">{{ sampleReportData.address }}</span>
-            <span class="report-text">에 대한 리포트가 도착했어요!</span>
+            <span class="address-text">{{
+              sampleReportData.address
+            }}</span>
+            <span class="report-text"
+              >에 대한 리포트가 도착했어요!</span
+            >
           </p>
         </div>
 
@@ -17,7 +21,9 @@
             <div id="map" ref="mapContainer"></div>
           </div>
           <div class="chart-container">
-            <DonutChart :score="sampleReportData.totalScore" />
+            <DonutChart
+              :score="sampleReportData.totalScore"
+            />
           </div>
         </div>
 
@@ -27,18 +33,22 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-danger': sampleReportData.totalScore < 70,
+              'faq-card-danger':
+                sampleReportData.totalScore < 70,
               'faq-card-warning':
                 sampleReportData.totalScore >= 70 &&
                 sampleReportData.totalScore < 85,
-              'faq-card-success': sampleReportData.totalScore >= 85,
+              'faq-card-success':
+                sampleReportData.totalScore >= 85,
             }"
           >
             <button @click="togglePanel(1)" class="faq-btn">
               <div class="faq-icon">
                 <svg
                   class="icon"
-                  :class="{ 'rotate-up': openPanels.includes(1) }"
+                  :class="{
+                    'rotate-up': openPanels.includes(1),
+                  }"
                   width="17"
                   height="10"
                   viewBox="0 0 17 10"
@@ -78,7 +88,11 @@
             </button>
             <div v-show="openPanels[1]" class="faq-answer">
               <span
-                v-html="formatTotalScoreMessage(sampleReportData.totalScore)"
+                v-html="
+                  formatTotalScoreMessage(
+                    sampleReportData.totalScore
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -87,7 +101,8 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-null': sampleReportData.jeonseRate === null,
+              'faq-card-null':
+                sampleReportData.jeonseRate === null,
               'faq-card-danger':
                 sampleReportData.jeonseRate !== null &&
                 sampleReportData.jeonseRate > 90,
@@ -129,7 +144,8 @@
                         sampleReportData.jeonseRate !== null
                           ? sampleReportData.jeonseRate < 70
                             ? 'green'
-                            : sampleReportData.jeonseRate < 90
+                            : sampleReportData.jeonseRate <
+                              90
                             ? 'orange'
                             : 'red'
                           : 'black',
@@ -150,7 +166,11 @@
             </button>
             <div v-show="openPanels[2]" class="faq-answer">
               <span
-                v-html="formatJeonseRateMessage(sampleReportData.jeonseRate)"
+                v-html="
+                  formatJeonseRateMessage(
+                    sampleReportData.jeonseRate
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -159,8 +179,10 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-danger': sampleReportData.accordOwner === false,
-              'faq-card-success': sampleReportData.accordOwner === true,
+              'faq-card-danger':
+                sampleReportData.accordOwner === false,
+              'faq-card-success':
+                sampleReportData.accordOwner === true,
             }"
           >
             <button @click="togglePanel(3)" class="faq-btn">
@@ -188,7 +210,9 @@
                   <span
                     class="summary"
                     :style="{
-                      color: !sampleReportData.accordOwner ? 'red' : 'green',
+                      color: !sampleReportData.accordOwner
+                        ? 'red'
+                        : 'green',
                     }"
                   >
                     {{
@@ -204,7 +228,11 @@
             </button>
             <div v-show="openPanels[3]" class="faq-answer">
               <span
-                v-html="formatAccordOwnerMessage(sampleReportData.accordOwner)"
+                v-html="
+                  formatAccordOwnerMessage(
+                    sampleReportData.accordOwner
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -213,7 +241,8 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-null': sampleReportData.maximumOfBond === null,
+              'faq-card-null':
+                sampleReportData.maximumOfBond === null,
               'faq-card-danger':
                 sampleReportData.maximumOfBond !== null &&
                 (sampleReportData.maximumOfBond * 100) /
@@ -260,11 +289,14 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.maximumOfBond !== null
-                          ? (sampleReportData.maximumOfBond * 100) /
+                        sampleReportData.maximumOfBond !==
+                        null
+                          ? (sampleReportData.maximumOfBond *
+                              100) /
                               sampleReportData.price <
                             50
-                            ? (sampleReportData.maximumOfBond * 100) /
+                            ? (sampleReportData.maximumOfBond *
+                                100) /
                                 sampleReportData.price <=
                               30
                               ? 'green'
@@ -274,11 +306,15 @@
                     }"
                   >
                     {{
-                      sampleReportData.maximumOfBond !== null
+                      sampleReportData.maximumOfBond !==
+                      null
                         ? `${Math.floor(
-                            sampleReportData.maximumOfBond / 100000000
+                            sampleReportData.maximumOfBond /
+                              100000000
                           )}억 ${
-                            (sampleReportData.maximumOfBond % 100000000) / 10000
+                            (sampleReportData.maximumOfBond %
+                              100000000) /
+                            10000
                           }만원`
                         : '분석불가'
                     }}
@@ -304,11 +340,20 @@
             :class="{
               'faq-card-success':
                 sampleReportData.useType &&
-                (sampleReportData.useType.includes('주택') ||
-                  sampleReportData.useType.includes('아파트') ||
-                  sampleReportData.useType.includes('주거') ||
-                  sampleReportData.useType.includes('오피스텔')),
-              'faq-card-danger': sampleReportData.useType == null,
+                (sampleReportData.useType.includes(
+                  '주택'
+                ) ||
+                  sampleReportData.useType.includes(
+                    '아파트'
+                  ) ||
+                  sampleReportData.useType.includes(
+                    '주거'
+                  ) ||
+                  sampleReportData.useType.includes(
+                    '오피스텔'
+                  )),
+              'faq-card-danger':
+                sampleReportData.useType == null,
             }"
           >
             <button @click="togglePanel(5)" class="faq-btn">
@@ -337,24 +382,42 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.useType !== null || undefined
+                        sampleReportData.useType !== null ||
+                        undefined
                           ? sampleReportData.useType &&
-                            (sampleReportData.useType.indexOf('주택') >= 0 ||
-                              sampleReportData.useType.indexOf('아파트') >= 0 ||
-                              sampleReportData.useType.indexOf('주거') >= 0 ||
-                              sampleReportData.useType.indexOf('오피스텔') >= 0)
+                            (sampleReportData.useType.indexOf(
+                              '주택'
+                            ) >= 0 ||
+                              sampleReportData.useType.indexOf(
+                                '아파트'
+                              ) >= 0 ||
+                              sampleReportData.useType.indexOf(
+                                '주거'
+                              ) >= 0 ||
+                              sampleReportData.useType.indexOf(
+                                '오피스텔'
+                              ) >= 0)
                             ? 'green'
                             : 'red'
                           : 'black',
                     }"
                   >
                     {{
-                      sampleReportData.useType !== null || undefined
+                      sampleReportData.useType !== null ||
+                      undefined
                         ? sampleReportData.useType &&
-                          (sampleReportData.useType.indexOf('주택') >= 0 ||
-                            sampleReportData.useType.indexOf('아파트') >= 0 ||
-                            sampleReportData.useType.indexOf('주거') >= 0 ||
-                            sampleReportData.useType.indexOf('오피스텔') >= 0)
+                          (sampleReportData.useType.indexOf(
+                            '주택'
+                          ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '아파트'
+                            ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '주거'
+                            ) >= 0 ||
+                            sampleReportData.useType.indexOf(
+                              '오피스텔'
+                            ) >= 0)
                           ? '안전'
                           : '위험'
                         : '분석불가'
@@ -365,7 +428,11 @@
             </button>
             <div v-show="openPanels[5]" class="faq-answer">
               <span
-                v-html="formatUseTypeMessage(sampleReportData.useType)"
+                v-html="
+                  formatUseTypeMessage(
+                    sampleReportData.useType
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -374,8 +441,10 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-warning': sampleReportData.commonOwner === '공동소유',
-              'faq-card-success': sampleReportData.commonOwner === '단독소유',
+              'faq-card-warning':
+                sampleReportData.commonOwner === '공동소유',
+              'faq-card-success':
+                sampleReportData.commonOwner === '단독소유',
             }"
           >
             <button @click="togglePanel(6)" class="faq-btn">
@@ -404,8 +473,10 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.commonOwner !== null
-                          ? sampleReportData.commonOwner == '단독소유'
+                        sampleReportData.commonOwner !==
+                        null
+                          ? sampleReportData.commonOwner ==
+                            '단독소유'
                             ? 'green'
                             : 'orange'
                           : 'black',
@@ -413,7 +484,8 @@
                   >
                     {{
                       sampleReportData.commonOwner !== null
-                        ? sampleReportData.commonOwner == '단독소유'
+                        ? sampleReportData.commonOwner ==
+                          '단독소유'
                           ? '안전'
                           : '주의'
                         : '분석불가'
@@ -424,7 +496,11 @@
             </button>
             <div v-show="openPanels[6]" class="faq-answer">
               <span
-                v-html="formatCommonOwnerMessage(sampleReportData.commonOwner)"
+                v-html="
+                  formatCommonOwnerMessage(
+                    sampleReportData.commonOwner
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -433,12 +509,15 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-null': sampleReportData.changeOwnerCount === null,
-              'faq-card-danger': sampleReportData.changeOwnerCount > 5,
+              'faq-card-null':
+                sampleReportData.changeOwnerCount === null,
+              'faq-card-danger':
+                sampleReportData.changeOwnerCount > 5,
               'faq-card-warning':
                 sampleReportData.changeOwnerCount >= 3 &&
                 sampleReportData.changeOwnerCount < 5,
-              'faq-card-success': sampleReportData.changeOwnerCount < 3,
+              'faq-card-success':
+                sampleReportData.changeOwnerCount < 3,
             }"
           >
             <button @click="togglePanel(7)" class="faq-btn">
@@ -467,21 +546,28 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.changeOwnerCount !== null
-                          ? sampleReportData.changeOwnerCount < 3
+                        sampleReportData.changeOwnerCount !==
+                        null
+                          ? sampleReportData.changeOwnerCount <
+                            3
                             ? 'green'
-                            : sampleReportData.changeOwnerCount >= 3 &&
-                              sampleReportData.changeOwnerCount < 5
+                            : sampleReportData.changeOwnerCount >=
+                                3 &&
+                              sampleReportData.changeOwnerCount <
+                                5
                             ? 'orange'
                             : 'red'
                           : 'black',
                     }"
                   >
                     {{
-                      sampleReportData.changeOwnerCount !== null
-                        ? sampleReportData.changeOwnerCount < 3
+                      sampleReportData.changeOwnerCount !==
+                      null
+                        ? sampleReportData.changeOwnerCount <
+                          3
                           ? '안전'
-                          : sampleReportData.changeOwnerCount < 5
+                          : sampleReportData.changeOwnerCount <
+                            5
                           ? '주의'
                           : '위험'
                         : '분석불가'
@@ -505,9 +591,15 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-null': sampleReportData.violationStructure === null,
-              'faq-card-danger': sampleReportData.violationStructure === true,
-              'faq-card-success': sampleReportData.violationStructure === false,
+              'faq-card-null':
+                sampleReportData.violationStructure ===
+                null,
+              'faq-card-danger':
+                sampleReportData.violationStructure ===
+                true,
+              'faq-card-success':
+                sampleReportData.violationStructure ===
+                false,
             }"
           >
             <button @click="togglePanel(8)" class="faq-btn">
@@ -536,7 +628,8 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.violationStructure != null
+                        sampleReportData.violationStructure !=
+                        null
                           ? !sampleReportData.violationStructure
                             ? 'green'
                             : 'red'
@@ -544,7 +637,8 @@
                     }"
                   >
                     {{
-                      sampleReportData.violationStructure != null
+                      sampleReportData.violationStructure !=
+                      null
                         ? !sampleReportData.violationStructure
                           ? '안전'
                           : '위험'
@@ -593,7 +687,9 @@
                     class="summary"
                     :style="{
                       color:
-                        sampleReportData.ownerState != null ? 'blue' : 'black',
+                        sampleReportData.ownerState != null
+                          ? 'blue'
+                          : 'black',
                     }"
                   >
                     {{
@@ -607,7 +703,11 @@
             </button>
             <div v-show="openPanels[9]" class="faq-answer">
               <span
-                v-html="formatOwnerStateMessage(sampleReportData.ownerState)"
+                v-html="
+                  formatOwnerStateMessage(
+                    sampleReportData.ownerState
+                  )
+                "
               ></span>
             </div>
           </div>
@@ -616,7 +716,10 @@
     </div>
 
     <div class="button-container">
-      <button class="btn btn-danger" @click="deleteSelected(sampleNo)">
+      <button
+        class="btn btn-danger"
+        @click="deleteSelected(sampleNo)"
+      >
         <i class="fas fa-trash-alt"></i> 삭제
       </button>
 
@@ -650,7 +753,8 @@ const score = ref(75); // 예: 65점
 
 // 패널을 토글하는 함수 (패널의 인덱스 번호로 제어)
 function togglePanel(panelNumber) {
-  openPanels.value[panelNumber] = !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
+  openPanels.value[panelNumber] =
+    !openPanels.value[panelNumber]; // 해당 패널의 상태만 토글
 }
 
 //1-9
@@ -697,14 +801,16 @@ const formatMaximumOfBondMessage = (bond, price) => {
   return bondRatio <= 30
     ? '근저당권으로 잡힌 채권이 <strong>없어</strong> 안전합니다.'
     : bondRatio < 50
-    ? `근저당권 채권 최고액이 <strong>${Math.floor(bond / 100000000)}억 ${(
-        (bond % 100000000) /
-        10000
-      ).toFixed(0)}만원</strong>으로 주의 수준입니다.`
-    : `근저당권 채권 최고액이 <strong>${Math.floor(bond / 100000000)}억 ${(
-        (bond % 100000000) /
-        10000
-      ).toFixed(0)}만원</strong>으로 위험 수준입니다.`;
+    ? `근저당권 채권 최고액이 <strong>${Math.floor(
+        bond / 100000000
+      )}억 ${((bond % 100000000) / 10000).toFixed(
+        0
+      )}만원</strong>으로 주의 수준입니다.`
+    : `근저당권 채권 최고액이 <strong>${Math.floor(
+        bond / 100000000
+      )}억 ${((bond % 100000000) / 10000).toFixed(
+        0
+      )}만원</strong>으로 위험 수준입니다.`;
 };
 
 const formatUseTypeMessage = (useType) => {
@@ -728,13 +834,17 @@ const formatCommonOwnerMessage = (commonOwner) => {
     : '해당 물건은 <strong>공동 소유</strong>입니다.';
 };
 
-const formatChangeOwnerCountMessage = (changeOwnerCount) => {
+const formatChangeOwnerCountMessage = (
+  changeOwnerCount
+) => {
   return changeOwnerCount === null
     ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
     : `해당 물건은 총 <strong>${changeOwnerCount}</strong>회 소유자가 <strong>변경</strong>되었습니다.`;
 };
 
-const formatViolationStructureMessage = (violationStructure) => {
+const formatViolationStructureMessage = (
+  violationStructure
+) => {
   return violationStructure === null
     ? '해당 물건에 대한 데이터가 <strong>부족</strong>합니다.'
     : violationStructure
@@ -767,7 +877,10 @@ const fetchReportData = async () => {
   try {
     const data = await reportApi.getReportData(sampleNo);
     sampleReportData.value = data; // 가져온 데이터를 상태에 저장
-    console.log('sampleReportData.value：', sampleReportData.value);
+    console.log(
+      'sampleReportData.value：',
+      sampleReportData.value
+    );
   } catch (error) {
     console.error('Failed to fetch analysis data:', error);
   }
@@ -783,7 +896,7 @@ const deleteSelected = async (sampleNo) => {
       alert('삭제가 완료되었습니다.');
 
       // 삭제 후 목록 페이지로 이동
-      router.push('/myreport');
+      router.push('/mypage/myreport');
     } catch (error) {
       console.error('삭제 중 오류 발생:', error);
       alert('삭제 중 오류가 발생했습니다.');
@@ -801,7 +914,7 @@ const back = () => {
 // 지도 관련된 함수
 let map = null;
 let marker = null;
-const initializeMap = (x, y, doroJuso) => {
+const initializeMap = (x, y, jibunJuso) => {
   const mapContainer = document.getElementById('map');
   const coords = new kakao.maps.LatLng(y, x);
   const mapOption = {
@@ -820,29 +933,29 @@ const initializeMap = (x, y, doroJuso) => {
       new kakao.maps.Size(40, 40)
     ),
   });
-  const overlayContent = document.createElement('div');
-  overlayContent.className = 'customoverlay';
-  overlayContent.innerHTML = `
-    <div
-      class="overlayContent"
-      style="position:relative;
-                                            font-size: 18px;
-                                            font-weight: bold;
-                                            bottom:15px;
-                                            background-color:white;"
-    >
-      ${doroJuso}
-    </div>
-  `;
-  // 커스텀 오버레이 생성
-  const customOverlay = new kakao.maps.CustomOverlay({
-    position: coords,
-    content: overlayContent,
-    clickable: false,
-    yAnchor: 2,
-    zIndex: 3,
-  });
-  customOverlay.setMap(map);
+  // const overlayContent = document.createElement('div');
+  // overlayContent.className = 'customoverlay';
+  // overlayContent.innerHTML = `
+  //   <div
+  //     class="overlayContent"
+  //     style="position:relative;
+  //                                           font-size: 18px;
+  //                                           font-weight: bold;
+  //                                           bottom:15px;
+  //                                           background-color:white;"
+  //   >
+  //     ${jibunJuso}
+  //   </div>
+  // `;
+  // // 커스텀 오버레이 생성
+  // const customOverlay = new kakao.maps.CustomOverlay({
+  //   position: coords,
+  //   content: overlayContent,
+  //   clickable: false,
+  //   yAnchor: 2,
+  //   zIndex: 3,
+  // });
+  // customOverlay.setMap(map);
   map.setMaxLevel(9);
 };
 
@@ -861,23 +974,30 @@ const toggleDetails = (no) => {
 
 const moveToSelectedProperty = async () => {
   try {
-    const data = await addressApi.getAddressDetails(
+    const data = await addressApi.getReportAddressDetails(
       sampleReportData.value.propertyNo
     );
     console.log(sampleReportData.value.reportNo);
 
-    if (data && data[0].xcoordinate && data[0].ycoordinate) {
+    if (
+      data &&
+      data[0].xcoordinate &&
+      data[0].ycoordinate
+    ) {
       // 가져온 좌표로 지도 초기화
       initializeMap(
         data[0].xcoordinate, // x 좌표
         data[0].ycoordinate, // y 좌표
-        data[0].doroJuso // 도로명 주소
+        data[0].jibunJuso // 도로명 주소
       );
     } else {
       console.error('Invalid coordinates:', data);
     }
   } catch (error) {
-    console.error('Failed to fetch address details:', error);
+    console.error(
+      'Failed to fetch address details:',
+      error
+    );
   }
 };
 

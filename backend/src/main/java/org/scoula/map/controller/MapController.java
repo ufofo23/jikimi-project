@@ -47,4 +47,9 @@ public class MapController {
         List<MapDetailDTO> addressDetails = addressService.getAddressDetails(id); // List로 변경
         return ResponseEntity.ok(addressDetails);
     }
+    @GetMapping("/report/{id}")
+    public ResponseEntity<List<MapDetailDTO>> getReportAddressDetails(@PathVariable Long id) {
+        List<MapDetailDTO> addressDetails = addressService.getReportAddressDetails(id); // List로 변경
+        return ResponseEntity.ok(addressDetails);
+    }
 }

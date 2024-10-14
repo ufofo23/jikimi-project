@@ -14,5 +14,6 @@ public interface MapService {
     List<MapClusterVO> getAddressListMoveClusterAll(double lat, double lon, int zoomLevel, int page, int limit);
 
     List<MapDetailDTO> getAddressDetails(Long id);
+    List<MapDetailDTO> getReportAddressDetails(Long id);
 
 }
