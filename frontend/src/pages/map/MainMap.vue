@@ -548,12 +548,13 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .container {
   display: flex;
   height: 100vh;
+  max-width: 100vw;
   margin: 0;
   padding: 0;
-  max-width: 2160px;
 }
 
 .container div {
