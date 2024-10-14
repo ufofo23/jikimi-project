@@ -440,7 +440,7 @@ body {
 }
 
 .left-section {
-  background-color: #f5f7fb; /* 밝은 회색 배경 추가 */
+  background-color: #f0f7ff; /* 밝은 회색 배경 추가 */
   border-bottom-right-radius: 80px; /* 우측 하단 모서리 둥글게 */
   width: 50%; /* 전체 화면의 50% */
   overflow: hidden; /* 내부 요소가 섹션을 넘지 않도록 설정 */
