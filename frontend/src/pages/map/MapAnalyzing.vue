@@ -353,11 +353,24 @@ const submitForm = async () => {
         timeout: 300000,
       }
     );
-    if (Array.isArray(response.data) && response.data.length > 0) {
-      addresses.value = response.data;
-      showAddressForm.value = false; // 폼 화면 숨기기
+
+    let checkState = true;
+    for (let address of response.data) {
+      if (address.resState == '-1') {
+        checkState = false;
+      }
+    }
+
+    if (checkState) {
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        addresses.value = response.data;
+        showAddressForm.value = false; // 폼 화면 숨기기
+      } else {
+        errorMessage.value = '조회된 주소가 없습니다.';
+      }
     } else {
-      errorMessage.value = '조회된 주소가 없습니다.';
+      errorMessage.value =
+        '오류 : 주소 확인 후 다시 시도해주세요. 오류가 반복될 경우 문의바랍니다. 1577-1577';
     }
   } catch (error) {
     handleError(error, '주소 검증에 실패했습니다.');
