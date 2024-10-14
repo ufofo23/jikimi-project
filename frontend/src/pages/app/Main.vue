@@ -396,7 +396,7 @@ body {
 /* Hero 섹션 스타일 */
 .hero-section {
   display: flex;
-  min-height: 100vh;
+  max-height: 100vh;
   padding-top: 0; /* 헤더 높이 + 여백 */
   padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
   align-items: stretch; /* 좌우 섹션의 높이를 동일하게 설정 */
@@ -436,7 +436,6 @@ body {
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  height: 85vh;
 }
 
 .left-section {
@@ -445,7 +444,7 @@ body {
   width: 50%; /* 전체 화면의 50% */
   overflow: hidden; /* 내부 요소가 섹션을 넘지 않도록 설정 */
   justify-content: space-between; /* 내용을 위아래로 분산 */
-  min-height: 100vh; /* 화면의 높이를 100%로 설정 */
+  /* min-height: 100vh; /* 화면의 높이를 100%로 설정 */
 }
 .right-section {
   background-color: transparent;

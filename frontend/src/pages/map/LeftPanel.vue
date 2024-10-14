@@ -69,6 +69,69 @@
             </h4>
           </div>
 
+    <div class="panel-section wishlist-toggle">
+      <div class="section-header" @click="toggleWishlist">
+        <span class="header-text">즐겨찾기</span>
+        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="wishlistVisible" class="section-content">
+        <ul v-if="wishlist.length" class="wishlist">
+          <li
+            v-for="wish in wishlist"
+            :key="wish.propertyNo"
+            @click="selectApartment(wish.propertyAddrAptName)"
+            class="wishlist-item"
+          >
+            <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
+            <font-awesome-icon
+              class="favorite-icon"
+              :icon="['fas', 'star']"
+              @click.stop="
+                removeFromWishlist(wish.propertyNo)
+              "
+              style="color: #ffd43b"
+            />
+          </li>
+        </ul>
+        <p v-else class="empty-message">즐겨찾기가 비어있습니다.</p>
+      </div>
+    </div>
+
+    <div class="panel-section detail-toggle">
+      <div class="section-header" @click="toggleDetails">
+        <span class="header-text">상세보기</span>
+        <span class="hamburger-menu" :class="{ active: detailsVisible }">
+
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="detailsVisible" class="section-content">
+        <div v-if="selectedProperty && selectedProperty.length" class="property-details">
+          <div class="property-header">
+            <h2 class="apart-name">
+              {{ selectedProperty[0].propertyAddrAptName }}
+              <font-awesome-icon
+                class="favorite-icon"
+                :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
+                :style="{
+                  color: isFavorite ? '#FFD43B' : '#8E8E8E',
+                }"
+                @click="toggleFavorite"
+              />
+            </h2>
+            <h4 class="address">
+              {{ selectedProperty[0].doroJuso }}
+              <span class="year">(건축년도: {{ selectedProperty[0].buildingYear }})</span>
+            </h4>
+          </div>
+
           <div class="table-container">
             <table class="property-table">
               <thead>
@@ -810,4 +873,5 @@ onMounted(() => {
     height: auto;
   }
 }
+
 </style>
