@@ -660,7 +660,7 @@ body {
 }
 
 .left-panel {
-  width: 25%;
+  width: 35%;
   padding: 20px;
   background-color: white;
   /* position: relative; */
@@ -670,7 +670,7 @@ body {
 }
 
 .right-panel {
-  width: 75%;
+  width: 70%;
   position: relative;
   height: 90vh;
 }
