@@ -996,7 +996,7 @@ select * from analysis_tbl;
 desc analysis_tbl;
 select * from property_location;
 select * from dictionary_tbl;
-
+select * from property_tbl;
 
 
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)

@@ -6,6 +6,7 @@ body {
   color: #333; /* 기본 텍스트 색상 */
   margin: 0;
   padding: 0;
+  background-color: #F0F7FF;
 }
 @import url('https://static.toss.im/tps/main.css');
 @import url('https://static.toss.im/tps/others.css');

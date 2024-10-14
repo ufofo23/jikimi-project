@@ -38,7 +38,6 @@
         <p v-else class="empty-message">즐겨찾기가 비어있습니다.</p>
       </div>
     </div>
-
     <div class="panel-section detail-toggle">
       <div class="section-header" @click="toggleDetails">
         <span class="header-text">상세보기</span>
@@ -496,7 +495,7 @@ onMounted(() => {
 
 <style scoped>
 .left-panel {
-  width: 30%;
+  width: 25%;
   height: 100%;
   padding: 24px;
   position: relative;

@@ -491,7 +491,7 @@ const togglePanel = () => {
   // 패널이 열리고 닫힌 후 지도의 크기를 재설정하여 좌표와 마커가 정상적으로 보이게 함
   setTimeout(() => {
     if (map) {
-      // map.relayout(); // 패널 상태가 바뀐 후 지도의 크기를 다시 설정
+      map.relayout(); // 패널 상태가 바뀐 후 지도의 크기를 다시 설정
     }
   }, 100);
 };
@@ -586,7 +586,7 @@ onMounted(() => {
 <template>
   <div class="container">
     <LeftPanel
-      v-show="isPanelOpen"
+      v-if="isPanelOpen"
       :selectedProperty="selectedProperty"
       :is-details-visible="isDetailsVisible"
       @toggle-panel="togglePanel"
@@ -660,7 +660,7 @@ body {
 }
 
 .left-panel {
-  width: 35%;
+  width: 10%;
   padding: 20px;
   background-color: white;
   /* position: relative; */
@@ -670,7 +670,7 @@ body {
 }
 
 .right-panel {
-  width: 70%;
+  width: 90%;
   position: relative;
   height: 90vh;
 }
