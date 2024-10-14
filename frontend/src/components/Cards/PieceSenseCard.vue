@@ -1,17 +1,17 @@
 <template>
   <div
-    class="bg-green-300 w-64 h-32 m-8 static rounded-lg"
+    class="w-80 h-40 m-8 static rounded-lg"
     @click="detail(currentCommonSenseNo)"
   >
     <div
-      class="bg-white w-64 h-40 hover:-m-2 absolute rounded-lg shadow-lg hover:shadow-2xl transition-all duration-150 ease-out hover:ease-in"
+      class="bg-white w-85 h-48 hover:-m-2 absolute rounded-lg shadow-lg hover:shadow-2xl transition-all duration-150 ease-out hover:ease-in"
     >
-      <h1 class="m-4 text-sm font-bold">오늘의 토막 상식 🏡</h1>
+      <h1 class="m-4 text-xl font-bold">오늘의 토막 상식 🏡</h1>
       <hr class="m-4 rounded-2xl border-t-2" />
       <div class="m-4 text-2xl">
         <!-- 현재 pieceSense가 있으면 출력, 없으면 로딩 메시지 -->
         <div v-if="commonPieceSense">
-          <p>{{ commonPieceSense }}</p>
+          <p class="m-1 text-xl text-left">{{ commonPieceSense }}</p>
         </div>
         <p v-else>로딩 중...</p>
       </div>

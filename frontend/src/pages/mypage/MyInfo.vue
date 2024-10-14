@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>회원정보</h2>
-    <form @submit.prevent="updateUserInfo">
+    <form @submit.prevent="updateUserInfo" class="form">
       <div class="form-group">
         <label for="name">이름</label>
         <input type="text" id="name" v-model="userName" disabled />
@@ -33,14 +33,22 @@
       </div>
       <div class="form-group">
         <label for="phone">전화번호</label>
-        <input type="text" id="phone" v-model="userPhone" @input="formatPhoneNumber" placeholder="010-0000-0000" />
+        <input
+          type="text"
+          id="phone"
+          v-model="userPhone"
+          @input="formatPhoneNumber"
+          placeholder="010-0000-0000"
+        />
       </div>
       <button type="submit" class="update-btn">정보 업데이트</button>
     </form>
 
     <div class="delete-account">
       <p>탈퇴를 원하시는 경우, 회원 탈퇴 버튼을 눌러 주세요.</p>
-      <button type="submit" class="delete-btn" @click="handleAccountDelete">회원 탈퇴하기</button>
+      <button type="submit" class="delete-btn" @click="handleAccountDelete">
+        회원 탈퇴하기
+      </button>
     </div>
   </div>
 </template>
@@ -122,14 +130,12 @@ const updateUserInfo = async () => {
 // Load user info on component mount
 onMounted(async () => {
   await authStore.checkAuth();
-  if(!authStore.isAuthenticated){
+  if (!authStore.isAuthenticated) {
     router.push('/login');
-  }else{
+  } else {
     loadUserInfo();
   }
 });
-
-
 
 // Account deletion handler
 const handleAccountDelete = async () => {
@@ -309,6 +315,22 @@ const handleAccountDelete = async () => {
   text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
 }
 
+.update-btn {
+  background-color: #374d6f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-block; /* 버튼을 오른쪽에 고정 */
+  align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
 .delete-btn {
   background-color: #dc3545;
   color: white;
@@ -318,7 +340,6 @@ const handleAccountDelete = async () => {
   cursor: pointer;
   display: inline-block; /* 버튼을 오른쪽에 고정 */
 }
-
 
 @media (max-width: 768px) {
   .mypage-container {

@@ -18,11 +18,11 @@ export default {
   // 지도 이동 시 중심 좌표와 줌 레벨을 기준으로 주소 리스트를 가져오는 함수
   async getAddressListMoveAll(lat, lon, zoomLevel) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      // });
 
       const { data } = await axiosInstance.get(
         `${BASE_URL}/moveall`,
@@ -44,11 +44,11 @@ export default {
     property_type
   ) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      // });
 
       const { data } = await axiosInstance.get(
         `${BASE_URL}/movepropertyfilter`,
@@ -70,11 +70,11 @@ export default {
     trade_type
   ) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      // });
 
       const { data } = await axiosInstance.get(
         `${BASE_URL}/movetradefilter`,
@@ -98,13 +98,13 @@ export default {
     limit = 200
   ) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-        page,
-        limit,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      //   page,
+      //   limit,
+      // });
       const { data } = await axiosInstance.get(
         `${BASE_URL}/moveclusterpropertyfilter`,
         {
@@ -127,13 +127,13 @@ export default {
     limit = 200
   ) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-        page,
-        limit,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      //   page,
+      //   limit,
+      // });
       const { data } = await axiosInstance.get(
         `${BASE_URL}/moveclustertradefilter`,
         {
@@ -155,13 +155,13 @@ export default {
     limit = 200
   ) {
     try {
-      console.log('API call with params:', {
-        lat,
-        lon,
-        zoomLevel,
-        page,
-        limit,
-      });
+      // console.log('API call with params:', {
+      //   lat,
+      //   lon,
+      //   zoomLevel,
+      //   page,
+      //   limit,
+      // });
       const { data } = await axiosInstance.get(
         `${BASE_URL}/moveclusterall`,
         {

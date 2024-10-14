@@ -6,7 +6,7 @@
         <div class="logo">
           <!-- 로고 부분 유지 -->
           <router-link :to="{ name: 'main' }">
-            <img src="@/assets/jikimi.png" alt="logo" class="dark:hidden" />
+            <img src="@/assets/jikimi.png" alt="logo" />
           </router-link>
         </div>
 

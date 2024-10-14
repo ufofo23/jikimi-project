@@ -31,6 +31,7 @@ public class ReportDTO {
     private String contractName; // 계약자 성명
     private String ownership; // 소유자 성명
     private int price;
+    private String analysisDate; // 분석 날짜
 
     // VO -> DTO
     public static ReportDTO of(ReportVO vo) {
@@ -53,6 +54,7 @@ public class ReportDTO {
                 .contractName(vo.getContractName())
                 .ownership(vo.getOwnership())
                 .price(vo.getPrice())
+                .analysisDate(vo.getAnalysisDate())
                 .build();
     }
 
@@ -77,6 +79,7 @@ public class ReportDTO {
                 .contractName(contractName)
                 .ownership(ownership)
                 .price(price)
+                .analysisDate(analysisDate)
                 .build();
     }
 }

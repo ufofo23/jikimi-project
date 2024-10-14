@@ -50,13 +50,13 @@
     <div class="right-section">
       <div class="map-container">
         <img src="@/assets/map.png" alt="hero" class="map-image" />
-        <router-link :to="{ name: 'map' }" class="button-primary right-button"
-          >안전 진단 받기</router-link
-        >
         <p class="map-description">
           지도를 통해 원하시는 지역의 시세를 확인하고,<br />
           등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
         </p>
+        <router-link :to="{ name: 'map' }" class="button-primary right-button"
+          >안전 진단 받기</router-link
+        >
       </div>
     </div>
   </div>
@@ -198,7 +198,6 @@ onUnmounted(() => {
   stopAutoScroll();
 });
 </script>
-
 <style scoped>
 /* 네비게이션 바의 선 제거 */
 .container,
@@ -274,6 +273,7 @@ body {
   justify-content: center; /* 수직 중앙 정렬 */
   height: 100%; /* 컨테이너의 높이를 100%로 설정 */
   text-align: center; /* 텍스트를 가운데 정렬 */
+  gap: 1rem; /* 요소들 사이의 간격 추가 */
 }
 
 /* 토막 바 스타일 */
@@ -294,7 +294,7 @@ body {
 
 .scroll-wrapper {
   display: flex;
-  animation: scroll 20s linear infinite; /* 20초 동안 부드럽게 스크롤, 반복 */
+  animation: scroll 60s linear infinite; /* 20초 동안 부드럽게 스크롤, 반복 */
 }
 
 /* 애니메이션 정의 */
@@ -397,20 +397,38 @@ body {
 .hero-section {
   display: flex;
   min-height: 100vh;
-
   padding-top: 0; /* 헤더 높이 + 여백 */
   padding-bottom: 20px; /* 하단에 약간의 여백 추가 */
+  align-items: stretch; /* 좌우 섹션의 높이를 동일하게 설정 */
 }
 .hero-compo {
   margin-left: 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-grow: 1; /* 남은 공간을 채우도록 설정 */
 }
+
 .piece-sense-container {
-  margin-top: 2rem;
+  margin-top: auto;
   width: 100%;
+  overflow: visible; /* 컨테이너를 넘어서는 내용도 표시 */
+  padding: 2rem 0; /* 위아래 패딩 추가 */
+}
+
+.scroll-container {
+  width: 100%;
+  overflow: visible; /* 가로, 세로 모두 넘치는 내용 표시 */
+}
+
+.scroll-wrapper {
+  display: flex;
+  animation: scroll 10s linear infinite;
 }
 
 .swiper {
   margin-left: 0;
+  padding: 1rem 0; /* 위아래 패딩을 줄여서 크기 감소 */
 }
 .left-section,
 .right-section {
@@ -418,16 +436,17 @@ body {
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  height: 85vh;
 }
 
 .left-section {
-  background-color: #f5f7fb; /* 밝은 회색 배경 추가 */
+  background-color: #f0f7ff; /* 밝은 회색 배경 추가 */
   border-bottom-right-radius: 80px; /* 우측 하단 모서리 둥글게 */
   width: 50%; /* 전체 화면의 50% */
   overflow: hidden; /* 내부 요소가 섹션을 넘지 않도록 설정 */
+  justify-content: space-between; /* 내용을 위아래로 분산 */
+  min-height: 100vh; /* 화면의 높이를 100%로 설정 */
 }
-
 .right-section {
   background-color: transparent;
   display: flex;
@@ -438,28 +457,39 @@ body {
 }
 
 .hero-title {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .hero-description {
   margin-bottom: 2rem;
 }
 
+.hero-description,
+.map-description {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
 .button-list {
   list-style: none;
   display: flex;
   gap: 1rem;
+
+  margin-bottom: 1rem;
 }
 
 .button-primary,
-.button-secondary {
+.button-secondary,
+.right-button {
   padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
   text-decoration: none;
   display: inline-block;
-  margin-bottom: 2rem; /* 버튼 아래에 여백 추가 */
-  margin-top: 2rem; /* 버튼 아래에 여백 추가 */
+  font-size: 1rem;
+  min-width: 200px;
+  text-align: center;
+  margin-top: 1rem; /* 버튼과 설명 텍스트 사이의 간격 추가 */
 }
 
 .button-secondary {
@@ -493,8 +523,14 @@ body {
 }
 
 .map-image {
-  max-width: 80%;
+  max-width: 85%;
   margin-bottom: 1rem;
+}
+
+/* 추가적인 스타일 개선 */
+.left-section {
+  justify-content: flex-start;
+  padding-top: 2rem;
 }
 
 /* 반응형 스타일 */
@@ -531,12 +567,26 @@ body {
 
   .hero-section {
     flex-direction: column;
+    padding-top: 60px;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .hero-compo {
+    margin-left: 0;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
   }
 
   .left-section,
   .right-section {
+    width: 100%;
     padding: 1rem;
-    width: 100%; /* 작은 화면에서는 각각 100% 차지 */
+  }
+
+  .map-container {
+    width: 100%;
   }
   .card {
     max-width: 100%; /* 카드도 섹션을 넘어가지 않도록 설정 */
