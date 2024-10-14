@@ -56,6 +56,7 @@ public class CopyOfRegisterMultiService {
 
             String productUrl = "/v1/kr/public/ck/real-estate-register/status";
             String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
+
             System.out.println("result = " + result);
 
 
@@ -177,7 +178,8 @@ public class CopyOfRegisterMultiService {
 
     private static String extractMaximumBond(String maximum) {
         Pattern pattern = Pattern.compile("최고액\\s*금([0-9,]+)원");
-        Matcher matcher = pattern.matcher(maximum);
+        String maximum2 = maximum.replaceAll("\\s+", "");
+        Matcher matcher = pattern.matcher(maximum2);
         if (matcher.find()) {
             return matcher.group(1).replace(",", "");
         }

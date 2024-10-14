@@ -995,9 +995,10 @@ select * from report_tbl;
 select * from analysis_tbl;
 desc analysis_tbl;
 select * from property_location;
-select * from dictionary_tbl;
-select * from property_tbl;
 
+# insert into report_tbl (analysis_no,property_no, address, total_score, jeonse_rate, accord_owner, maximum_of_bond, use_type, violation_structure, common_owner, change_owner_count, owner_state, price) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     ==> Parameters: 21(Integer), 345(Integer), 서울특별시 강서구 화곡동 877-2(String), 0(Integer), null, null, 2160000000(Long), 도시형생활주택(단지형다세대)(String), true(Boolean), 단독소유(String), 11(Integer), 29.07(Double), 228000000(Integer)
+# select * from dictionary_tbl;
 
 # INSERT INTO estate.report_tbl (property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type)
 #                     VALUES (3186, 5, '서울특별시 중구 중림동 324-37', 0, 0, null, null, null, null, 216000000, null, 3, 0, '단독소유', 74.34, '공동주택(다세대주택)');
