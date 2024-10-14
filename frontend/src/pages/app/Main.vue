@@ -48,18 +48,17 @@
     </div>
 
     <div class="right-section">
-      <div class="map-container">
-        <img src="@/assets/map.png" alt="hero" class="map-image" />
-        <p class="map-description">
-          지도를 통해 원하시는 지역의 시세를 확인하고,<br />
-          등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
-        </p>
-        <router-link :to="{ name: 'map' }" class="button-primary right-button"
-          >안전 진단 받기</router-link
-        >
-      </div>
+      <img src="@/assets/map.png" alt="hero" class="map-image" />
+      <p class="map-description">
+        지도를 통해 원하시는 지역의 시세를 확인하고,<br />
+        등기부 등본 분석을 통해 안전 진단 리포트를 제공해 드릴게요.
+      </p>
+      <router-link :to="{ name: 'map' }" class="button-primary right-button"
+        >안전 진단 받기</router-link
+      >
     </div>
   </div>
+
   <Footer></Footer>
 </template>
 
