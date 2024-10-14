@@ -5,10 +5,14 @@
       <h2>{{ userName }}님</h2>
       <ul>
         <li>
-          <router-link to="/mypage/myreport" exact-active-class="active-link">My Report</router-link>
+          <router-link to="/mypage/myreport" exact-active-class="active-link"
+            >My Report</router-link
+          >
         </li>
         <li>
-          <router-link to="/mypage/myinfo" exact-active-class="active-link">회원 정보</router-link>
+          <router-link to="/mypage/myinfo" exact-active-class="active-link"
+            >회원 정보</router-link
+          >
         </li>
       </ul>
       <button class="logout-btn" @click="handleLogout">로그아웃</button>
@@ -16,7 +20,8 @@
 
     <!-- Main Content Section -->
     <div class="info-section">
-      <router-view></router-view> <!-- 여기서 메인 컨텐츠가 동적으로 로드됩니다. -->
+      <router-view></router-view>
+      <!-- 여기서 메인 컨텐츠가 동적으로 로드됩니다. -->
     </div>
   </div>
 </template>
@@ -46,7 +51,7 @@ const loadUserInfo = async () => {
 const handleLogout = async () => {
   try {
     authStore.logout();
-    router.push('/login'); 
+    router.push('/login');
   } catch (error) {
     console.error('Failed to logout:', error);
     errorMessage.value = '로그아웃에 실패했습니다. 다시 시도해 주세요.';
@@ -70,6 +75,7 @@ onMounted(async () => {
   height: 100vh;
   padding: 20px;
   background-color: #f7f9fc;
+  align-items: stretch; /* 좌우 섹션의 높이를 동일하게 설정 */
 }
 
 /* 사이드바 스타일 */
@@ -98,7 +104,7 @@ onMounted(async () => {
 
 /* 활성화된 링크 스타일 */
 .active-link {
-  background-color: #0066CC; /* 파란색 배경 */
+  background-color: #0066cc; /* 파란색 배경 */
   color: white; /* 텍스트 색상 변경 */
   border-radius: 5px; /* 모서리 둥글게 */
 }
