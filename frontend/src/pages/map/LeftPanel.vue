@@ -5,99 +5,146 @@
         @address-selected="handleAddressSelected"
       />
     </div>
-
-    <div class="panel-section wishlist-toggle">
-      <div class="section-header" @click="toggleWishlist">
-        <span class="header-text">즐겨찾기</span>
-        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
-
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </span>
-      </div>
-      <div v-if="wishlistVisible" class="section-content">
-        <ul v-if="wishlist.length" class="wishlist">
-          <li
-            v-for="wish in wishlist"
-            :key="wish.propertyNo"
-            @click="selectApartment(wish.propertyAddrAptName)"
-            class="wishlist-item"
+    <div class="panel-content">
+      <!-- 즐겨찾기 섹션 -->
+      <div class="panel-section wishlist-toggle">
+        <div class="section-header" @click="toggleWishlist">
+          <span class="header-text">즐겨찾기</span>
+          <span
+            class="hamburger-menu"
+            :class="{ active: wishlistVisible }"
           >
-            <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
-            <font-awesome-icon
-              class="favorite-icon"
-              :icon="['fas', 'star']"
-              @click.stop="
-                removeFromWishlist(wish.propertyNo)
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </span>
+        </div>
+        <div v-if="wishlistVisible" class="section-content">
+          <ul v-if="wishlist.length" class="wishlist">
+            <li
+              v-for="wish in wishlist"
+              :key="wish.propertyNo"
+              @click="
+                selectApartment(wish.propertyAddrAptName)
               "
-              style="color: #ffd43b"
-            />
-          </li>
-        </ul>
-        <p v-else class="empty-message">즐겨찾기가 비어있습니다.</p>
-      </div>
-    </div>
-
-    <div class="panel-section detail-toggle">
-      <div class="section-header" @click="toggleDetails">
-        <span class="header-text">상세보기</span>
-        <span class="hamburger-menu" :class="{ active: detailsVisible }">
-
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </span>
-      </div>
-      <div v-if="detailsVisible" class="section-content">
-        <div v-if="selectedProperty && selectedProperty.length" class="property-details">
-          <div class="property-header">
-            <h2 class="apart-name">
-              {{ selectedProperty[0].propertyAddrAptName }}
+              class="wishlist-item"
+            >
+              <span @click="favoriteClick(wish)">{{
+                wish.doroJuso
+              }}</span>
               <font-awesome-icon
                 class="favorite-icon"
-                :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
-                :style="{
-                  color: isFavorite ? '#FFD43B' : '#8E8E8E',
-                }"
-                @click="toggleFavorite"
+                :icon="['fas', 'star']"
+                @click.stop="
+                  removeFromWishlist(wish.propertyNo)
+                "
+                style="color: #ffd43b"
               />
-            </h2>
-            <h4 class="address">
-              {{ selectedProperty[0].doroJuso }}
-              <span class="year">(건축년도: {{ selectedProperty[0].buildingYear }})</span>
-            </h4>
-          </div>
-
-          <div class="table-container">
-            <table class="property-table">
-              <thead>
-                <tr>
-                  <th>계약일자</th>
-                  <th>가격</th>
-                  <th>면적</th>
-                  <th>층</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(property, index) in selectedProperty" :key="index">
-                  <td>{{ property.date }}</td>
-                  <td>{{ property.price }}억 원</td>
-                  <td>{{ property.propertyArea }} m²</td>
-                  <td>{{ property.propertyAddrFloor }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div class="analyze-button-container">
-            <button class="analyze-button" @click="analyzeProperty">
-
-              매물 분석하기
-            </button>
-          </div>
+            </li>
+          </ul>
+          <p v-else class="empty-message">
+            즐겨찾기가 비어있습니다.
+          </p>
         </div>
-        <p v-else class="empty-message">매물을 골라주세요.</p>
+      </div>
+      <!-- 상세보기 섹션 -->
+      <div class="panel-section detail-toggle">
+        <div class="section-header" @click="toggleDetails">
+          <span class="header-text">상세보기</span>
+          <span
+            class="hamburger-menu"
+            :class="{ active: isDetailsVisible }"
+          >
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </span>
+        </div>
+        <div
+          v-if="isDetailsVisible"
+          class="section-content"
+        >
+          <div
+            v-if="
+              selectedProperty && selectedProperty.length
+            "
+            class="property-details"
+          >
+            <div class="property-header">
+              <h2 class="address">
+                {{ selectedProperty[0].doroJuso }}
+                <font-awesome-icon
+                  class="favorite-icon"
+                  :icon="
+                    isFavorite
+                      ? ['fas', 'star']
+                      : ['far', 'star']
+                  "
+                  :style="{
+                    color: isFavorite
+                      ? '#FFD43B'
+                      : '#8E8E8E',
+                  }"
+                  @click="toggleFavorite"
+                />
+              </h2>
+              <h4 class="">
+                <span>
+                  {{ selectedProperty[0].propertyType }}
+                </span>
+                <span class="year"
+                  >(건축년도:
+                  {{
+                    selectedProperty[0].buildingYear
+                  }})</span
+                >
+              </h4>
+            </div>
+
+            <div class="table-container">
+              <table class="property-table">
+                <thead>
+                  <tr>
+                    <th>계약일자</th>
+                    <th>가격</th>
+                    <th>면적</th>
+                    <th>층</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(
+                      property, index
+                    ) in selectedProperty"
+                    :key="index"
+                  >
+                    <td>{{ property.date }}</td>
+                    <td>{{ property.price }}억 원</td>
+                    <td>{{ property.propertyArea }} m²</td>
+                    <td>
+                      {{ property.propertyAddrFloor }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p v-else class="empty-message">
+            매물을 골라주세요.
+          </p>
+        </div>
+      </div>
+      <!-- 매물 분석 버튼 -->
+      <div class="analyze-button-container">
+        <button
+          class="analyze-button"
+          @click="analyzeProperty"
+          :disabled="
+            !selectedProperty || !selectedProperty.length
+          "
+        >
+          매물 분석하기
+        </button>
       </div>
     </div>
   </div>
@@ -112,6 +159,7 @@ import api from '@/api/like/likePropertyApi';
 
 const props = defineProps({
   selectedProperty: Array,
+  isDetailsVisible: Boolean,
 });
 
 const emit = defineEmits([
@@ -120,12 +168,12 @@ const emit = defineEmits([
   'updateTransactionType',
   'updateBuildingType',
   'favoriteItem',
+  'update:isDetailsVisible',
 ]);
 
 // 즐겨찾기와 상세보기 토글 상태 관리
 const wishlistVisible = ref(true);
-const detailsVisible = ref(true);
-
+const isDetailsVisible = ref(true);
 // 즐겨찾기 데이터
 const wishlist = ref([]);
 
@@ -133,8 +181,20 @@ const reloadWishlist = async () => {
   try {
     const response = await api.getList();
     wishlist.value = response;
+    // wishlist 로드 후 selectedProperty와 즐겨찾기 동기화
+    if (
+      props.selectedProperty &&
+      props.selectedProperty.length > 0
+    ) {
+      const isInWishlist = wishlist.value.some(
+        (wish) =>
+          wish.locationNo ===
+          props.selectedProperty[0].locationNo
+      );
+      isFavorite.value = isInWishlist;
+    }
   } catch (e) {
-    console.log(e);
+    console.error('Failed to load wishlist:', e);
   }
 };
 
@@ -146,15 +206,13 @@ watch(
   () => props.selectedProperty,
   (newValue) => {
     if (newValue && newValue.length > 0) {
-      for (let wish of wishlist.value) {
-        if (wish.locationNo === newValue[0].locationNo) {
-          isFavorite.value = true;
-        } else {
-          isFavorite.value = false;
-        }
-      }
+      // selectedProperty에 해당하는 매물이 즐겨찾기에 있는지 확인
+      const isInWishlist = wishlist.value.some(
+        (wish) => wish.locationNo === newValue[0].locationNo
+      );
+      isFavorite.value = isInWishlist;
     } else {
-      isFavorite.value = false; // 선택된 아파트가 없으면 기본값 false
+      isFavorite.value = false; // 선택된 매물이 없으면 기본값 false
     }
   },
   { immediate: true }
@@ -163,7 +221,6 @@ watch(
 // 즐겨찾기에서 상세보기
 const favoriteClick = (wish) => {
   emit('favoriteItem', wish);
-  console.log(wish);
 };
 
 // 즐겨찾기에서 아이템 삭제 함수
@@ -186,8 +243,22 @@ const toggleWishlist = () => {
   wishlistVisible.value = !wishlistVisible.value;
 };
 
+// Props 변경 시 로그를 찍기 위해 watch 사용
+watch(
+  () => props.isDetailsVisible,
+  (newVal) => {
+    if (!!newVal) {
+      isDetailsVisible.value = true;
+    } else {
+      isDetailsVisible.value = false;
+    }
+  },
+  { immediate: true } // 초기값도 감지
+);
+
 const toggleDetails = () => {
-  detailsVisible.value = !detailsVisible.value;
+  isDetailsVisible.value = !isDetailsVisible.value;
+  emit('update:isDetailsVisible', !props.isDetailsVisible);
 };
 
 // 즐겨찾기 상태 토글
@@ -208,17 +279,24 @@ const toggleFavorite = async () => {
     reloadWishlist();
   }
   isFavorite.value = !isFavorite.value;
+  // 즐겨찾기 토글이 닫혀있으면 열기
+  if (!wishlistVisible.value) {
+    wishlistVisible.value = true;
+  }
 };
 
 // 아파트 선택 함수
 const selectApartment = (propertyAddrAptName) => {
-  const selected = props.selectedProperty.find(
-    (prop) =>
-      prop.propertyAddrAptName === propertyAddrAptName
-  );
-  if (selected) {
-    emit('update:selectedProperty', [selected]);
-  }
+  setTimeout(() => {
+    const selected = props.selectedProperty.find(
+      (prop) =>
+        prop.propertyAddrAptName === propertyAddrAptName
+    );
+    if (selected) {
+      emit('update:selectedProperty', [selected]);
+    }
+    isDetailsVisible.value = true;
+  }, 100);
 };
 
 // 선택된 주소에 따른 좌표 처리
@@ -261,22 +339,6 @@ const activeFilter = ref(null); // 필터 toggle 관련
 const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트값
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 
-const toggleFilter = (filterType) => {
-  activeFilter.value =
-    activeFilter.value === filterType ? null : filterType;
-};
-
-const selectTransaction = (type) => {
-  selectedTransaction.value = type;
-  // activeFilter.value = null; // 선택이후 닫기
-  emit('updateTransactionType', selectedTransaction.value);
-};
-const selectBuilding = (type) => {
-  selectedBuilding.value = type;
-  // activeFilter.value = null; // 선택이후 닫기
-  emit('updateBuildingType', selectedBuilding.value);
-};
-
 onMounted(() => {
   reloadWishlist();
 });
@@ -287,29 +349,43 @@ onMounted(() => {
   width: 30%;
   height: 100%;
   padding: 24px;
-  position: relative;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* position: relative;
+  overflow-y: auto; */
   background-color: #ffffff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: hidden; /* 전체 패널의 스크롤은 숨기고 각 섹션별로 스크롤 */
+}
 
 .panel-section {
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+  margin-bottom: 16px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-height: 100%; /* Ensure the section uses full available height */
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-shrink: 0;
   padding: 16px 20px;
   background: #1a73e8;
   color: white;
   border-radius: 12px 12px 0 0;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .section-header:hover {
@@ -323,9 +399,22 @@ onMounted(() => {
 }
 
 .section-content {
-  padding: 20px;
+  flex: 1; /* Allow section content to take up remaining space */
+  padding: 10px;
+  overflow-y: auto; /* Make only the content scrollable */
   background: #fff;
   border-radius: 0 0 12px 12px;
+}
+
+/* Wishlist and Details Sections */
+.wishlist-toggle {
+  flex: 2.8; /* 20% */
+  max-height: 28%; /* Fixed percentage height */
+}
+
+.detail-toggle {
+  flex: 6.2; /* 70% */
+  max-height: 62%; /* Fixed percentage height */
 }
 
 .hamburger-menu {
@@ -366,7 +455,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 12px;
   margin-bottom: 8px;
   background: #f8f9fa;
   border-radius: 8px;
@@ -384,20 +473,14 @@ onMounted(() => {
   margin-bottom: 24px;
 }
 
-.apart-name {
-  font-size: 24px;
+.address {
+  font-size: 22px;
   color: #1a73e8;
-  margin-bottom: 8px;
+  margin: 8px 0 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-}
-
-.address {
-  font-size: 14px;
-  color: #666;
-  margin: 0;
 }
 
 .year {
@@ -427,7 +510,7 @@ onMounted(() => {
 }
 
 .property-table td {
-  padding: 12px;
+  padding: 5px;
   text-align: center;
   border-bottom: 1px solid #e0e0e0;
   color: #333;
@@ -445,11 +528,12 @@ onMounted(() => {
 }
 
 .analyze-button-container {
+  flex: 1;
+  max-height: 10%;
   display: flex;
   justify-content: center;
-  margin-top: 24px;
+  align-items: center;
 }
-
 .analyze-button {
   background: #1a73e8;
   color: white;
@@ -459,6 +543,7 @@ onMounted(() => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  cursor: pointer;
   box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
 }
 
@@ -468,6 +553,10 @@ onMounted(() => {
   box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
 }
 
+.analyze-button:disabled {
+  background: #c0c0c0; /* Grey color for disabled state */
+  cursor: not-allowed;
+}
 .favorite-icon {
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -478,7 +567,7 @@ onMounted(() => {
 }
 
 .search {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
