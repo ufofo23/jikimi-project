@@ -56,6 +56,7 @@ public class CopyOfRegisterMultiService {
 
             String productUrl = "/v1/kr/public/ck/real-estate-register/status";
             String result = easyCodef.requestProduct(productUrl, EasyCodefServiceType.DEMO, parameterMap);
+
             System.out.println("result = " + result);
 
 
@@ -90,7 +91,7 @@ public class CopyOfRegisterMultiService {
         ResRegisterEntriesList firstEntry = obj.getData().getResRegisterEntriesList()[0];
 
         String ownerStateStr = getOwnerState(firstEntry);
-        String cleanedInput = ownerStateStr.replace("&", "");
+        String cleanedInput = (ownerStateStr != null) ? ownerStateStr.replace("&", "") : "";
         Double ownerState = Double.parseDouble(cleanedInput);
         List<String> ownershipList = getOwnership(firstEntry);
         String ownership = String.join("", ownershipList);
@@ -119,8 +120,11 @@ public class CopyOfRegisterMultiService {
     }
 
     private static String extractOwnerState(ResRegistrationList registration) {
-        return registration.getResContentsList()[1].getResDetailList()[3].getResContents()
-                .split("㎡")[0].replaceAll(".*?\\s+", "");
+        String content = registration.getResContentsList()[1].getResDetailList()[3].getResContents();
+        content = content.replaceAll("\\s+", "");
+        String beforeSquareMeter = content.split("㎡")[0];
+        String result = beforeSquareMeter.replaceAll(".*?\\s+", "").replaceAll("[^0-9.]", "");
+        return result;
     }
 
     private static List<String> getOwnership(ResRegisterEntriesList entry) {
@@ -174,7 +178,8 @@ public class CopyOfRegisterMultiService {
 
     private static String extractMaximumBond(String maximum) {
         Pattern pattern = Pattern.compile("최고액\\s*금([0-9,]+)원");
-        Matcher matcher = pattern.matcher(maximum);
+        String maximum2 = maximum.replaceAll("\\s+", "");
+        Matcher matcher = pattern.matcher(maximum2);
         if (matcher.find()) {
             return matcher.group(1).replace(",", "");
         }

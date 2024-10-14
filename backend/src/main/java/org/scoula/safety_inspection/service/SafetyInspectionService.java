@@ -17,6 +17,23 @@ import java.util.List;
 import java.util.Map;
 
 
+
+import lombok.RequiredArgsConstructor;
+import org.scoula.like.report.service.LikeReportService;
+import org.scoula.report.mapper.ReportMapper;
+import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
+import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerMultiService;
+import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterGeneralService;
+import org.scoula.safety_inspection.infra.cors.service.CopyOfRegisterMultiService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.scoula.safety_inspection.infra.analysis.service.AnalysisService;
+import org.scoula.report.service.ReportService;
+import org.scoula.report.domain.ReportDTO;
+
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class SafetyInspectionService {
@@ -39,21 +56,21 @@ public class SafetyInspectionService {
         try {
             String propertyNo = (String) payload.get("propertyNo");
             Integer analysisNo = analysisService.processPropertyAnalysis(propertyNo, payload);
-            List<Map<String, String>> uniqueCodes = extractUnicodeService.getUniqueCode(payload);
-            if (!uniqueCodes.isEmpty()) {
-                String realtyType = uniqueCodes.get(0).get("realtyType");
-                System.out.println("realtyType = " + realtyType);
 
-                if (realtyType != null && !realtyType.equals("-1")) {
-                    if ("1".equals(realtyType)) {
-                        copyOfRegisterMultiService.getCopyOfRegister(payload, analysisNo);
-                        buildingManagementLedgerMultiService.getBuildingLedger(payload, analysisNo);
-                        System.out.println("SafetyInspectionService.processSafetyInspection");
-                    } else if ("0".equals(realtyType)) {
-                        copyOfRegisterGeneralService.getCopyOfRegister(payload, analysisNo);
-                        buildingManagementLedgerGeneralService.getBuildingLedger(payload, analysisNo);
-                    }
+            String realtyType = (String) payload.get("realtyType");
+            System.out.println("realtyType = " + realtyType);
+
+            if (realtyType != null && !realtyType.equals("-1")) {
+                if ("1".equals(realtyType)) {
+                    System.out.println("resultType : 1");
+                    copyOfRegisterMultiService.getCopyOfRegister(payload, analysisNo);
+                    buildingManagementLedgerMultiService.getBuildingLedger(payload, analysisNo);
+                } else if ("0".equals(realtyType)) {
+                    System.out.println("resultType : 0");
+                    copyOfRegisterGeneralService.getCopyOfRegister(payload, analysisNo);
+                    buildingManagementLedgerGeneralService.getBuildingLedger(payload, analysisNo);
                 }
+            } else {
             }
 
             // 보고서 생성 및 저장

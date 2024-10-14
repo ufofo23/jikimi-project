@@ -146,6 +146,10 @@
             제출
           </button>
         </div>
+
+        <div v-if="errorMessage.value" class="error-message">
+          {{ errorMessage.value }}
+        </div>
       </div>
     </div>
 
@@ -163,7 +167,7 @@
           <p class="status">상태: {{ address.resState }}</p>
         </div>
         <button
-          @click="sendUniqueCode(address.commonUniqueNo)"
+          @click="sendUniqueCode(address.commonUniqueNo, address.realtyType)"
           class="select-button"
           :disabled="isLoading"
         >
@@ -297,7 +301,7 @@ const handleProgressType = (type) => {
 };
 
 // 공통 payload 생성 함수
-const generatePayload = (uniqueCode) => {
+const generatePayload = (uniqueCode,realtyType) => {
   const jibunAddressParts = selectedAddress.value.jibunJuso.split(' ');
   const addr_sido = jibunAddressParts[0].match(/.*[시도]/)[0] || '';
   const addr_dong = jibunAddressParts[1] || '';
@@ -332,6 +336,7 @@ const generatePayload = (uniqueCode) => {
     propertyNo: selectedAddress.value.propertyNo,
     price,
     analysisDate,
+    realtyType,
   };
 
   return payload;
@@ -342,6 +347,7 @@ const submitForm = async () => {
   if (isLoading.value) return;
 
   isLoading.value = true;
+  errorMessage.value = '';
   try {
     const payload = generatePayload();
     console.log(payload);
@@ -354,38 +360,38 @@ const submitForm = async () => {
       }
     );
 
-    let checkState = true;
-    for (let address of response.data) {
-      if (address.resState == '-1') {
-        checkState = false;
-      }
-    }
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      addresses.value = response.data.filter(address => 
+        address.commonUniqueNo && address.commAddrLotNumber && address.resState
+      ).map(address => ({
+        ...address,
+        realtyType: address.realtyType
+      }));
 
-    if (checkState) {
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        addresses.value = response.data;
-        showAddressForm.value = false; // 폼 화면 숨기기
+      if (addresses.value.length > 0) {
+        showAddressForm.value = false; 
       } else {
-        errorMessage.value = '조회된 주소가 없습니다.';
+        alert('해당 정보로 유효한 주소를 찾을 수 없습니다. 입력 내용을 확인하고 다시 시도해주세요.');
       }
     } else {
-      errorMessage.value =
-        '오류 : 주소 확인 후 다시 시도해주세요. 오류가 반복될 경우 문의바랍니다. 1577-1577';
+      resetForm(false);
+      alert('서버에서 주소 정보를 찾을 수 없습니다. 입력한 정보를 다시 확인해주세요.');
     }
   } catch (error) {
-    handleError(error, '주소 검증에 실패했습니다.');
+    handleError(error, '알 수 없는 오류가 발생했습니다. 자세한 오류 내역은 서비스 번호로 전화주세요. 1577-1577');
+    resetForm(false);
   } finally {
     isLoading.value = false;
   }
 };
 
 // 유니크 코드 전송
-const sendUniqueCode = async (uniqueCode) => {
+const sendUniqueCode = async (uniqueCode, realtyType) => {
   if (isLoading.value) return;
   isLoading.value = true;
   isLoadingCORS.value = true;
   try {
-    const payload = generatePayload(uniqueCode);
+    const payload = generatePayload(uniqueCode,realtyType);
     console.log('Sending Unique Code with:', payload);
     const response = await axiosInstance.post(
       '/api/safety-inspection/cors',
@@ -438,19 +444,39 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
+.error-message {
+  color: red;
+  background-color: #ffe0e0;
+  border: 1px solid red;
+  padding: 10px;
+  margin-top: 10px;
+  font-weight: bold;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-error {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: red;
+}
+
 .address-search-container {
-  max-width: 30%;
+  max-width: 800px;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Noto Sans KR', sans-serif;
   background-color: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: 50vh;
 }
 
 .form-section {
-  background-color: #F0F7FF;
+  background-color: #ffffff;
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);

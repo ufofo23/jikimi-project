@@ -97,6 +97,29 @@
         <p v-else class="empty-message">매물을 골라주세요.</p>
       </div>
     </div>
+
+    <div class="panel-section image-search-toggle">
+      <div class="section-header" @click="toggleImageSearch">
+        <span class="header-text">관련 이미지</span>
+        <span class="hamburger-menu" :class="{ active: imageSearchVisible }">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </span>
+      </div>
+      <div v-if="imageSearchVisible" class="section-content">
+        <div v-if="isImageLoading" class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <div v-else-if="imageResults.length" class="image-results">
+          <div v-for="image in imageResults" :key="image.link" class="image-result">
+            <img :src="image.thumbnail" :alt="image.title" @error="handleImageError" @click="openImageModal(image) ">
+          </div>
+        </div>
+        <p v-else class="empty-message">관련 이미지가 없습니다.</p>
+      </div>
+    </div>
+
     <div class="panel-section blog-search-toggle">
       <div class="section-header" @click="toggleBlogSearch">
         <span class="header-text">관련 블로그</span>
@@ -171,36 +194,7 @@
         <p v-else class="empty-message">주변 정보가 없습니다.</p>
       </div>
     </div>
-    <div class="panel-section image-search-toggle">
-      <div class="section-header" @click="toggleImageSearch">
-        <span class="header-text">관련 이미지</span>
-        <span class="hamburger-menu" :class="{ active: imageSearchVisible }">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </span>
-      </div>
-      <div v-if="imageSearchVisible" class="section-content">
-        <div v-if="isImageLoading" class="loading-spinner">
-          <div class="spinner"></div>
-        </div>
-        <div v-else-if="imageResults.length" class="image-results">
-          <div
-            v-for="image in imageResults"
-            :key="image.link"
-            class="image-result"
-          >
-            <img
-              :src="image.thumbnail"
-              :alt="image.title"
-              @error="handleImageError"
-              @click="openImageModal(image)"
-            />
-          </div>
-        </div>
-        <p v-else class="empty-message">관련 이미지가 없습니다.</p>
-      </div>
-    </div>
+
   </div>
   <!-- Image Modal -->
   <div v-if="selectedImage" class="image-modal" @click="closeImageModal">

@@ -36,6 +36,26 @@
                                   on pl.location_no = pr.location_no
         where pl.location_no = #{id}
     </select>
+    <select id="getReportAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
+        select pl.location_no,
+               pr.property_no,
+               pl.property_doro_juso          as doro_juso,
+               pl.jibun_juso,
+               pr.formated_price              as price,
+               pr.formated_date               AS date,
+               pr.property_building_area      as property_area,
+               pr.property_addr_floor,
+               pr.building_year,
+               pr.property_addr_building_name as property_addr_apt_name,
+               pr.property_type,
+               pl.zipcode,
+               pl.x_coordinate,
+               pl.y_coordinate
+        from property_location as pl
+                 right outer join property_tbl as pr
+                                  on pl.location_no = pr.location_no
+        where pr.property_no = #{id}
+    </select>
 
 
     <select id="getAddressListMoveAll" resultType="org.scoula.map.domain.MapVO">
