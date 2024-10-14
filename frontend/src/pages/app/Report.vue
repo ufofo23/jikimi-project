@@ -38,7 +38,7 @@
               <div class="faq-icon">
                 <svg
                   class="icon"
-                  :class="{ 'rotate-up': openPanels.includes(1) }"
+                  :class="{ 'rotate-180': openPanels[1] }"
                   width="17"
                   height="10"
                   viewBox="0 0 17 10"
@@ -105,7 +105,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(2),
+                    'rotate-180': openPanels[2],
                   }"
                   width="17"
                   height="10"
@@ -159,8 +159,13 @@
           <div
             class="faq-card"
             :class="{
-              'faq-card-danger': sampleReportData.accordOwner === false,
-              'faq-card-success': sampleReportData.accordOwner === true,
+              'faq-card-null': sampleReportData.accordOwner === null,
+              'faq-card-danger':
+                sampleReportData.accordOwner !== null &&
+                sampleReportData.accordOwner === false,
+              'faq-card-success':
+                sampleReportData.accordOwner !== null &&
+                sampleReportData.accordOwner === true,
             }"
           >
             <button @click="togglePanel(3)" class="faq-btn">
@@ -168,7 +173,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(3),
+                    'rotate-180': openPanels[3],
                   }"
                   width="17"
                   height="10"
@@ -188,7 +193,12 @@
                   <span
                     class="summary"
                     :style="{
-                      color: !sampleReportData.accordOwner ? 'red' : 'green',
+                      color:
+                        sampleReportData.accordOwner !== null
+                          ? !sampleReportData.accordOwner
+                            ? 'red'
+                            : 'green'
+                          : 'black',
                     }"
                   >
                     {{
@@ -239,7 +249,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(4),
+                    'rotate-180': openPanels[4],
                   }"
                   width="17"
                   height="10"
@@ -302,13 +312,13 @@
           <div
             class="faq-card"
             :class="{
+              'faq-card-null': sampleReportData.useType === null,
               'faq-card-success':
                 sampleReportData.useType &&
                 (sampleReportData.useType.includes('주택') ||
                   sampleReportData.useType.includes('아파트') ||
                   sampleReportData.useType.includes('주거') ||
                   sampleReportData.useType.includes('오피스텔')),
-              'faq-card-danger': sampleReportData.useType == null,
             }"
           >
             <button @click="togglePanel(5)" class="faq-btn">
@@ -316,7 +326,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(5),
+                    'rotate-180': openPanels[5],
                   }"
                   width="17"
                   height="10"
@@ -383,7 +393,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(6),
+                    'rotate-180': openPanels[6],
                   }"
                   width="17"
                   height="10"
@@ -446,7 +456,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(7),
+                    'rotate-180': openPanels[7],
                   }"
                   width="17"
                   height="10"
@@ -515,7 +525,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(8),
+                    'rotate-180': openPanels[8],
                   }"
                   width="17"
                   height="10"
@@ -572,7 +582,7 @@
                 <svg
                   class="icon"
                   :class="{
-                    'rotate-180': openPanels.includes(9),
+                    'rotate-180': openPanels[9],
                   }"
                   width="17"
                   height="10"
@@ -642,9 +652,8 @@ const router = useRouter();
 // MyReport 페이지에서 reportNo 받아오기!!!!!
 const sampleNo = cr.params.no;
 // 샘플 데이터 <-- reportNo로 바꿔버리자!!!!!!
-
-// 여러 패널의 상태를 관리하는 배열 (각 패널의 열림 상태를 저장)
-const openPanels = ref([]);
+// 여러 패널의 상태를 관리하는 객체 (각 패널의 열림 상태를 저장)
+const openPanels = ref({});
 // 점수 상태를 저장 (필요시 점수 값을 동적으로 변경 가능)
 const score = ref(75); // 예: 65점
 
@@ -1005,6 +1014,7 @@ body {
 
 .faq-icon {
   margin-right: 20px;
+  transition: transform 0.3s ease;
 }
 
 .faq-title {
@@ -1093,6 +1103,10 @@ body {
 
 .btn-primary:hover {
   background-color: #3a66cc;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
 }
 
 @media (max-width: 768px) {
