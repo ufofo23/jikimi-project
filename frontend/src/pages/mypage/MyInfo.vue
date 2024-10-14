@@ -2,14 +2,17 @@
   <div>
     <h2>회원정보</h2>
     <form @submit.prevent="updateUserInfo" class="form">
-      <div class="form-group">
-        <label for="name">이름</label>
-        <input type="text" id="name" v-model="userName" disabled />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">이름</label>
+          <input type="text" id="name" v-model="userName" disabled />
+        </div>
+        <div class="form-group">
+          <label for="email">이메일</label>
+          <input type="email" id="email" v-model="userEmail" disabled />
+        </div>
       </div>
-      <div class="form-group">
-        <label for="email">이메일</label>
-        <input type="email" id="email" v-model="userEmail" disabled />
-      </div>
+
       <div class="form-group radio-button">
         <label>성별</label>
         <div class="radio-group">
@@ -27,23 +30,27 @@
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <label for="birthday">생년월일</label>
-        <input type="date" id="birthday" v-model="userBirthday" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="birthday">생년월일</label>
+          <input type="date" id="birthday" v-model="userBirthday" />
+        </div>
+        <div class="form-group">
+          <label for="phone">전화번호</label>
+          <input
+            type="text"
+            id="phone"
+            v-model="userPhone"
+            @input="formatPhoneNumber"
+            placeholder="010-0000-0000"
+          />
+        </div>
       </div>
-      <div class="form-group">
-        <label for="phone">전화번호</label>
-        <input
-          type="text"
-          id="phone"
-          v-model="userPhone"
-          @input="formatPhoneNumber"
-          placeholder="010-0000-0000"
-        />
-      </div>
-      <div class="delete-account">
+
+      <div class="button-group">
         <button type="submit" class="update-btn">정보 업데이트</button>
-        <button type="submit" class="delete-btn" @click="handleAccountDelete">
+        <button type="button" class="delete-btn" @click="handleAccountDelete">
           회원 탈퇴하기
         </button>
       </div>
@@ -148,14 +155,16 @@ const handleAccountDelete = async () => {
 </script>
 
 <style scoped>
-/* 메인 컨테이너 스타일 */
 .mypage-container {
   display: flex;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 40px;
   background-color: #f7f9fc;
+  align-items: stretch;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-/* 사이드바 스타일 */
 .sidebar {
   width: 20%;
   background-color: #f0f4f8;
@@ -168,6 +177,7 @@ const handleAccountDelete = async () => {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 20px;
+  color: #030f1d;
 }
 
 .sidebar ul {
@@ -182,28 +192,21 @@ const handleAccountDelete = async () => {
 .sidebar ul li a {
   text-decoration: none;
   font-size: 16px;
-  color: #333;
-  transition: color 0.3s;
+
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .sidebar ul li a:hover {
-  color: #007bff;
-}
-
-.sidebar ul li .info-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  background-color: #1e32e8;
   color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: left;
 }
 
-.sidebar ul li .info-btn.active {
-  background-color: #0056b3;
+.sidebar ul li a.active-link {
+  background-color: #1e32e8;
+  color: white;
 }
 
 .logout-btn {
@@ -215,11 +218,11 @@ const handleAccountDelete = async () => {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  color: #030f1d;
 }
 
-/* 메인 정보 영역 스타일 */
 .info-section {
-  width: 80%;
+  width: 60%;
   background-color: white;
   padding: 40px;
   border-radius: 10px;
@@ -233,7 +236,7 @@ const handleAccountDelete = async () => {
 
 .info-section p {
   margin-bottom: 30px;
-  color: #6c757d;
+  color: #1e32e8;
 }
 
 .form-group {
@@ -244,7 +247,7 @@ const handleAccountDelete = async () => {
   display: block;
   margin-bottom: 10px;
   font-size: 16px;
-  color: #333;
+  color: #1e32e8;
 }
 
 .form-group input {
@@ -254,12 +257,11 @@ const handleAccountDelete = async () => {
   font-size: 16px;
 }
 
-/* 라디오 버튼 스타일 */
+/* 라디오 버튼 스타일 수정 */
 .radio-group {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  width: 100%;
+  gap: 80px; /* 라디오 버튼 선택지 간 거리 조정 */
 }
 
 .radio-button input[type='radio'] {
@@ -293,34 +295,26 @@ const handleAccountDelete = async () => {
 }
 
 .radio-button input[type='radio']:checked + .radio {
-  border-color: #28a745;
+  border-color: #283ba7;
   background-color: #fff;
-  box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.6),
-    0px 0px 20px rgba(40, 167, 69, 0.4);
+
   transition: box-shadow 0.3s ease-in-out;
 }
 
 .radio-button input[type='radio']:checked + .radio::before {
-  background-color: #28a745;
+  background-color: #2626e2;
   opacity: 1;
   box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.8);
 }
-
+.button-group {
+  display: flex;
+  justify-content: flex-start; /* 버튼을 왼쪽으로 정렬 */
+  gap: 20px;
+  margin-top: 40px;
+}
 .delete-account {
   margin-top: 40px;
   text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
-}
-
-.update-btn {
-  background-color: #374d6f;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline; /* 버튼을 오른쪽에 고정 */
-  align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-  margin-right: 20px;
 }
 
 .form {
@@ -328,14 +322,53 @@ const handleAccountDelete = async () => {
   flex-direction: column;
 }
 
-.delete-btn {
-  background-color: #dc3545;
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.update-btn {
+  background-color: #4caf50;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  display: inline-block; /* 버튼을 오른쪽에 고정 */
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.update-btn:hover {
+  background-color: #45a049;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
 }
 
 @media (max-width: 768px) {
