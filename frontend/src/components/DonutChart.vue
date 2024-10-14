@@ -10,12 +10,7 @@
 
 <script setup>
 import { Doughnut } from 'vue-chartjs';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { computed } from 'vue';
 
 // Chart.js 플러그인 등록
@@ -72,14 +67,8 @@ const chartData = computed(() => {
       datasets: [
         {
           data: [props.score, 100 - props.score],
-          backgroundColor: [
-            backgroundColor.value,
-            '#E0E0E0',
-          ],
-          hoverBackgroundColor: [
-            backgroundColor.value,
-            '#BDBDBD',
-          ],
+          backgroundColor: [backgroundColor.value, '#E0E0E0'],
+          hoverBackgroundColor: [backgroundColor.value, '#BDBDBD'],
           borderWidth: 0,
         },
       ],
@@ -122,16 +111,23 @@ const textCenterPlugin = {
     if (score === 0) {
       ctx.fillStyle = '#FF0000';
       ctx.font = 'bold 35px sans-serif'; // 점수 크기 키우기
-      ctx.fillText('⚠️', centerX - 25, centerY - 50); // 경고 아이콘 추가
+      ctx.fillText('⚠️', centerX - 20, centerY - 50); // 경고 아이콘 추가
     }
 
     ctx.fillStyle = colorToUse; // 텍스트 색상 검정색으로 변경
-    ctx.font = 'bold 30px sans-serif'; // 점수 크기 키우기
+    ctx.font = 'bold 40px sans-serif'; // 점수 크기 키우기
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`${score}점`, centerX, centerY - 10); // 점수 표시
-    ctx.font = '25px sans-serif'; // 문구 크기 설정
-    ctx.fillText(textToDisplay, centerX, centerY + 20); // 문구 표시
+
+    if (score === 0) {
+      ctx.font = '55px sans-serif';
+      ctx.fillText(textToDisplay, centerX, centerY + 20); // 문구 표시
+    } else {
+      ctx.fillText(`${score}점`, centerX, centerY - 10); // 점수 표시
+      ctx.font = '25px sans-serif'; // 문구 크기 설정
+      ctx.fillText(textToDisplay, centerX, centerY + 30); // 문구 표시
+    }
+
     ctx.restore();
   },
 };
