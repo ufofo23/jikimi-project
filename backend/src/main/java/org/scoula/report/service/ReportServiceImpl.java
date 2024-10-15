@@ -116,10 +116,12 @@ public class ReportServiceImpl implements ReportService {
             } else {
 
                 String ownership = cor.getOwnership();
-
+                ownership = ownership.replace(" ", "");
                 report.setOwnership(ownership);
+
                 // 정규 표현식을 사용하여 이름 부분만 추출
-                Pattern pattern = Pattern.compile("(\\S+)(?= \\([^)]*\\))");
+                Pattern pattern = Pattern.compile("([^(]+)\\s*\\(.*?\\)");
+
                 Matcher matcher = pattern.matcher(ownership);
 
                 // 결과를 저장할 List

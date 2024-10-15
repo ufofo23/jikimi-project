@@ -1097,3 +1097,16 @@ select  * from report_tbl;
 # update report_tbl set analysis_date = (CURRENT_TIMESTAMP) WHERE analysis_date is NULL;
 
 
+# select * from cor_tbl;
+# select * from bml_tbl;
+# select * from report_tbl;
+# select * from analysis_tbl;
+#
+#
+# INSERT INTO estate.cor_tbl (cor_no, analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond) VALUES (1, 1, 84.972, '김미선 (공유자)이보영 (공유자)', '공동소유', 2, 0);
+# INSERT INTO estate.bml_tbl (bml_no, analysis_no, violation_structure, use_type) VALUES (1, 1, 0, '공동주택(아파트)');
+# INSERT INTO estate.report_tbl (report_no, property_no, analysis_no, address, violation_structure, total_score, deposit, rent, price, jeonse_rate, maximum_of_bond, ownership, change_owner_count, accord_owner, common_owner, owner_state, use_type, analysis_date) VALUES (1, 1223, 1, '서울특별시 중구 만리동2가 273', 0, 0, null, null, 1648000000, 74, 0, null, 2, 0, '공동소유', 84.972, '공동주택(아파트)', '2024. 10. 15.');
+# INSERT INTO estate.analysis_tbl (analysis_no, property_no) VALUES (1, 1223);
+#
+
+

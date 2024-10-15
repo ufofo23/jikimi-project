@@ -35,75 +35,137 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container d-flex flex-column min-vh-100">
-    <div class="flex-grow-1">
-      <h1 class="mt-4 text-center">{{ article.dictionaryTitle }}</h1>
+  <div class="dictionary-detail">
+    <div class="content-wrapper">
+      <h1 class="title">{{ article.dictionaryTitle }}</h1>
 
-      <div v-if="isLoading" class="text-center my-4">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">로딩 중...</span>
-        </div>
+      <div v-if="isLoading" class="loader">
+        <div class="spinner"></div>
+        <span>로딩 중...</span>
       </div>
 
       <div
         v-else-if="errorMessage"
-        class="alert alert-danger my-4"
+        class="error-message"
         role="alert"
       >
         {{ errorMessage }}
       </div>
 
-      <div v-else class="content my-4">{{ article.dictionaryContent }}</div>
+      <div v-else class="content">
+        <p>{{ article.dictionaryContent }}</p>
+      </div>
     </div>
 
     <div class="button-container">
       <button
-        class="btn btn-primary"
+        class="btn-back"
         @click="back"
         aria-label="목록으로 돌아가기"
       >
-        <i class="fa-solid fa-list"></i> 목록
+        <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container {
-  max-width: 800px; /* 최대 너비 설정 */
-  margin: 0 auto; /* 중앙 정렬 */
-  padding: 0 15px; /* 좌우 패딩 추가 */
+.dictionary-detail {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.content-wrapper {
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #3498db; /* 하늘색 브랜드 컬러 */
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+}
+
+.loader {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* 화면 전체 높이 차지 */
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  background-color: #ffecec;
+  color: #ff6b6b;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  margin: 1rem 0;
 }
 
 .content {
-  white-space: pre-line;
-  margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
-  max-width: 800px; /* 내용의 최대 너비를 제한하여 읽기 편하게 */
-  text-align: justify; /* 내용이 균등하게 정렬되도록 설정 */
-  margin-bottom: 10px;
-}
-
-.content.my-4 {
-  padding-bottom: 30px;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  line-height: 1.6;
+  color: #333;
 }
 
 .button-container {
   display: flex;
-  justify-content: flex-end; /* 버튼을 우측으로 정렬 */
-  padding: 20px 0; /* 상하 패딩 추가 */
-  border-bottom: none;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
-.attach {
-  font-size: 0.8rem;
+.btn-back {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.flex-grow-1 {
-  border-bottom: none;
+.btn-back:hover {
+  background-color: #2980b9;
 }
 
+.btn-back i {
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .dictionary-detail {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+}
 </style>

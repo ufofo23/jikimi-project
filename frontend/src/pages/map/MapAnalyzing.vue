@@ -191,6 +191,13 @@
       <p>잠시만 기다려주세요.</p>
     </div>
   </div>
+
+  <div v-if="showCustomAlert" class="custom-alert-overlay">
+      <div class="custom-alert">
+        <p>{{ customAlertMessage }}</p>
+        <button @click="closeCustomAlert" class="custom-alert-button">확인</button>
+      </div>
+  </div>
 </template>
 
 <script setup>
@@ -214,6 +221,18 @@ const jeonsePrice = ref('');
 const names = ref(['']);
 const formattedDeposit = ref('');
 const isLoadingCORS = ref(false);
+const showCustomAlert = ref(false);
+const customAlertMessage = ref('');
+
+const displayCustomAlert = (message) => {
+  customAlertMessage.value = message;
+  showCustomAlert.value = true;
+  console.log('displayCustomAlert called:', message);
+};
+
+const closeCustomAlert = () => {
+  showCustomAlert.value = false;
+};
 
 // 뒤로가기 함수 추가
 const goBack = () => {
@@ -371,11 +390,12 @@ const submitForm = async () => {
       if (addresses.value.length > 0) {
         showAddressForm.value = false; 
       } else {
-        alert('해당 정보로 유효한 주소를 찾을 수 없습니다. 입력 내용을 확인하고 다시 시도해주세요.');
+        resetForm(false);
+        displayCustomAlert('해당 정보로 유효한 주소를 찾을 수 없습니다. 입력 내용을 확인하고 다시 시도해주세요.');
       }
     } else {
       resetForm(false);
-      alert('서버에서 주소 정보를 찾을 수 없습니다. 입력한 정보를 다시 확인해주세요.');
+      displayCustomAlert('서버에서 주소를 찾을 수 없습니다. 입력 내용을 확인하고 다시 시도해주세요.');
     }
   } catch (error) {
     handleError(error, '알 수 없는 오류가 발생했습니다. 자세한 오류 내역은 서비스 번호로 전화주세요. 1577-1577');
@@ -444,26 +464,51 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
-.error-message {
-  color: red;
-  background-color: #ffe0e0;
-  border: 1px solid red;
-  padding: 10px;
-  margin-top: 10px;
-  font-weight: bold;
-  border-radius: 5px;
+.custom-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
-.close-error {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-  color: red;
+.custom-alert {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
+  width: 400px;
+  text-align: center;
+  z-index: 10000;
 }
+
+.custom-alert p {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+.custom-alert-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.custom-alert-button:hover {
+  background-color: #0056b3;
+}
+
 
 .address-search-container {
   max-width: 800px;
