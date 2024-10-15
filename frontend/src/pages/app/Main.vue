@@ -421,7 +421,7 @@ img {
 
 .scroll-wrapper {
   display: flex;
-  /* animation: scroll 10s linear infinite; */
+  animation: scroll 30s linear infinite;
 }
 
 .swiper {
