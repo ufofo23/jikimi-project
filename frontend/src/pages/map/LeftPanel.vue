@@ -1,13 +1,18 @@
 <template>
   <div class="left-panel">
     <div class="search">
-      <SearchBar @address-selected="handleAddressSelected" />
+      <SearchBar
+        @address-selected="handleAddressSelected"
+      />
     </div>
 
     <div class="panel-section wishlist-toggle">
       <div class="section-header" @click="toggleWishlist">
         <span class="header-text">즐겨찾기</span>
-        <span class="hamburger-menu" :class="{ active: wishlistVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: wishlistVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -18,31 +23,42 @@
           <li
             v-for="wish in wishlist"
             :key="wish.propertyNo"
-            @click="selectApartment(wish.propertyAddrAptName)"
+            @click="
+              selectApartment(wish.propertyAddrAptName)
+            "
             class="wishlist-item"
           >
-            <span @click="favoriteClick(wish)">{{ wish.doroJuso }}</span>
+            <span @click="favoriteClick(wish)">{{
+              wish.doroJuso
+            }}</span>
             <font-awesome-icon
               class="favorite-icon"
               :icon="['fas', 'star']"
-              @click.stop="removeFromWishlist(wish.propertyNo)"
+              @click.stop="
+                removeFromWishlist(wish.propertyNo)
+              "
               style="color: #ffd43b"
             />
           </li>
         </ul>
-        <p v-else class="empty-message">즐겨찾기가 비어있습니다.</p>
+        <p v-else class="empty-message">
+          즐겨찾기가 비어있습니다.
+        </p>
       </div>
     </div>
     <div class="panel-section detail-toggle">
       <div class="section-header" @click="toggleDetails">
         <span class="header-text">상세보기</span>
-        <span class="hamburger-menu" :class="{ active: detailsVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: isDetailsVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
-      <div v-if="detailsVisible" class="section-content">
+      <div v-if="isDetailsVisible" class="section-content">
         <div
           v-if="selectedProperty && selectedProperty.length"
           class="property-details"
@@ -52,7 +68,11 @@
               {{ selectedProperty[0].propertyAddrAptName }}
               <font-awesome-icon
                 class="favorite-icon"
-                :icon="isFavorite ? ['fas', 'star'] : ['far', 'star']"
+                :icon="
+                  isFavorite
+                    ? ['fas', 'star']
+                    : ['far', 'star']
+                "
                 :style="{
                   color: isFavorite ? '#FFD43B' : '#8E8E8E',
                 }"
@@ -62,7 +82,10 @@
             <h4 class="address">
               {{ selectedProperty[0].doroJuso }}
               <span class="year"
-                >(건축년도: {{ selectedProperty[0].buildingYear }})</span
+                >(건축년도:
+                {{
+                  selectedProperty[0].buildingYear
+                }})</span
               >
             </h4>
           </div>
@@ -78,7 +101,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(property, index) in selectedProperty" :key="index">
+                <tr
+                  v-for="(
+                    property, index
+                  ) in selectedProperty"
+                  :key="index"
+                >
                   <td>{{ property.date }}</td>
                   <td>{{ property.price }}억 원</td>
                   <td>{{ property.propertyArea }} m²</td>
@@ -89,41 +117,72 @@
           </div>
 
           <div class="analyze-button-container">
-            <button class="analyze-button" @click="analyzeProperty">
+            <button
+              class="analyze-button"
+              @click="analyzeProperty"
+            >
               매물 분석하기
             </button>
           </div>
         </div>
-        <p v-else class="empty-message">매물을 골라주세요.</p>
+        <p v-else class="empty-message">
+          매물을 골라주세요.
+        </p>
       </div>
     </div>
 
     <div class="panel-section image-search-toggle">
-      <div class="section-header" @click="toggleImageSearch">
+      <div
+        class="section-header"
+        @click="toggleImageSearch"
+      >
         <span class="header-text">관련 이미지</span>
-        <span class="hamburger-menu" :class="{ active: imageSearchVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: imageSearchVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
-      <div v-if="imageSearchVisible" class="section-content">
+      <div
+        v-if="imageSearchVisible"
+        class="section-content"
+      >
         <div v-if="isImageLoading" class="loading-spinner">
           <div class="spinner"></div>
         </div>
-        <div v-else-if="imageResults.length" class="image-results">
-          <div v-for="image in imageResults" :key="image.link" class="image-result">
-            <img :src="image.thumbnail" :alt="image.title" @error="handleImageError" @click="openImageModal(image) ">
+        <div
+          v-else-if="imageResults.length"
+          class="image-results"
+        >
+          <div
+            v-for="image in imageResults"
+            :key="image.link"
+            class="image-result"
+          >
+            <img
+              :src="image.thumbnail"
+              :alt="image.title"
+              @error="handleImageError"
+              @click="openImageModal(image)"
+            />
           </div>
         </div>
-        <p v-else class="empty-message">관련 이미지가 없습니다.</p>
+        <p v-else class="empty-message">
+          관련 이미지가 없습니다.
+        </p>
       </div>
     </div>
 
     <div class="panel-section blog-search-toggle">
       <div class="section-header" @click="toggleBlogSearch">
         <span class="header-text">관련 블로그</span>
-        <span class="hamburger-menu" :class="{ active: blogSearchVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: blogSearchVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
@@ -133,52 +192,95 @@
         <div v-if="isLoading" class="loading-spinner">
           <div class="spinner"></div>
         </div>
-        <div v-else-if="blogPosts.length" class="blog-posts">
-          <div v-for="post in blogPosts" :key="post.link" class="blog-post">
+        <div
+          v-else-if="blogPosts.length"
+          class="blog-posts"
+        >
+          <div
+            v-for="post in blogPosts"
+            :key="post.link"
+            class="blog-post"
+          >
             <a
               :href="post.link"
               target="_blank"
               rel="noopener noreferrer"
               class="blog-post-link"
             >
-              <h3 class="blog-post-title" v-html="post.title"></h3>
-              <p class="blog-post-description" v-html="post.description"></p>
+              <h3
+                class="blog-post-title"
+                v-html="post.title"
+              ></h3>
+              <p
+                class="blog-post-description"
+                v-html="post.description"
+              ></p>
               <div class="blog-post-info">
                 <span class="blog-post-date">{{
                   formatDate(post.postdate)
                 }}</span>
-                <span class="blog-post-blogger">{{ post.bloggername }}</span>
+                <span class="blog-post-blogger">{{
+                  post.bloggername
+                }}</span>
               </div>
             </a>
           </div>
         </div>
-        <p v-else class="empty-message">관련 블로그 포스트가 없습니다.</p>
+        <p v-else class="empty-message">
+          관련 블로그 포스트가 없습니다.
+        </p>
       </div>
     </div>
     <div class="panel-section local-search-toggle">
-      <div class="section-header" @click="toggleLocalSearch">
+      <div
+        class="section-header"
+        @click="toggleLocalSearch"
+      >
         <span class="header-text">주변 정보</span>
-        <span class="hamburger-menu" :class="{ active: localSearchVisible }">
+        <span
+          class="hamburger-menu"
+          :class="{ active: localSearchVisible }"
+        >
           <div class="bar"></div>
           <div class="bar"></div>
           <div class="bar"></div>
         </span>
       </div>
-      <div v-if="localSearchVisible" class="section-content">
+      <div
+        v-if="localSearchVisible"
+        class="section-content"
+      >
         <div v-if="isLocalLoading" class="loading-spinner">
           <div class="spinner"></div>
         </div>
-        <div v-else-if="localResults.length" class="local-results">
+        <div
+          v-else-if="localResults.length"
+          class="local-results"
+        >
           <div
             v-for="result in localResults"
             :key="result.link"
             class="local-result"
           >
-            <h3 class="local-result-title" v-html="result.title"></h3>
-            <p class="local-result-category">{{ result.category }}</p>
-            <p class="local-result-address" v-html="result.address"></p>
-            <p class="local-result-description" v-html="result.description"></p>
-            <p class="local-result-telephone" v-if="result.telephone">
+            <h3
+              class="local-result-title"
+              v-html="result.title"
+            ></h3>
+            <p class="local-result-category">
+              {{ result.category }}
+            </p>
+            <p
+              class="local-result-address"
+              v-html="result.address"
+            ></p>
+            <p
+              class="local-result-description"
+              v-html="result.description"
+            ></p>
+            <p
+              class="local-result-telephone"
+              v-if="result.telephone"
+            >
               {{ result.telephone }}
             </p>
             <a
@@ -191,13 +293,18 @@
             >
           </div>
         </div>
-        <p v-else class="empty-message">주변 정보가 없습니다.</p>
+        <p v-else class="empty-message">
+          주변 정보가 없습니다.
+        </p>
       </div>
     </div>
-
   </div>
   <!-- Image Modal -->
-  <div v-if="selectedImage" class="image-modal" @click="closeImageModal">
+  <div
+    v-if="selectedImage"
+    class="image-modal"
+    @click="closeImageModal"
+  >
     <div class="modal-content" @click.stop>
       <img
         :src="selectedImage.link"
@@ -218,6 +325,7 @@ import api from '@/api/like/likePropertyApi';
 import axiosInstance from '@/axiosInstance';
 const props = defineProps({
   selectedProperty: Array,
+  isDetailsVisible: Boolean, // is-details-visible을 프롭스로 정의
 });
 const emit = defineEmits([
   'update:selectedProperty',
@@ -229,7 +337,7 @@ const emit = defineEmits([
 ]);
 // 즐겨찾기와 상세보기 토글 상태 관리
 const wishlistVisible = ref(true);
-const detailsVisible = ref(true);
+const isDetailsVisible = ref(true);
 // 즐겨찾기 데이터
 const wishlist = ref([]);
 // 블로그/지역/이미지
@@ -274,7 +382,6 @@ watch(
 // 즐겨찾기에서 상세보기
 const favoriteClick = (wish) => {
   emit('favoriteItem', wish);
-  console.log(wish);
 };
 // 즐겨찾기에서 아이템 삭제 함수
 const removeFromWishlist = async (proNo) => {
@@ -294,11 +401,15 @@ const toggleWishlist = () => {
   wishlistVisible.value = !wishlistVisible.value;
 };
 const toggleDetails = () => {
-  detailsVisible.value = !detailsVisible.value;
+  isDetailsVisible.value = !isDetailsVisible.value;
 };
 // 즐겨찾기 상태 토글
 const toggleFavorite = async () => {
-  if (!props.selectedProperty || props.selectedProperty.length === 0) return;
+  if (
+    !props.selectedProperty ||
+    props.selectedProperty.length === 0
+  )
+    return;
   if (isFavorite.value) {
     // 즐겨찾기 O -> X
     await api.delete(props.selectedProperty[0].propertyNo);
@@ -313,7 +424,8 @@ const toggleFavorite = async () => {
 // 아파트 선택 함수
 const selectApartment = (propertyAddrAptName) => {
   const selected = props.selectedProperty.find(
-    (prop) => prop.propertyAddrAptName === propertyAddrAptName
+    (prop) =>
+      prop.propertyAddrAptName === propertyAddrAptName
   );
   if (selected) {
     emit('update:selectedProperty', [selected]);
@@ -321,16 +433,19 @@ const selectApartment = (propertyAddrAptName) => {
 };
 // 선택된 주소에 따른 좌표 처리
 const handleAddressSelected = (coordinates) => {
-  console.log('선택된 좌표:', coordinates);
   // 좌표를 상위 컴포넌트로 전달
   emit('move-map-to-coordinates', coordinates);
 };
 const router = useRouter();
 const analyzeProperty = () => {
-  if (props.selectedProperty.length > 0 && props.selectedProperty[0].doroJuso) {
+  if (
+    props.selectedProperty.length > 0 &&
+    props.selectedProperty[0].doroJuso
+  ) {
     // selectedProperty 배열의 첫 번째 객체의 doro 값을 추출
     const jibunJuso = props.selectedProperty[0].jibunJuso;
-    const buildingName = props.selectedProperty[0].propertyAddrAptName;
+    const buildingName =
+      props.selectedProperty[0].propertyAddrAptName;
     const propertyNo = props.selectedProperty[0].propertyNo;
     const zipCode = props.selectedProperty[0].zipCode;
     const price = props.selectedProperty[0].price;
@@ -364,7 +479,9 @@ const searchBlogs = async (query) => {
     blogPosts.value = response.data.items.map((item) => ({
       title: decodeHtmlEntities(stripHtmlTags(item.title)),
       link: item.link,
-      description: decodeHtmlEntities(stripHtmlTags(item.description)),
+      description: decodeHtmlEntities(
+        stripHtmlTags(item.description)
+      ),
       bloggername: item.bloggername,
       postdate: item.postdate,
     }));
@@ -393,17 +510,24 @@ const searchLocal = async (query) => {
         sort: 'random',
       },
     });
-    console.log('Local search response:', response.data);
-    localResults.value = response.data.items.map((item) => ({
-      title: decodeHtmlEntities(item.title || ''),
-      category: item.category || '',
-      address: decodeHtmlEntities(item.address || ''),
-      roadAddress: decodeHtmlEntities(item.roadAddress || ''),
-      link: item.link || '',
-      mapx: item.mapx || '',
-      mapy: item.mapy || '',
-    }));
-    console.log('Processed local results:', localResults.value);
+    // console.log('Local search response:', response.data);
+    localResults.value = response.data.items.map(
+      (item) => ({
+        title: decodeHtmlEntities(item.title || ''),
+        category: item.category || '',
+        address: decodeHtmlEntities(item.address || ''),
+        roadAddress: decodeHtmlEntities(
+          item.roadAddress || ''
+        ),
+        link: item.link || '',
+        mapx: item.mapx || '',
+        mapy: item.mapy || '',
+      })
+    );
+    // console.log(
+    //   'Processed local results:',
+    //   localResults.value
+    // );
   } catch (error) {
     console.error('로컬 검색 중 오류 발생:', error);
     localResults.value = [];
@@ -424,11 +548,15 @@ const searchImages = async (query) => {
         filter: 'large',
       },
     });
-    imageResults.value = response.data.items.map((item) => ({
-      title: decodeHtmlEntities(stripHtmlTags(item.title)),
-      link: item.link,
-      thumbnail: item.thumbnail,
-    }));
+    imageResults.value = response.data.items.map(
+      (item) => ({
+        title: decodeHtmlEntities(
+          stripHtmlTags(item.title)
+        ),
+        link: item.link,
+        thumbnail: item.thumbnail,
+      })
+    );
   } catch (error) {
     console.error('이미지 검색 중 오류 발생:', error);
     imageResults.value = [];
@@ -457,7 +585,10 @@ const stripHtmlTags = (text) => {
 // 날짜 포맷팅 함수
 const formatDate = (dateStr) => {
   if (!dateStr || dateStr.length < 8) return '';
-  return `${dateStr.slice(0, 4)}.${dateStr.slice(4, 6)}.${dateStr.slice(6)}`;
+  return `${dateStr.slice(0, 4)}.${dateStr.slice(
+    4,
+    6
+  )}.${dateStr.slice(6)}`;
 };
 // selectedProperty 변경 감지 및 블로그 검색 실행
 watch(
@@ -503,7 +634,8 @@ const activeFilter = ref(null); // 필터 toggle 관련
 const selectedTransaction = ref('전체'); // 매매전월세 유형 디폴트값
 const selectedBuilding = ref('전체'); // 건물유형 디폴트값
 const toggleFilter = (filterType) => {
-  activeFilter.value = activeFilter.value === filterType ? null : filterType;
+  activeFilter.value =
+    activeFilter.value === filterType ? null : filterType;
 };
 const selectTransaction = (type) => {
   selectedTransaction.value = type;
@@ -529,6 +661,9 @@ onMounted(() => {
   overflow-y: auto;
   background-color: #ffffff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  /* 수직 및 수평 가운데 정렬을 위한 flexbox */
+  justify-content: center;
+  align-items: center;
 }
 .panel-section {
   margin-bottom: 24px;
@@ -589,20 +724,6 @@ onMounted(() => {
   width: 80%;
 }
 
-.search button {
-  padding: 8px 16px;
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.search button:hover {
-  background-color: #1557b0;
-}
 .wishlist {
   list-style: none;
   padding: 0;
@@ -709,21 +830,14 @@ onMounted(() => {
 }
 .search {
   display: flex;
+  flex-direction: column;
+  gap: 16px; /* 요소 간의 간격 */
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 24px;
   width: 100%; /* panel-section과 동일한 width 적용 */
 }
 
-/* 반응형을 위한 flex 속성 */
-.search input {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-right: 8px;
-}
 .blog-search-toggle {
   margin-top: 24px;
 }
@@ -875,12 +989,6 @@ onMounted(() => {
   .search {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .search input {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 8px;
   }
 
   .search button {
