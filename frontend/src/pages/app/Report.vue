@@ -93,11 +93,11 @@
                 sampleReportData.jeonseRate > 90,
               'faq-card-warning':
                 sampleReportData.jeonseRate !== null &&
-                sampleReportData.jeonseRate > 80 &&
+                sampleReportData.jeonseRate > 70 &&
                 sampleReportData.jeonseRate <= 90,
               'faq-card-success':
                 sampleReportData.jeonseRate !== null &&
-                sampleReportData.jeonseRate <= 80,
+                sampleReportData.jeonseRate <= 70,
             }"
           >
             <button @click="togglePanel(2)" class="faq-btn">
@@ -127,9 +127,9 @@
                     :style="{
                       color:
                         sampleReportData.jeonseRate !== null
-                          ? sampleReportData.jeonseRate < 70
+                          ? sampleReportData.jeonseRate <= 70
                             ? 'green'
-                            : sampleReportData.jeonseRate < 90
+                            : sampleReportData.jeonseRate <= 90
                             ? 'orange'
                             : 'red'
                           : 'black',
@@ -137,9 +137,9 @@
                   >
                     {{
                       sampleReportData.jeonseRate !== null
-                        ? sampleReportData.jeonseRate < 60
+                        ? sampleReportData.jeonseRate <= 70
                           ? '안전'
-                          : sampleReportData.jeonseRate < 80
+                          : sampleReportData.jeonseRate <= 90
                           ? '경고'
                           : '위험'
                         : '분석불가'
