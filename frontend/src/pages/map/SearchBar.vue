@@ -47,7 +47,9 @@ async function getCoordinates(address) {
 
     const response = await axios.get(url, {
       headers: {
-        Authorization: `KakaoAK ${import.meta.env.VITE_DAUM_API_KEY}`,
+        Authorization: `KakaoAK ${
+          import.meta.env.VITE_DAUM_API_KEY
+        }`,
       },
       params: {
         query: address,
@@ -62,7 +64,10 @@ async function getCoordinates(address) {
       return null;
     }
   } catch (error) {
-    console.error(`Failed to fetch coordinates for address: ${address}`, error);
+    console.error(
+      `Failed to fetch coordinates for address: ${address}`,
+      error
+    );
     return null;
   }
 }
@@ -85,7 +90,9 @@ const openDaumPostcode = () => {
         apartment: data.apartment,
       };
 
-      const coordinates = await getCoordinates(data.roadAddress);
+      const coordinates = await getCoordinates(
+        data.roadAddress
+      );
       if (coordinates) {
         x.value = coordinates.x;
         y.value = coordinates.y;
@@ -107,17 +114,21 @@ const openDaumPostcode = () => {
 
 <style scoped>
 .search-input {
-  width: 360px; /* 기본 너비 */
+  width: 100%; /* 검색 버튼의 너비 조정 */
   height: 60px; /* 기본 높이 */
   border-radius: 10px; /* 둥근 테두리 */
   border: 1px solid #ccc; /* 테두리 색상 */
-  padding: 0 15px; /* 내부 여백 */
+  padding: 0 40px; /* 내부 여백 */
   font-size: 16px; /* 기본 글자 크기 */
   transition: all 0.3s ease; /* 애니메이션 적용 */
 }
 
 .search-input:focus {
-  border-color: rgb(0, 181, 0); /* 포커스 시 테두리 색상 변경 */
+  border-color: rgb(
+    0,
+    181,
+    0
+  ); /* 포커스 시 테두리 색상 변경 */
   outline: none; /* 기본 아웃라인 제거 */
 }
 

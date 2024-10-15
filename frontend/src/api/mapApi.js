@@ -63,7 +63,7 @@ export default {
       const { data } = await axiosInstance.get(
         `${BASE_URL}/${id}`
       );
-      console.log(data);
+      // console.log(data);
       return data;
     } catch (error) {
       throw error;
@@ -74,7 +74,7 @@ export default {
       const { data } = await axiosInstance.get(
         `${BASE_URL}/report/${id}`
       );
-      console.log(data);
+      // console.log(data);
       return data;
     } catch (error) {
       throw error;
