@@ -1,4 +1,3 @@
-  
 <template>
   <div class="about-us">
     <section class="team-section">
@@ -11,11 +10,19 @@
           :class="{ left: index % 2 === 0, right: index % 2 !== 0 }"
         >
           <div class="member-content">
-            <img :src="member.image" :alt="member.name" class="member-image" />
+            <div class="member-image-container">
+              <img
+                :src="member.image"
+                :alt="member.name"
+                class="member-image"
+              />
+            </div>
             <div class="member-info">
               <h3>{{ member.name }}</h3>
               <p class="member-role">{{ member.role }}</p>
-              <p class="member-description">{{ member.description }}</p>
+              <div class="member-description">
+                <div class="desc">{{ member.description }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -26,15 +33,15 @@
 </template>
 
 <script setup>
-import QuickChat from '@/components/QuickChat.vue';
 import Footer from '@/components/Footer.vue';
+
 const teamMembers = [
   {
     id: 1,
     name: '재성',
     role: 'Leader / BE',
     description:
-      '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+      'KB "It\'s your life" 마지막 프로젝트가 성공적으로 끝났습니다. 이번 프로젝트는 서로의 강점을 잘 활용해 부족한 부분을 보완하는 과정이었으며, 각자의 경험을 바탕으로 좋은 결과를 만들어냈다고 생각합니다. 이번 경험을 통해 협업에서 중요한 것은 단순히 역할을 나누는 것이 아니라, 서로의 강점을 이해하고 보완하는 것임을 다시 한 번 깨달았습니다. 프로젝트를 함께 해주신 팀원들께 감사드립니다.',
     image: 'src/assets/members/js.png',
   },
   {
@@ -42,7 +49,7 @@ const teamMembers = [
     name: '지현',
     role: 'UI / FE',
     description:
-      '안녕하세요! 지키미의 UI 담당자입니다. 저 또한 지키미로 안전한 집에서 잘 지내고 있습니다. 여러분도 한번 이용해보세요!',
+      "한 달 만큼은 '나'보단 '우리'로 움직였던 시간이었던 것 같습니다. 어떤 실수든 격려해주신 팀원들 덕분에 하나의 멋진 서비스를 만들 수 있었습니다. 같은 목표를 가진 사람들과 완주를 해낸다는 것은 생각보다 더 큰 의미가 있었습니다. 각자의 부분에서 최선을 다하고, 서로의 부족함을 채워주기 위해 노력했던 시간들이 앞으로 살아가면서 큰 힘이 될 것 같습니다. ",
     image: 'src/assets/members/zh.png',
   },
   {
@@ -50,7 +57,7 @@ const teamMembers = [
     name: '석진',
     role: 'COO',
     description:
-      '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+      '이번 팀 프로젝트를 통해 스프링 구조와 여러 개발 지식을 채우는데 도움이 되었으며 무엇보다 프로젝트 기간동안 모르는 부분들이 있을 때 팀원들의 많은 도움과 배려 덕분에  성장할 수 있게 된 계기가 되어서 뜻깊은 시간이었습니다. 그리고 개발 기간동안 많은 시간과 노력을 들여서 완벽한 마무리를 향해 달려주신 모든 팀원분들에게 매우 감사하게 생각하며 이번 프로젝트는 평생 기억에 남을 좋은 추억이 될거같습니다.',
     image: 'src/assets/members/seokjin.png',
   },
   {
@@ -58,7 +65,7 @@ const teamMembers = [
     name: '채영',
     role: 'UX / FE',
     description:
-      '법률 전문가로서 ASK.Q의 비전과 전략을 이끌고 있습니다. 오랜 경험을 바탕으로 고객 중심의 혁신적인 법률 서비스를 제공하기 위해 노력하고 있습니다.',
+      '팀 프로젝트를 하면서 부족한 점이 많았지만 팀원들이 항상 도와주신 덕분에 프로젝트를 완성할 수 있었습니다. 특히 마지막에는 새벽 늦게까지 서로 도와주면서 시간을 많이 보냈던 점이 힘들기도 했지만 즐겁기도 했던 것 같아 가장 기억에 많이 남습니다. 팀원들 모두 감사합니다! (특히! 퇴근 순서 정하는 퀴즈쇼 열어주신 재성님, 새벽에 오른쪽/왼쪽이 헷갈려도 친절하게 넘어가주신 홍관님 감사합니다!)',
     image: 'src/assets/members/chaeyoung.png',
   },
   {
@@ -66,7 +73,7 @@ const teamMembers = [
     name: '안용',
     role: 'CTO',
     description:
-      '최신 기술을 활용하여 법률 서비스의 혁신을 주도합니다. AI와 빅데이터를 활용한 법률 분석 시스템 개발에 주력하고 있으며, 사용자 경험을 개선하기 위해 끊임없이 노력합니다.',
+      '무작정 개발을 했지만, 하나의 작품이 되는걸 보면서 쾌감을 느꼈습니다. 혼자서는 하나의 기능밖에 구현하지 못했지만 각자 맡은 일들이 모였기 때문이라 생각됩니다. 이번 프로젝틀르 통해 팀의 중요성을 다시한번 느끼게 되었습니다. 팀의 기둥인 재성님, 깃 풀 깃 푸쉬의 홍관님, 레전드 웹 디자이너 지현님, 아이디어 은행원 채영님, 그리고 발표 석진님 모두 감사합니다~',
     image: 'src/assets/members/anyong.png',
   },
   {
@@ -74,29 +81,8 @@ const teamMembers = [
     name: '홍관',
     role: 'COO',
     description:
-      '효율적인 운영을 통해 고객 만족도를 극대화합니다. 고객의 니즈를 정확히 파악하고, 이를 바탕으로 서비스 품질을 지속적으로 개선하는 것이 주요 목표입니다.',
+      '"혼자서는 작은 한 방울이지만 함께 모이면 바다를 이룹니다."라는 말이 있습니다. 이번 팀 프로젝트를 성공적으로 완성할 수 있었던 것은 팀원들 간의 화합 덕분입니다. 각자의 역할에 충실히 임할 뿐 아니라 서로에게 상호보완하며 고생했던 팀원들에게 감사한 마음을 전합니다.',
     image: 'src/assets/members/honggwan.png',
-  },
-];
-
-const features = [
-  {
-    id: 1,
-    title: '신뢰성',
-    description: '정확한 법률 정보 제공',
-    icon: '/path/to/icon1.svg',
-  },
-  {
-    id: 2,
-    title: '효율성',
-    description: '빠른 법률 서비스',
-    icon: '/path/to/icon2.svg',
-  },
-  {
-    id: 3,
-    title: '접근성',
-    description: '쉬운 법률 상담',
-    icon: '/path/to/icon3.svg',
   },
 ];
 </script>
@@ -105,51 +91,17 @@ const features = [
 .about-us {
   font-family: 'Arial', sans-serif;
   color: #333;
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 4rem;
-  background-color: #f9f9a0;
-  padding: 4rem;
-  border-radius: 10px;
-}
-
-.header h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.cta-button,
-.chat-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.cta-button:hover,
-.chat-button:hover {
-  background-color: #0056b3;
-}
-
-.team-section {
-  margin-bottom: 4rem;
-}
-
-.team-section h2,
-.features h2,
-.contact h2 {
+.team-section h2 {
   text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  color: #2c3e50;
 }
 
 .team-members {
@@ -158,19 +110,25 @@ const features = [
 }
 
 .team-member {
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
   width: 100%;
 }
 
 .member-content {
   display: flex;
   align-items: center;
-  background-color: #f8f8f8;
-  border-radius: 15px;
+  background-color: #ffffff;
+  border-radius: 20px;
   padding: 3rem;
-  max-width: 75%;
+  max-width: 90%;
   min-height: 300px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.member-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 .team-member.left .member-content {
@@ -182,19 +140,27 @@ const features = [
   flex-direction: row-reverse;
 }
 
-.member-image {
-  width: 200px;
-  height: 200px;
+.member-image-container {
+  flex-shrink: 0;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 5px solid #ffffff;
 }
 
-.team-member.left .member-image {
+.member-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-member.left .member-image-container {
   margin-right: 3rem;
 }
 
-.team-member.right .member-image {
+.team-member.right .member-image-container {
   margin-left: 3rem;
 }
 
@@ -203,47 +169,43 @@ const features = [
 }
 
 .member-info h3 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
 }
 
 .member-role {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #007bff;
-  margin-bottom: 1rem;
+  color: #3498db;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
 }
 
 .member-description {
   font-size: 1.1rem;
-  line-height: 1.6;
+  line-height: 1.8;
+  color: #34495e;
+  position: relative;
+  padding-left: 20px;
+  border-left: 3px solid #3498db;
 }
 
-.features {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 4rem;
+.member-description::before {
+  content: '"';
+  font-size: 3rem;
+  color: #3498db;
+  position: absolute;
+  top: -20px;
+  left: -15px;
+  opacity: 0.3;
 }
 
-.feature {
-  flex-basis: calc(33.333% - 2rem);
-  text-align: center;
+.desc {
+  font-size: 22px;
 }
 
-.feature-icon {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 1.5rem;
-}
-
-.contact {
-  text-align: center;
-  background-color: #e6f7ff;
-  padding: 4rem;
-  border-radius: 15px;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .member-content {
     flex-direction: column !important;
     text-align: center;
@@ -251,13 +213,40 @@ const features = [
     padding: 2rem;
   }
 
-  .member-image {
+  .member-image-container {
     margin: 0 0 2rem 0 !important;
   }
 
-  .feature {
-    flex-basis: 100%;
-    margin-bottom: 2rem;
+  .member-description {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .member-description::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .about-us {
+    padding: 2rem 1rem;
+  }
+
+  .team-section h2 {
+    font-size: 2rem;
+  }
+
+  .member-info h3 {
+    font-size: 1.8rem;
+  }
+
+  .member-role {
+    font-size: 1rem;
+  }
+
+  .member-description {
+    font-size: 1rem;
   }
 }
 </style>

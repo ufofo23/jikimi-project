@@ -24,22 +24,22 @@
             >
           </li>
         </ul>
-        <div class="swiper">
-          <div class="piece-sense-container">
-            <div class="scroll-container" ref="scrollContainer">
-              <div class="scroll-wrapper">
-                <div
-                  v-for="article in articles"
-                  :key="article.commonSenseNo"
-                  class="card"
-                >
-                  <PieceSenseCard
-                    :commonSenseTitle="article.commonSenseTitle"
-                    :commonSenseNo="article.commonSenseNo"
-                    :commonSenseContent="article.commonSenseContent"
-                    :commonPieceSense="article.pieceSense"
-                  />
-                </div>
+      </div>
+      <div class="swiper">
+        <div class="piece-sense-container">
+          <div class="scroll-container" ref="scrollContainer">
+            <div class="scroll-wrapper">
+              <div
+                v-for="article in articles"
+                :key="article.commonSenseNo"
+                class="card"
+              >
+                <PieceSenseCard
+                  :commonSenseTitle="article.commonSenseTitle"
+                  :commonSenseNo="article.commonSenseNo"
+                  :commonSenseContent="article.commonSenseContent"
+                  :commonPieceSense="article.pieceSense"
+                />
               </div>
             </div>
           </div>
@@ -123,8 +123,9 @@ onMounted(() => {
 
 //  <!-- ====== common Section  -->
 
-const scrollContainer = ref(null);
+const scrollContainer = ref<HTMLElement | null>(null);
 let scrollInterval: number | null = null;
+let isScrolling = ref(false);
 
 const page = reactive({
   list: [],
@@ -158,27 +159,34 @@ const load = async () => {
   }
 };
 
-// 자동 스크롤 함수
+// Updated auto-scroll function
 const startAutoScroll = () => {
   if (scrollInterval) return;
 
   scrollInterval = setInterval(() => {
-    if (scrollContainer.value) {
+    if (scrollContainer.value && !isScrolling.value) {
       const container = scrollContainer.value;
       const cardWidth = container.querySelector('.card')?.offsetWidth || 0;
+
+      isScrolling.value = true;
 
       if (
         container.scrollLeft >=
         container.scrollWidth - container.clientWidth
       ) {
-        // 끝에 도달하면 처음으로 돌아감
+        // Smoothly scroll back to the start
         container.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
-        // 다음 카드로 스크롤
+        // Scroll to the next card
         container.scrollBy({ left: cardWidth, behavior: 'smooth' });
       }
+
+      // Reset isScrolling after the smooth scroll animation is likely to have finished
+      setTimeout(() => {
+        isScrolling.value = false;
+      }, 500); // Adjust this value based on your scroll animation duration
     }
-  }, 3000); // 3초마다 스크롤
+  }, 5000); // Scroll every 5 seconds
 };
 
 const stopAutoScroll = () => {
@@ -280,15 +288,8 @@ img {
 
 .scroll-container {
   width: 100%;
-  overflow-x: hidden;
   overflow-y: visible; /* 수직 방향으로 카드가 잘리지 않도록 설정 */
-
   position: relative;
-}
-
-.scroll-wrapper {
-  display: flex;
-  animation: scroll 60s linear infinite; /* 20초 동안 부드럽게 스크롤, 반복 */
 }
 
 /* 애니메이션 정의 */
@@ -309,7 +310,8 @@ img {
   padding: 0;
   margin: 0;
   box-shadow: none !important; /* 그림자 제거 */
-  min-height: 100%; /* 카드의 최소 높이를 설정해 부모 요소에 맞도록 설정 */
+  height: auto;
+  /* min-height: 120%;  */
 
   /* flex: 0 0 auto; /* 카드가 한 줄로 수평 정렬되도록 설정 */
   /* max-width: 380px; 카드의 최대 너비 */
@@ -405,25 +407,30 @@ img {
 
 .piece-sense-container {
   margin-top: auto;
-  width: 100%;
+  width: 150%;
   overflow: visible; /* 컨테이너를 넘어서는 내용도 표시 */
-  padding: 2rem 0; /* 위아래 패딩 추가 */
+  margin-left: -6rem; /* 왼쪽 여백을 제거하기 위해 음수 마진 적용 */
+  margin-right: 2rem; /* 오른쪽 여백을 제거하기 위해 음수 마진 적용 */
 }
-
 .scroll-container {
   width: 100%;
-  overflow: visible; /* 가로, 세로 모두 넘치는 내용 표시 */
+  overflow-x: hidden;
+  overflow-y: visible;
+  padding-bottom: 20px; /* 하단에 여유 공간 추가 */
 }
 
 .scroll-wrapper {
   display: flex;
-  animation: scroll 10s linear infinite;
+  /* animation: scroll 10s linear infinite; */
 }
 
 .swiper {
   margin-left: 0;
-  padding: 1rem 0; /* 위아래 패딩을 줄여서 크기 감소 */
+  margin-right: 0; /* 오른쪽 여백도 제거 */
+  padding: 0;
+  width: 100%; /* 전체 너비를 사용하도록 설정 */
 }
+
 .left-section,
 .right-section {
   flex: 1;
@@ -526,50 +533,11 @@ img {
   padding-top: 2rem;
 }
 
-/* 반응형 스타일 */
+/* Responsive styles */
 @media (max-width: 768px) {
-  .card {
-    max-width: 100%; /* 모바일에서는 카드 너비를 100%로 */
-  }
-  .menu-toggle {
-    display: block;
-  }
-
-  .nav-menu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: white;
-    padding: 1rem;
-  }
-
-  .nav-menu.nav-open {
-    display: flex;
-  }
-
-  .nav-list {
-    flex-direction: column;
-  }
-
-  .nav-item {
-    margin: 0.5rem 0;
-  }
-
   .hero-section {
     flex-direction: column;
     padding-top: 60px;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .hero-compo {
-    margin-left: 0;
-    align-items: center;
-    text-align: center;
-    height: 100vh;
   }
 
   .left-section,
@@ -578,20 +546,56 @@ img {
     padding: 1rem;
   }
 
-  .map-container {
+  .hero-compo {
+    margin-left: 0;
+    align-items: center;
+    text-align: center;
+  }
+
+  .piece-sense-container {
+    margin-left: 0;
+    margin-right: 0;
     width: 100%;
   }
-  .card {
-    max-width: 100%; /* 카드도 섹션을 넘어가지 않도록 설정 */
+
+  .scroll-container {
+    overflow-x: hidden;
+    padding-bottom: 20px;
   }
+
+  .scroll-wrapper {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .card {
+    flex: 0 0 85%;
+    max-width: 85%;
+    margin-right: 1rem;
+  }
+
   .button-list {
     flex-direction: column;
+    width: 100%;
   }
 
   .button-primary,
   .button-secondary {
     width: 100%;
-    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .left-section {
+    border-bottom-right-radius: 0;
+    overflow: visible;
   }
 }
 </style>

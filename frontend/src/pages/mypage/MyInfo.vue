@@ -163,158 +163,22 @@ const handleAccountDelete = async () => {
   align-items: stretch;
   justify-content: center;
   margin: 0 auto;
-}
-
-.sidebar {
-  width: 20%;
-  background-color: #f0f4f8;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: left;
-}
-
-.sidebar h2 {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #030f1d;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar ul li {
-  margin-bottom: 10px;
-}
-
-.sidebar ul li a {
-  text-decoration: none;
-  font-size: 16px;
-
-  display: block;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.sidebar ul li a:hover {
-  background-color: #1e32e8;
-  color: white;
-}
-
-.sidebar ul li a.active-link {
-  background-color: #1e32e8;
-  color: white;
-}
-
-.logout-btn {
-  margin-top: 20px;
-  padding: 10px;
-  width: 100%;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  color: #030f1d;
+  max-width: 1200px;
 }
 
 .info-section {
-  width: 60%;
+  width: 100%;
+  max-width: 800px;
   background-color: white;
   padding: 40px;
   border-radius: 10px;
-  margin-left: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .info-section h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-.info-section p {
+  font-size: 24px;
   margin-bottom: 30px;
-  color: #1e32e8;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #1e32e8;
-}
-
-.form-group input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-/* 라디오 버튼 스타일 수정 */
-.radio-group {
-  display: flex;
-  align-items: center;
-  gap: 80px; /* 라디오 버튼 선택지 간 거리 조정 */
-}
-
-.radio-button input[type='radio'] {
-  position: absolute;
-  opacity: 0;
-}
-
-.radio {
-  position: relative;
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-}
-
-.radio::before {
-  position: absolute;
-  content: '';
-  width: 10px;
-  height: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background-color: #fff;
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
-}
-
-.radio-button input[type='radio']:checked + .radio {
-  border-color: #283ba7;
-  background-color: #fff;
-
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.radio-button input[type='radio']:checked + .radio::before {
-  background-color: #2626e2;
-  opacity: 1;
-  box-shadow: 0px 0px 10px rgba(40, 167, 69, 0.8);
-}
-.button-group {
-  display: flex;
-  justify-content: flex-start; /* 버튼을 왼쪽으로 정렬 */
-  gap: 20px;
-  margin-top: 40px;
-}
-.delete-account {
-  margin-top: 40px;
-  text-align: right; /* 텍스트와 버튼을 오른쪽 정렬 */
+  color: #333;
 }
 
 .form {
@@ -326,10 +190,90 @@ const handleAccountDelete = async () => {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
-.form-row .form-group {
+.form-group {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #000000;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group input:disabled {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #4d79ff;
+  outline: none;
+}
+
+.form-group input:disabled {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.radio-button {
+  margin-bottom: 20px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-button input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+}
+
+.radio {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #4d79ff;
+  margin-right: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+.radio::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  background-color: #4d79ff;
+  transition: all 0.3s ease-in-out;
+}
+
+.radio-button input[type='radio']:checked + .radio::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .button-group {
@@ -339,51 +283,55 @@ const handleAccountDelete = async () => {
   margin-top: 40px;
 }
 
-.update-btn {
-  background-color: #4caf50;
-  color: white;
+.update-btn,
+.delete-btn {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.update-btn {
+  background-color: #4d79ff;
+  color: white;
 }
 
 .update-btn:hover {
-  background-color: #45a049;
+  background-color: #3a66cc;
+  transform: translateY(-2px);
 }
 
 .delete-btn {
-  background-color: #f44336;
+  background-color: #ff4d4d;
   color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
 }
 
 .delete-btn:hover {
-  background-color: #d32f2f;
+  background-color: #e63946;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
   .mypage-container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    margin-bottom: 20px;
+    padding: 20px;
   }
 
   .info-section {
-    width: 100%;
-    margin-left: 0;
+    padding: 20px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }
 </style>
