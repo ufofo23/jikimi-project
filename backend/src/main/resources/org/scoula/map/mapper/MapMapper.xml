@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scoula.map.mapper.MapMapper">
+
+    <select id="getAddressList" resultType="org.scoula.map.domain.MapVO">
+        #최신 데이터 순으로 실거래가 전체 보여주기
+#         select pl.location_no, pl.road_name, pl.x_coordinate, pl.y_coordinate, pl.recent_price
+#         from property_location pl
+#         right join property_tbl pr
+#         on pl.location_no = pr.location_no
+#         WHERE property_doro_juso in (SELECT property_doro_juso FROM property_tbl
+#                                      group by property_doro_juso
+#                                      HAVING COUNT(property_doro_juso) > 1)
+    </select>
+
+
+    <select id="getAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
+        select pl.location_no,
+               pr.property_no,
+               pl.property_doro_juso          as doro_juso,
+               pl.jibun_juso,
+               pr.formated_price              as price,
+               pr.formated_date               AS date,
+               pr.property_building_area      as property_area,
+               pr.property_addr_floor,
+               pr.building_year,
+               pr.property_addr_building_name as property_addr_apt_name,
+               pr.property_type,
+               pl.zipcode,
+               pl.x_coordinate,
+               pl.y_coordinate
+        from property_location as pl
+                 right outer join property_tbl as pr
+                                  on pl.location_no = pr.location_no
+        where pl.location_no = #{id}
+    </select>
+    <select id="getReportAddressDetails" resultType="org.scoula.map.domain.MapDetailDTO">
+        select pl.location_no,
+               pr.property_no,
+               pl.property_doro_juso          as doro_juso,
+               pl.jibun_juso,
+               pr.formated_price              as price,
+               pr.formated_date               AS date,
+               pr.property_building_area      as property_area,
+               pr.property_addr_floor,
+               pr.building_year,
+               pr.property_addr_building_name as property_addr_apt_name,
+               pr.property_type,
+               pl.zipcode,
+               pl.x_coordinate,
+               pl.y_coordinate
+        from property_location as pl
+                 right outer join property_tbl as pr
+                                  on pl.location_no = pr.location_no
+        where pr.property_no = #{id}
+    </select>
+
+
+    <select id="getAddressListMoveAll" resultType="org.scoula.map.domain.MapVO">
+        SELECT DISTINCT pl.location_no,
+                        pl.x_coordinate,
+                        pl.y_coordinate,
+                        round(pl.formated_price, 1) as price
+        FROM property_location pl
+                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
+                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
+    </select>
+
+    <select id="getAddressListMoveClusterAll" resultType="org.scoula.map.domain.MapClusterVO">
+        SELECT DISTINCT pl.x_coordinate, pl.y_coordinate
+        FROM property_location pl
+                 INNER JOIN property_tbl pr ON pl.location_no = pr.location_no
+                 INNER JOIN zoom_levels zl ON zl.zoom_level = #{zoomLevel}
+        WHERE pl.y_coordinate BETWEEN (#{lat} - zl.lat_range) AND (#{lat} + zl.lat_range)
+          AND pl.x_coordinate BETWEEN (#{lon} - zl.lon_range) AND (#{lon} + zl.lon_range)
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+</mapper>

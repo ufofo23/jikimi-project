@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.test.mapper.TestMapper">
+
+    <insert id="createCor">
+        insert into cor_tbl (analysis_no, owner_state, type_of_ownership, common_owner, change_owner_count, maximum_of_bond)
+        values
+            (
+             #{analysisNo},
+             #{ownerState},
+             #{ownership},
+             #{commonOwner},
+             #{changeOwnerCount},
+             #{maximumOfBond}
+            )
+    </insert>
+
+    <insert id="createBml">
+        insert into bml_tbl (analysis_no, violation_structure, use_type)
+        values
+            (
+             #{analysisNo},
+             #{resViolationStatus},
+             #{resContents}
+            )
+    </insert>
+</mapper>

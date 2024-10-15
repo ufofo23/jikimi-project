@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.like.report.mapper.LikeReportMapper">
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*) from member_report_tbl
+    </select>
+
+    <select id="getPage" resultType="org.scoula.report.domain.ReportVO">
+        select * from report_tbl rt
+        where report_no in (
+            select report_no from member_report_tbl mr
+            where mr.report_no in (
+                select report_no
+                from member_report_tbl
+                where member_no = (
+                    select member_no
+                    from member_tbl
+                    where member_id = #{userId})))
+        limit #{pageRequest.offset}, #{pageRequest.amount}
+    </select>
+
+    <insert id="create">
+        insert into member_report_tbl (member_no, report_no)
+        values((select member_no from member_tbl where member_id = #{userId}), #{reportNo})
+    </insert>
+
+    <select id="getList" resultType="org.scoula.report.domain.ReportVO">
+        select * from member_report_tbl mr
+        where mr.report_no in (
+            select report_no
+            from member_report_tbl
+            where member_no = (
+                select member_no
+                from member_tbl
+                where member_id = #{userId}))
+        order by member_report_no desc
+    </select>
+
+    <delete id="delete">
+        delete from member_report_tbl where member_report_no = #{memberReportNo}
+    </delete>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.oauth.mapper.OauthMemberMapper">
+
+    <resultMap id="OauthMemberResultMap" type="org.scoula.oauth.domain.vo.OauthMemberVO">
+        <id property="userId" column="member_id"/>
+        <result property="email" column="member_email"/>
+        <result property="name" column="member_name"/>
+        <result property="gender" column="member_sex"/>
+        <result property="birthday" column="member_birthday"/>
+        <result property="mobileE164" column="member_phone"/>
+        <result property="role" column="member_role"/>
+    </resultMap>
+
+    <select id="findByOauthId" parameterType="java.lang.String" resultMap="OauthMemberResultMap">
+        SELECT *
+        FROM member_tbl
+        WHERE TRIM(member_id) = TRIM(#{userId})
+            LIMIT 1
+    </select>
+
+    <insert id="save" parameterType="org.scoula.oauth.domain.vo.OauthMemberVO">
+        INSERT INTO member_tbl (member_id, member_email, member_name, member_role)
+        VALUES (#{userId}, #{email}, #{name}, #{role})
+    </insert>
+
+    <update id="updateOauthInfo">
+        UPDATE member_tbl SET
+        member_sex = #{member.gender},
+        member_birthday = #{member.birthday},
+        member_phone = #{member.mobileE164}
+        WHERE member_id = #{userId}
+    </update>
+
+</mapper>

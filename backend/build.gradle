@@ -6,10 +6,13 @@ plugins {
 group 'org.scoula'
 version '1.0-SNAPSHOT'
 
+// codef 버전
+group = 'io.codef.api'
+version = '1.0.6'
+
+
 repositories {
   mavenCentral()
-  maven { url 'https://repo.spring.io/milestone' }
-  maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
@@ -19,8 +22,8 @@ ext {
   springSecurityVersion = '5.8.13'
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -28,12 +31,14 @@ tasks.withType(JavaCompile) {
 
 dependencies {
 
-  // Spring AI
-  implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
-  implementation 'org.springframework.ai:spring-ai-openai'
+  //2024.09.24 챗봇
+  implementation 'io.projectreactor:reactor-core:3.4.0'
+  implementation 'org.springframework:spring-webflux:5.3.10'
+  implementation 'io.projectreactor.netty:reactor-netty:1.0.24'
 
   // OAuth2 의존성 추가
   implementation("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")
+
   // JWT 처리용
   implementation("org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}")
 
@@ -73,6 +78,7 @@ dependencies {
 
   // Jackson - Json 처리
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 
   // 테스트
   testImplementation "org.springframework:spring-test:${springVersion}"
@@ -101,7 +107,12 @@ dependencies {
   implementation("io.jsonwebtoken:jjwt-api:0.11.5")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
   implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+  //codefapi 관련
+  implementation 'commons-codec:commons-codec:1.14'
+  implementation 'commons-io:commons-io:2.7'
+
 }
 
 test {
-useJUnitPlatform()}
+  useJUnitPlatform()}

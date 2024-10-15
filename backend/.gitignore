@@ -4,6 +4,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Custom ###
+application.properties
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -40,3 +43,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+/src/main/resources/application.properties

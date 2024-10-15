@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.scoula.report.mapper.ReportMapper">
+    <insert id="create">
+        insert into report_tbl (analysis_no,property_no, address, total_score, jeonse_rate, accord_owner, maximum_of_bond, use_type, violation_structure, common_owner, change_owner_count, owner_state, price, analysis_date)
+        values (#{analysisNo},#{propertyNo}, #{address}, #{totalScore}, #{jeonseRate}, #{accordOwner}, #{maximumOfBond}, #{useType}, #{violationStructure}, #{commonOwner}, #{changeOwnerCount}, #{ownerState}, #{price}, #{analysisDate})
+
+        <selectKey resultType="int" keyProperty="reportNo" keyColumn="report_no" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="get" resultType="org.scoula.report.domain.ReportVO">
+        SELECT * FROM member_report_tbl mrt
+        JOIN report_tbl rt ON mrt.report_no = rt.report_no
+            where rt.report_no = #{reportNo} and mrt.member_no = (select member_no from member_tbl where member_id = #{userId})
+    </select>
+
+    <select id="getReportNo" resultType="int">
+        SELECT report_no FROM report_tbl WHERE analysis_no = #{analysisNo}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM member_report_tbl WHERE member_report_no = #{report_no};
+    </delete>
+</mapper>

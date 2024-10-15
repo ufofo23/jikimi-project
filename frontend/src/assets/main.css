@@ -1,35 +1,43 @@
-/* //@import './base.css';
+/* main.css 또는 App.vue 안의 <style> 섹션에서 설정 */
+body {
+  /* font-family: 'Roboto', sans-serif; */
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333; /* 기본 텍스트 색상 */
+  margin: 0;
+  padding: 0;
+  background-color: #F0F7FF;
+}
+@import url('https://static.toss.im/tps/main.css');
+@import url('https://static.toss.im/tps/others.css');
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+* {
+  font-family: 'Toss Product Sans';
 }
 
-a,
-.green {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #444; /* 제목은 조금 더 진한 색상 */
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+a {
+  color: #007bff; /* 링크 색상 */
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+  transition: color 0.3s ease;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+a:hover {
+  color: #0056b3; /* 링크 호버 시 색상 변경 */
 }
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-} */
