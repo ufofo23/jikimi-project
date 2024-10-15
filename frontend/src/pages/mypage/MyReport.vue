@@ -115,10 +115,6 @@
             </a>
           </div>
         </nav>
-
-        <button class="btn btn-danger ml-4" @click="deleteSelected">
-          삭제
-        </button>
       </div>
     </div>
   </div>
