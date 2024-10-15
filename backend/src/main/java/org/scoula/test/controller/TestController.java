@@ -64,6 +64,8 @@ public class TestController {
         payloadMap.put("jibunAddress", payload.getJibunAddress());
         payloadMap.put("propertyNo", payload.getPropertyNo());
         payloadMap.put("price", payload.getPrice());
+        payloadMap.put("analysisDate", payload.getAnalysisDate());
+
 
         return ResponseEntity.ok(reportService.analysis(analysisNo, propertyNo, payloadMap));
     }

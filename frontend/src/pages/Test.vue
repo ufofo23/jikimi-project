@@ -215,6 +215,7 @@ const test = async () => {
     contractName: names.value.length ? names.value : null,
     jibunAddress: emptyToNull(jibunAddress.value),
     price: emptyToNull(String(price.value)),
+    analysisDate: String(new Date().toLocaleDateString('kr')),
   };
 
   console.log('payload : ', payload);
