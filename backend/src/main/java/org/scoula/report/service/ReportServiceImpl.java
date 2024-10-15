@@ -75,6 +75,7 @@ public class ReportServiceImpl implements ReportService {
 
         // 날짜
         report.setAnalysisDate(payload.get("analysisDate").toString());
+        log.info("DATEDATEDATE : " + report.getAnalysisDate());
 
         // jeonsePrice: 0, null 예외처리 - jeonseRate을 null 값으로 두고 프론트에서 "판단 불가"로 표기
         if (payload.get("jeonsePrice") != null && payload.get("jeonsePrice") != "") {

@@ -22,4 +22,5 @@ public class Payload {
     private String jibunAddress;
     private String propertyNo;
     private String price;
+    private String analysisDate;
 }

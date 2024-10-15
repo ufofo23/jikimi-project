@@ -1,6 +1,7 @@
 package org.scoula.safety_inspection.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.scoula.like.report.service.LikeReportService;
 import org.scoula.report.mapper.ReportMapper;
 import org.scoula.safety_inspection.infra.bml.service.BuildingManagementLedgerGeneralService;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SafetyInspectionService {
 
     private final AnalysisService analysisService;
@@ -75,6 +77,7 @@ public class SafetyInspectionService {
 
             // 보고서 생성 및 저장
             ReportDTO reportDTO = reportService.analysis(analysisNo, propertyNo, payload);
+            log.info("AnalysisDate in DTO : " + reportDTO.getAnalysisDate());
             reportService.create(reportDTO, analysisNo, token);
             int reportNo = reportMapper.getReportNo(analysisNo);
 
