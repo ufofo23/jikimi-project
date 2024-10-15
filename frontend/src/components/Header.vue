@@ -7,46 +7,76 @@
             <img src="@/assets/jikimi.png" alt="logo" />
           </router-link>
         </div>
-        <nav class="main-nav">
+        <button
+          class="hamburger"
+          @click="toggleMenu"
+          :class="{ 'is-active': isMenuOpen }"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="main-nav" :class="{ 'is-open': isMenuOpen }">
           <ul class="nav-list">
             <li>
-              <router-link :to="{ name: 'map' }" class="nav-item">Map</router-link>
+              <router-link :to="{ name: 'map' }" class="nav-item"
+                >Map</router-link
+              >
             </li>
             <li class="dropdown">
-              <button class="nav-item dropdown-toggle" @click="toggleDropdown" aria-haspopup="true" :aria-expanded="isDropdownOpen">
+              <button
+                class="nav-item dropdown-toggle"
+                @click="toggleDropdown"
+                aria-haspopup="true"
+                :aria-expanded="isDropdownOpen"
+              >
                 Study
               </button>
               <ul class="dropdown-menu" v-if="isDropdownOpen" @click.stop>
                 <li>
-                  <router-link :to="{ path: '/study/commonsense/list' }" class="dropdown-item">
+                  <router-link
+                    :to="{ path: '/study/commonsense/list' }"
+                    class="dropdown-item"
+                  >
                     부동산 토막 상식
                   </router-link>
                 </li>
                 <li>
-                  <router-link :to="{ path: '/study/dictionary/list' }" class="dropdown-item">
+                  <router-link
+                    :to="{ path: '/study/dictionary/list' }"
+                    class="dropdown-item"
+                  >
                     부동산 용어 사전
                   </router-link>
                 </li>
               </ul>
             </li>
             <li>
-              <router-link :to="{ name: 'faq' }" class="nav-item">FAQ</router-link>
+              <router-link :to="{ name: 'faq' }" class="nav-item"
+                >FAQ</router-link
+              >
             </li>
             <li>
-              <router-link :to="{ name: 'introduce' }" class="nav-item">About us</router-link>
+              <router-link :to="{ name: 'introduce' }" class="nav-item"
+                >About us</router-link
+              >
             </li>
           </ul>
         </nav>
         <div class="auth-nav">
           <ul class="nav-list">
             <li v-if="isAuthenticated">
-              <router-link :to="{ name: 'mypage' }" class="nav-item">MyPage</router-link>
+              <router-link :to="{ name: 'mypage' }" class="nav-item"
+                >MyPage</router-link
+              >
             </li>
             <li v-if="isAuthenticated">
               <a @click.prevent="logout" class="nav-item">Logout</a>
             </li>
             <li v-else>
-              <router-link :to="{ name: 'login' }" class="nav-item">Sign in</router-link>
+              <router-link :to="{ name: 'login' }" class="nav-item"
+                >Sign in</router-link
+              >
             </li>
           </ul>
         </div>
@@ -64,11 +94,16 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const isDropdownOpen = ref(false);
+const isMenuOpen = ref(false);
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
+};
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
 };
 
 const logout = () => {
@@ -129,12 +164,10 @@ onUnmounted(() => {
   width: auto;
 }
 
-/* 메인 4뭉치 */
 .main-nav {
   margin-right: 25%;
 }
 
-/* login logout 뭉치 */
 .auth-nav {
   margin-left: auto;
 }
@@ -148,7 +181,8 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.nav-item, .dropdown-toggle {
+.nav-item,
+.dropdown-toggle {
   color: #333333;
   text-decoration: none;
   font-size: 25px;
@@ -202,6 +236,29 @@ onUnmounted(() => {
   background-color: #f8f9fa;
 }
 
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #333333;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
 @media (max-width: 1024px) {
   .header {
     height: 120px;
@@ -211,7 +268,8 @@ onUnmounted(() => {
     max-height: 100px;
   }
 
-  .nav-item, .dropdown-toggle {
+  .nav-item,
+  .dropdown-toggle {
     font-size: 24px;
     padding: 0 15px;
   }
@@ -228,25 +286,37 @@ onUnmounted(() => {
   }
 
   .header-content {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .logo, .main-nav, .auth-nav {
+  .hamburger {
+    display: flex;
+    order: 1;
+  }
+
+  .logo {
+    order: 0;
+  }
+
+  .main-nav,
+  .auth-nav {
+    display: none;
     width: 100%;
-    margin: 0;
+    order: 2;
   }
 
-  .main-nav, .auth-nav {
+  .main-nav.is-open,
+  .auth-nav.is-open {
     display: block;
   }
 
   .nav-list {
     flex-direction: column;
-    height: auto;
+    align-items: flex-start;
   }
 
-  .nav-item, .dropdown-toggle {
+  .nav-item,
+  .dropdown-toggle {
     padding: 15px 0;
     font-size: 20px;
     height: auto;
@@ -264,6 +334,18 @@ onUnmounted(() => {
 
   .dropdown-item {
     font-size: 18px;
+  }
+
+  .hamburger.is-active span:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .hamburger.is-active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.is-active span:nth-child(3) {
+    transform: rotate(-45deg);
   }
 }
 </style>
